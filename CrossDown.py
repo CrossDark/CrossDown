@@ -122,6 +122,14 @@ def main(text: str) -> str:
 
 if __name__ == '__main__':
     with open('test.md', encoding='utf-8') as test:
-        cd = main(test.read())
+        cd = f"""<!DOCTYPE html>
+<html>
+<head>
+    <title>页面标题</title>
+</head>
+<body>
+    {main(test.read())}
+</body>
+</html>"""
     with open('test.html', 'w', encoding='utf-8') as html:
         html.write(cd)
