@@ -176,6 +176,7 @@ class CodeBlock:
 class Basic:
     @staticmethod
     def paragraph(text: str):
+        text = '\n'.join(['-' + line + '-' for line in original_string.splitlines()])
         return re.sub(r'(<.+?>.*?<.+?>)\n', r'<p>\1</p>\n', text)
 
 
