@@ -136,6 +136,9 @@ class CodeBlock:
     def __call__(self, *args, **kwargs):
         return re.sub(r'`[^`]*`', '', self.text)
 
+    def restore(self):
+        pass
+
 
 class Basic:
     @staticmethod
@@ -184,15 +187,7 @@ def main(origen: str):
 
 if __name__ == '__main__':
     with open('test.md', encoding='utf-8') as test:
-        cd = f"""<!DOCTYPE html>
-<html>
-<head>
-    <title>页面标题</title>
-</head>
-<body>
-    {main(test.read())}
-</body>
-</html>"""
+        cd = main(test.read())
     with open('test.html', 'w', encoding='utf-8') as html:
         html.write(f"""<!DOCTYPE html>  
 <html lang="zh-CN">  
@@ -206,4 +201,4 @@ if __name__ == '__main__':
     {add_indent_to_string(cd, 4)}
 </body>  
 </html>
-        """)
+""")
