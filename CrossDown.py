@@ -129,21 +129,54 @@ class Value:
 
 class CodeBlock:
     def __init__(self, text: str):
-        self.text = text
-        self.codes = [i for i in re.findall('`([^`]*)`', self.text) if i != '']
-        print(self.codes)
+        """
+        找出代码块并移除代码标识
+        :param text: 输入的文本
+        """
+        self.codes = [i for i in re.findall(r'`([^`]*)`', text) if i != '']  # 找出代码快
+        self.text = re.sub(r'``', '', text)  # 移除代码标识`
 
     def __call__(self, *args, **kwargs):
-        return re.sub(r'`[^`]*`', '', self.text)
+        """
+        临时移除代码块
+        :param args:
+        :param kwargs:
+        :return: 不含代码的文本
+        """
+        for index, item in enumerate(self.codes):  # 替换代码块为-@@-(ID)-@@-
+            self.text = re.sub(fr'`{re.escape(item)}`', f'-@@-{index}-@@-', self.text)  # 同时转译特殊字符
+        return self.text
 
-    def restore(self):
-        pass
+    def rendering(self):
+        """
+        渲染代码
+        :return:
+        """
+        for index, code in enumerate(self.codes):
+            if re.search(r'\n', code):  # 是多行代码
+                head = re.findall(r'(.*?)\n', code)[0]
+                if head == 'python':
+                    pass
+                elif head == 'shell':
+                    pass
+            else:  # 是单行代码
+                self.codes[index] = f'\({code}\)'
+
+    def restore(self, new_text: str):
+        """
+        将渲染好的代码重新放回处理好的正文
+        :param new_text: 处理好的正文
+        :return: 加上代码的文章
+        """
+        for index, item in enumerate(self.codes):
+            new_text = re.sub(fr'-@@-{index}-@@-', f'{item}', new_text, flags=re.DOTALL)
+        return new_text
 
 
 class Basic:
     @staticmethod
     def paragraph(text: str):
-        return re.sub(r'(.*?)\n', r'<p>\1</p>\n', text)
+        return re.sub(r'(<.+?>.*?<.+?>)\n', r'<p>\1</p>\n', text)
 
 
 def add_indent_to_string(input_string: str, indent_spaces: int = 4):
@@ -173,6 +206,7 @@ def body(text: str) -> str:
     text = Header.header(text)  # 渲染标题
     text = Style(text)()  # 渲染字体样式
     text = Function(text)()  # 渲染特殊功能
+    text = Basic.paragraph(text)
 
     # text = Basic.paragraph(text)  # 渲染段落
     return text
@@ -180,8 +214,11 @@ def body(text: str) -> str:
 
 def main(origen: str):
     # 预处理
-    text = CodeBlock(origen)()
-    return body(text)  # 处理正文
+    code_block = CodeBlock(origen)  # 获取代码内容
+    text = code_block()  # 暂时移除代码
+    code_block.rendering()  # 渲染代码
+    # 处理正文
+    return code_block.restore(body(text))  # 放回代码
     #
 
 
@@ -195,6 +232,9 @@ if __name__ == '__main__':
     <meta charset="UTF-8">  
     <meta name="viewport" content="width=device-width, initial-scale=1.0">  
     <title>UTF-8编码示例</title>  
+    <script type="text/javascript" async
+      src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+    </script>
     <!-- 可以在这里添加其他元数据和CSS链接 -->  
 </head>  
 <body>  
