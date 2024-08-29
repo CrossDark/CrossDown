@@ -176,8 +176,8 @@ class CodeBlock:
 class Basic:
     @staticmethod
     def paragraph(text: str):
-        text = '\n'.join(['-' + line + '-' for line in original_string.splitlines()])
-        return re.sub(r'(<.+?>.*?<.+?>)\n', r'<p>\1</p>\n', text)
+        text = '\n'.join([f'<p>{line}</p>' for line in original_string.splitlines()])
+        return re.sub(r'<p>(<.+?>.*?<.+?>)</p>\n', r'\1\n', text)
 
 
 def add_indent_to_string(input_string: str, indent_spaces: int = 4):
