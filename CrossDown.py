@@ -1,3 +1,4 @@
+from typing import *
 import re
 
 
@@ -113,9 +114,8 @@ class Value:
         self.values = {
             key: value for key, value in re.findall(r'\{([^{}]+)} ?= ?(.+?)(?=\n|$)', text)
         }  # 从text中提取所有变量并转换成字典
-        print(self.values)
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, *args, **kwargs) -> Tuple[str, Dict[str, str]]:
         """
         将所有变量赋值并移除变量定义
         :param args:
@@ -124,9 +124,9 @@ class Value:
         """
         text = self.text
         for k, v in self.values.items():
-            text = re.sub(fr'\[{k}]: (.+?)(?=\n|$)', '', text)  # 移除变量的定义
+            text = re.sub(r'\{' + k + '} ?= ?(.+?)(?=\n|$)', '', text)  # 移除变量的定义
             text = re.sub(r'\{' + k + '}', fr'{v}', text)  # 给变量赋值
-        return text
+        return text, self.values
 
 
 class CodeBlock:
@@ -149,20 +149,86 @@ class CodeBlock:
             self.text = re.sub(fr'`{re.escape(item)}`', f'-@@-{index}-@@-', self.text)  # 同时转译特殊字符
         return self.text
 
-    def rendering(self):
+    def rendering(self, values: Dict[str, str]):
         """
         渲染代码
+        :param values: 变量字典
         :return:
         """
         for index, code in enumerate(self.codes):
+            if re.match(r'\{[^$]*}', code):  # 是变量
+                # 给变量赋值
+                key = re.findall(r'\{([^}]+)}', code)[0]  # 查找变量名
+                code = re.sub(r'\{' + key + '}', fr'{values[key]}', code)
+                self.codes[index] = code  # 给变量赋值
             if re.search(r'\n', code):  # 是多行代码
                 head = re.findall(r'(.*?)\n', code)[0]
                 if head == 'python':
                     pass
                 elif head == 'shell':
                     pass
-            else:  # 是单行代码
-                self.codes[index] = f'\({code}\)'
+            elif re.match(r'\$[^$]*\$', code):  # 是LaTex代码
+                self.codes[index] = re.sub(fr'\$([^$]*)\$', r'\(\1\)', code)
+
+    def restore(self, new_text: str):
+        """
+        将渲染好的代码重新放回处理好的正文
+        :param new_text: 处理好的正文
+        :return: 加上代码的文章
+        """
+        for index, item in enumerate(self.codes):
+            new_text = re.sub(fr'-@@-{index}-@@-', f'{item}', new_text, flags=re.DOTALL)
+        return new_text
+
+
+class Escape:
+    """
+    转义\后字符
+    """
+
+    def __init__(self, text: str):
+        """
+        找出转义符并转义
+        :param text: 输入的文本
+        """
+        self.text = text
+        self.escapes = {
+            i: f'--@|{i}|@--' for i in re.findall(r'\\(.)', text)
+        }   # 找出要转义的字符
+        print(self.escapes)
+
+    def __call__(self, *args, **kwargs):
+        """
+        临时移除代码块
+        :param args:
+        :param kwargs:
+        :return: 不含代码的文本
+        """
+        # TODO
+        for index, item in enumerate(self.escapes):  # 替换代码块为-@@-(ID)-@@-
+            self.text = re.sub(fr'{index}', f'-@@-{index}-@@-', self.text)  # 同时转译特殊字符
+        return self.text
+
+    def rendering(self, values: Dict[str, str]):
+        """
+        渲染代码
+        :param values: 变量字典
+        :return:
+        """
+        for index, code in enumerate(self.codes):
+            if re.match(r'\{[^$]*}', code):  # 是变量
+                # 给变量赋值
+                key = re.findall(r'\{([^}]+)}', code)[0]  # 查找变量名
+                code = re.sub(r'\{' + key + '}', fr'{values[key]}', code)
+                self.codes[index] = code  # 给变量赋值
+            if re.search(r'\n', code):  # 是多行代码
+                head = re.findall(r'(.*?)\n', code)[0]
+                if head == 'python':
+                    pass
+                elif head == 'shell':
+                    pass
+            elif re.match(r'\$[^$]*\$', code):  # 是LaTex代码
+                self.codes[index] = re.sub(fr'\$([^$]*)\$', r'\(\1\)', code)
 
     def restore(self, new_text: str):
         """
@@ -217,30 +283,30 @@ def add_indent_to_string(input_string: str, indent_spaces: int = 4):
     return indented_string
 
 
-def body(text: str) -> str:
+def body(text: str) -> Tuple[str, Dict[str, str]]:
     """
     渲染正文部分
     :param text: 输入正文
     :return: 输出渲染后的正文
     """
-    text = Value(text)()  # 提取变量并赋值到文本中
+    Escape(text)
+    text, values = Value(text)()  # 提取变量并赋值到文本中
     text = Header(text)()  # 渲染标题
     text = Style(text)()  # 渲染字体样式
     text = Function(text)()  # 渲染特殊功能
     text = Basic(text)()  # 渲染基础格式
 
     # text = Basic.paragraph(text)  # 渲染段落
-    return text
+    return text, values
 
 
 def main(origen: str):
     # 预处理
     code_block = CodeBlock(origen)  # 获取代码内容
     text = code_block()  # 暂时移除代码
-    code_block.rendering()  # 渲染代码
-    # 处理正文
-    return code_block.restore(body(text))  # 放回代码
-    #
+    text, values = body(text)  # 处理正文
+    code_block.rendering(values)  # 渲染代码
+    return code_block.restore(text)  # 放回代码
 
 
 if __name__ == '__main__':
