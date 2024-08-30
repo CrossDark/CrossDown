@@ -2,14 +2,15 @@ import re
 
 
 class Header:
-    @staticmethod
-    def header(text: str) -> str:
+    def __init__(self, text: str):
+        self.text = text
+
+    def __call__(self, *args, **kwargs):
         """
         渲染标题
-        :param text: 原始文本
         :return: 处理后的文本
         """
-        h6 = re.sub(r'###### (.*?)\n', r'<h6>\1</h6>\n', text)  # H6
+        h6 = re.sub(r'###### (.*?)\n', r'<h6>\1</h6>\n', self.text)  # H6
         h5 = re.sub(r'##### (.*?)\n', r'<h5>\1</h5>\n', h6)  # H5
         h4 = re.sub(r'#### (.*?)\n', r'<h4>\1</h4>\n', h5)  # H4
         h3 = re.sub(r'### (.*?)\n', r'<h3>\1</h3>\n', h4)  # H3
@@ -110,8 +111,9 @@ class Value:
     def __init__(self, text: str):
         self.text = text
         self.values = {
-            key: value for key, value in re.findall(r'\[([^]]+)]: (.+?)(?=\n|$)', text)
+            key: value for key, value in re.findall(r'\{([^{}]+)} ?= ?(.+?)(?=\n|$)', text)
         }  # 从text中提取所有变量并转换成字典
+        print(self.values)
 
     def __call__(self, *args, **kwargs):
         """
@@ -122,8 +124,8 @@ class Value:
         """
         text = self.text
         for k, v in self.values.items():
-            text = re.sub(fr'\[([^]]+)]\({k}\)', fr'[\1]({v})', text)
-            text = re.sub(fr'\[{k}]: (.+?)(?=\n|$)', '', text)
+            text = re.sub(fr'\[{k}]: (.+?)(?=\n|$)', '', text)  # 移除变量的定义
+            text = re.sub(r'\{' + k + '}', fr'{v}', text)  # 给变量赋值
         return text
 
 
@@ -174,10 +176,28 @@ class CodeBlock:
 
 
 class Basic:
-    @staticmethod
-    def paragraph(text: str):
-        text = '\n'.join([f'<p>{line}</p>' for line in original_string.splitlines()])
-        return re.sub(r'<p>(<.+?>.*?<.+?>)</p>\n', r'\1\n', text)
+    def __init__(self, text: str):
+        self.text: str = text
+
+    def paragraph(self):
+        """
+        为普通的行套上段落标签
+        """
+        self.text = re.sub(r'<p>(<.+?>.*?<.+?>)</p>\n',
+                           r'\1\n',  # 移除已被标签包裹的行的额外的<p>标签
+                           '\n'.join(
+                               [
+                                   f'<p>{line}</p>' for line in self.text.splitlines() if
+                                   not re.search(  # 把所有非空的行都套上<p>标签
+                                       r'^\s*\n?$', line  # 识别空行或空白行
+                                   )
+                               ]
+                           )
+                           )
+
+    def __call__(self, *args, **kwargs):
+        self.paragraph()
+        return self.text
 
 
 def add_indent_to_string(input_string: str, indent_spaces: int = 4):
@@ -204,10 +224,10 @@ def body(text: str) -> str:
     :return: 输出渲染后的正文
     """
     text = Value(text)()  # 提取变量并赋值到文本中
-    text = Header.header(text)  # 渲染标题
+    text = Header(text)()  # 渲染标题
     text = Style(text)()  # 渲染字体样式
     text = Function(text)()  # 渲染特殊功能
-    text = Basic.paragraph(text)
+    text = Basic(text)()  # 渲染基础格式
 
     # text = Basic.paragraph(text)  # 渲染段落
     return text
