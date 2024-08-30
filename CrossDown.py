@@ -163,7 +163,9 @@ class CodeBlock:
                 self.codes[index] = code  # 给变量赋值
             if re.search(r'\n', code):  # 是多行代码
                 head = re.findall(r'(.*?)\n', code)[0]
-                if head == 'python':
+                if head in ('', 'yaml'):
+                    pass
+                elif head == 'python':
                     pass
                 elif head == 'shell':
                     pass
