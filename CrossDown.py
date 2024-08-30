@@ -164,9 +164,7 @@ class CodeBlock:
             if re.search(r'\n', code):  # 是多行代码
                 head = re.findall(r'(.*?)\n', code)[0]
                 if head in ('', 'yaml'):
-                    pass
-                elif head == 'python':
-                    pass
+                    self.codes[index] = f'<pre><code class="language-yaml">{code}</code></pre>'
                 elif head == 'shell':
                     pass
             elif re.match(r'\$[^$]*\$', code):  # 是LaTex代码
@@ -211,34 +209,13 @@ class Escape:
             self.text = re.sub(fr'{index}', f'-@@-{index}-@@-', self.text)  # 同时转译特殊字符
         return self.text
 
-    def rendering(self, values: Dict[str, str]):
-        """
-        渲染代码
-        :param values: 变量字典
-        :return:
-        """
-        for index, code in enumerate(self.codes):
-            if re.match(r'\{[^$]*}', code):  # 是变量
-                # 给变量赋值
-                key = re.findall(r'\{([^}]+)}', code)[0]  # 查找变量名
-                code = re.sub(r'\{' + key + '}', fr'{values[key]}', code)
-                self.codes[index] = code  # 给变量赋值
-            if re.search(r'\n', code):  # 是多行代码
-                head = re.findall(r'(.*?)\n', code)[0]
-                if head == 'python':
-                    pass
-                elif head == 'shell':
-                    pass
-            elif re.match(r'\$[^$]*\$', code):  # 是LaTex代码
-                self.codes[index] = re.sub(fr'\$([^$]*)\$', r'\(\1\)', code)
-
     def restore(self, new_text: str):
         """
         将渲染好的代码重新放回处理好的正文
         :param new_text: 处理好的正文
         :return: 加上代码的文章
         """
-        for index, item in enumerate(self.codes):
+        for index, item in enumerate(self.escapes):
             new_text = re.sub(fr'-@@-{index}-@@-', f'{item}', new_text, flags=re.DOTALL)
         return new_text
 
@@ -257,7 +234,7 @@ class Basic:
                                [
                                    f'<p>{line}</p>' for line in self.text.splitlines() if
                                    not re.search(  # 把所有非空的行都套上<p>标签
-                                       r'^\s*\n?$', line  # 识别空行或空白行
+                                       r'^\s*\n?$', line  # 识别空行或空白行 TODO 还应识别-@@-n-@@-
                                    )
                                ]
                            )
@@ -324,6 +301,7 @@ if __name__ == '__main__':
     <script type="text/javascript" async
       src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-yaml.min.js"></script>
     <!-- 可以在这里添加其他元数据和CSS链接 -->  
 </head>  
 <body>  
