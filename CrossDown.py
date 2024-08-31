@@ -166,7 +166,7 @@ class CodeBlock:
                 if head in ('', 'yaml'):
                     self.codes[index] = f'<pre><code class="language-yaml">{code}</code></pre>'
                 elif head in ('shell', 'python'):
-                    self.codes[index] = f'<pre><code class="language-{head}">{re.sub(f"({head})[s/S]*?", "", code)}</code></pre>'
+                    self.codes[index] = f'<pre><code class="language-{head}">{re.sub(f"({head})", "", code)}</code></pre>'
             elif re.match(r'\$[^$]*\$', code):  # 是LaTex代码(单行)
                 self.codes[index] = re.sub(fr'\$([^$]*)\$', r'<p>\(\1\)</p>', code)
             else:  # 是突出块
@@ -195,7 +195,7 @@ class Escape:
         """
         self.text = text
         self.escapes = {
-            i: f'--@|{i}|@--' for i in re.findall(r'\\(.)', text)
+            i: f'-@@-@{i}-@@-' for i in re.findall(r'\\(.)', text)
         }   # 找出要转义的字符
         print(self.escapes)
 
@@ -208,7 +208,7 @@ class Escape:
         """
         # TODO
         for index, item in enumerate(self.escapes):  # 替换代码块为-@@-(ID)-@@-
-            self.text = re.sub(fr'{index}', f'-@@-{index}-@@-', self.text)  # 同时转译特殊字符
+            self.text = re.sub(fr'{index}', f'-@@-@{index}-@@-', self.text)  # 同时转译特殊字符
         return self.text
 
     def restore(self, new_text: str):
@@ -222,14 +222,43 @@ class Escape:
         return new_text
 
 
+class Cite:
+    def __init__(self, text):
+        self.text = text
+
+    def __call__(self, *args, **kwargs) -> str:
+        self.text = re.sub('> (.*?) --\[(.*?)]\n', r'<blockquote>\1<footer><cite>\2</cite></footer></blockquote>', self.text)  # 渲染有来源的引用
+        self.text = re.sub('> (.*?)\n', r'<blockquote>\1</blockquote>\n', self.text)  # 渲染没有来源的引用
+        return self.text
+
+
 class Basic:
     def __init__(self, text: str):
         self.text: str = text
+
+    @staticmethod
+    def strong_annotation(text: str) -> str:
+        """
+        移除强注释
+        :param text: 原始文本
+        :return: 移除强注释后的文本
+        """
+        return re.sub('\|=[\s\S]=|', '', text)
+
+    @staticmethod
+    def week_annotation(text: str) -> str:
+        """
+        移除弱注释
+        :param text: 原始文本
+        :return: 移除弱注释后的文本
+        """
+        return re.sub('// .*?\n', '', text)
 
     def paragraph(self):
         """
         为普通的行套上段落标签
         """
+        # TODO 有点问题
         self.text = re.sub(r'<p>(<.+?>.*?<.+?>)</p>\n',
                            r'\1\n',  # 移除已被标签包裹的行的额外的<p>标签
                            '\n'.join(
@@ -270,10 +299,12 @@ def body(text: str) -> Tuple[str, Dict[str, str]]:
     :return: 输出渲染后的正文
     """
     Escape(text)
+    text = Basic.week_annotation(text)  # 移除弱注释
     text, values = Value(text)()  # 提取变量并赋值到文本中
     text = Header(text)()  # 渲染标题
     text = Style(text)()  # 渲染字体样式
     text = Function(text)()  # 渲染特殊功能
+    text = Cite(text)()  # 渲染引用
     text = Basic(text)()  # 渲染基础格式
 
     # text = Basic.paragraph(text)  # 渲染段落
@@ -281,10 +312,13 @@ def body(text: str) -> Tuple[str, Dict[str, str]]:
 
 
 def main(origen: str):
-    # 预处理
+    # 预处理、
+    origen = Basic.strong_annotation(origen)  # 移除强注释
     code_block = CodeBlock(origen)  # 获取代码内容
     text = code_block()  # 暂时移除代码
-    text, values = body(text)  # 处理正文
+    # 处理正文
+    text, values = body(text)
+    # 后处理
     code_block.rendering(values)  # 渲染代码
     return code_block.restore(text)  # 放回代码
 
