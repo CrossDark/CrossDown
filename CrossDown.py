@@ -67,6 +67,20 @@ class Style:
         """
         self.text = re.sub(r'==([^=\n]+)==', r'<mark>\1</mark>', self.text)
 
+    def up(self):
+        """
+        在文本的正上方添加一行小文本,主要用于标拼音
+        :return:
+        """
+        self.text = re.sub(r'\[(.*?)]\^\((.*?)\)', r'<ruby>\1<rt>\2</rt></ruby>', self.text)
+
+    def hide(self):
+        """
+        在指定的文本里面隐藏一段文本,只有鼠标放在上面才会显示隐藏文本
+        :return:
+        """
+        self.text = re.sub(r'\[(.*?)]-\((.*?)\)', r'<span title="\2">\1</span>', self.text)
+
     def __call__(self, *args, **kwargs):
         """
         一键运行
@@ -79,6 +93,8 @@ class Style:
         self.strikethrough()
         self.underline()
         self.highlight()
+        self.up()
+        self.hide()
         return self.text
 
 
@@ -94,7 +110,18 @@ class Function:
         """
         self.text = text
 
+    def image(self):
+        """
+        实现链接
+        :return:
+        """
+        self.text = re.sub(r'!\[([^\[\]\n]+)]\(([^()\n]+)\)', r'<img src="\2" alt="\1">', self.text)
+
     def link(self):
+        """
+        实现链接
+        :return:
+        """
         self.text = re.sub(r'\[([^\[\]\n]+)]\(([^()\n]+)\)', r'<a href="\2">\1</a>', self.text)
 
     def __call__(self, *args, **kwargs):
@@ -104,6 +131,7 @@ class Function:
         :param kwargs:
         :return:
         """
+        self.image()
         self.link()
         return self.text
 
