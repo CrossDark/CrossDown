@@ -146,7 +146,7 @@ class CodeBlock:
         :return: 不含代码的文本
         """
         for index, item in enumerate(self.codes):  # 替换代码块为-@@-(ID)-@@-
-            self.text = re.sub(fr'`{re.escape(item)}`', f'-@@-{index}-@@-', self.text)  # 同时转译特殊字符
+            self.text = re.sub(fr'`{re.escape(item)}`', f'\0\1{index}\1\0', self.text)  # 同时转译特殊字符
         return self.text
 
     def rendering(self, values: Dict[str, str]):
@@ -179,7 +179,7 @@ class CodeBlock:
         :return: 加上代码的文章
         """
         for index, item in enumerate(self.codes):
-            new_text = re.sub(fr'-@@-{index}-@@-', f'{item}', new_text, flags=re.DOTALL)
+            new_text = re.sub(f'\0\1{index}\1\0', f'{item}', new_text, flags=re.DOTALL)
         return new_text
 
 
@@ -195,7 +195,7 @@ class Escape:
         """
         self.text = text
         self.escapes = {
-            i: f'-@@-@{i}-@@-' for i in re.findall(r'\\(.)', text)
+            i: f'\0\1\2{i}\2\1\0' for i in re.findall(r'\\(.)', text)
         }   # 找出要转义的字符
         print(self.escapes)
 
@@ -208,7 +208,7 @@ class Escape:
         """
         # TODO
         for index, item in enumerate(self.escapes):  # 替换代码块为-@@-(ID)-@@-
-            self.text = re.sub(fr'{index}', f'-@@-@{index}-@@-', self.text)  # 同时转译特殊字符
+            self.text = re.sub(fr'{index}', f'\0\1\2{index}\2\1\0', self.text)  # 同时转译特殊字符
         return self.text
 
     def restore(self, new_text: str):
@@ -263,7 +263,7 @@ class Basic:
                            r'\1\n',  # 移除已被标签包裹的行的额外的<p>标签
                            '\n'.join(
                                [
-                                   f'<p>{line}</p>' if not re.search(r'-@@-.+?-@@-', line) else line  # 识别-@@-n-@@-并保留
+                                   f'<p>{line}</p>' if not re.search('\0.+?\0', line) else line  # 识别-@@-n-@@-并保留
                                    for line in self.text.splitlines()  # 把所有非空的行都套上<p>标签
                                    if not re.search(r'^\s*\n?$', line)  # 识别空行或空白行
                                ]
