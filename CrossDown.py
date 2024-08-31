@@ -81,6 +81,9 @@ class Style:
         """
         self.text = re.sub(r'\[(.*?)]-\((.*?)\)', r'<span title="\2">\1</span>', self.text)
 
+    def split_line(self):
+        self.text = re.sub(r'([*_-]){3}\n', r'<hr>', self.text)
+
     def __call__(self, *args, **kwargs):
         """
         一键运行
@@ -95,6 +98,7 @@ class Style:
         self.highlight()
         self.up()
         self.hide()
+        self.split_line()
         return self.text
 
 
@@ -195,6 +199,8 @@ class CodeBlock:
                     self.codes[index] = f'<pre><code class="language-yaml">{code}</code></pre>'
                 elif head in ('shell', 'python'):
                     self.codes[index] = f'<pre><code class="language-{head}">{re.sub(f"({head})", "", code)}</code></pre>'
+                elif head in ('mermaid',):
+                    self.codes[index] = f'<div class="{head}">{re.sub(f"({head})", "", code)}</div>'
             elif re.match(r'\$[^$]*\$', code):  # 是LaTex代码(单行)
                 self.codes[index] = re.sub(fr'\$([^$]*)\$', r'<p>\(\1\)</p>', code)
             else:  # 是突出块
@@ -373,9 +379,13 @@ if __name__ == '__main__':
         color: white; /* 白色文字 */  
     }}
     </style> 
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
     <!-- 可以在这里添加其他元数据和CSS链接 -->  
 </head>  
-<body>  
+<body>
+    <script>  
+        mermaid.initialize({{startOnLoad:true}});  
+    </script>
     {add_indent_to_string(cd, 4)}
 </body>  
 </html>
