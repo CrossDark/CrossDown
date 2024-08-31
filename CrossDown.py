@@ -165,10 +165,12 @@ class CodeBlock:
                 head = re.findall(r'(.*?)\n', code)[0]
                 if head in ('', 'yaml'):
                     self.codes[index] = f'<pre><code class="language-yaml">{code}</code></pre>'
-                elif head == 'shell':
-                    pass
-            elif re.match(r'\$[^$]*\$', code):  # 是LaTex代码
-                self.codes[index] = re.sub(fr'\$([^$]*)\$', r'\(\1\)', code)
+                elif head in ('shell', 'python'):
+                    self.codes[index] = f'<pre><code class="language-{head}">{re.sub(f"({head})[s/S]*?", "", code)}</code></pre>'
+            elif re.match(r'\$[^$]*\$', code):  # 是LaTex代码(单行)
+                self.codes[index] = re.sub(fr'\$([^$]*)\$', r'<p>\(\1\)</p>', code)
+            else:  # 是突出块
+                self.codes[index] = f'<span class="block">{code}</span>'
 
     def restore(self, new_text: str):
         """
@@ -232,10 +234,9 @@ class Basic:
                            r'\1\n',  # 移除已被标签包裹的行的额外的<p>标签
                            '\n'.join(
                                [
-                                   f'<p>{line}</p>' for line in self.text.splitlines() if
-                                   not re.search(  # 把所有非空的行都套上<p>标签
-                                       r'^\s*\n?$', line  # 识别空行或空白行 TODO 还应识别-@@-n-@@-
-                                   )
+                                   f'<p>{line}</p>' if not re.search(r'-@@-.+?-@@-', line) else line  # 识别-@@-n-@@-并保留
+                                   for line in self.text.splitlines()  # 把所有非空的行都套上<p>标签
+                                   if not re.search(r'^\s*\n?$', line)  # 识别空行或空白行
                                ]
                            )
                            )
@@ -301,7 +302,15 @@ if __name__ == '__main__':
     <script type="text/javascript" async
       src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
     </script>
+    <link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-yaml.min.js"></script>
+    <style>  
+    .block {{  
+        background-color: grey; /* 灰色背景 */  
+        color: white; /* 白色文字 */  
+    }}
+    </style> 
     <!-- 可以在这里添加其他元数据和CSS链接 -->  
 </head>  
 <body>  
