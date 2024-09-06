@@ -9,6 +9,12 @@ class Header:
     def __call__(self, *args, **kwargs):
         """
         渲染标题
+        # 一级标题
+        ## 二级标题
+        ### 三级标题
+        #### 四级标题
+        ##### 五级标题
+        ###### 六级标题
         :return: 处理后的文本
         """
         h6 = re.sub(r'###### (.*?)\n', r'<h6>\1</h6>\n', self.text)  # H6
@@ -34,54 +40,64 @@ class Style:
 
     def italic(self):
         """
-        斜体
+        *斜体*
         :return:
         """
         self.text = re.sub(r'\*([^*\n]+)\*', r'<i>\1</i>', self.text)
 
     def bold(self):
         """
-        粗体
+        **粗体**
         :return:
         """
         self.text = re.sub(r'\*\*([^*\n]+)\*\*', r'<b>\1</b>', self.text)
 
     def underline(self):
         """
-        下划线
+        ~下划线~
         :return:
         """
         self.text = re.sub(r'~([^~\n]+)~', r'<u>\1</u>', self.text)
 
     def strikethrough(self):
         """
-        删除线
+        ~~删除线~~
         :return:
         """
         self.text = re.sub(r'~~([^~\n]+)~~', r'<s>\1</s>', self.text)
 
     def highlight(self):
         """
-        高亮
+        ==高亮==
         :return:
         """
         self.text = re.sub(r'==([^=\n]+)==', r'<mark>\1</mark>', self.text)
 
     def up(self):
         """
-        在文本的正上方添加一行小文本,主要用于标拼音
+        [在文本的正上方添加一行小文本]^(主要用于标拼音)
         :return:
         """
         self.text = re.sub(r'\[(.*?)]\^\((.*?)\)', r'<ruby>\1<rt>\2</rt></ruby>', self.text)
 
     def hide(self):
         """
-        在指定的文本里面隐藏一段文本,只有鼠标放在上面才会显示隐藏文本
+        [在指定的文本里面隐藏一段文本]-(只有鼠标放在上面才会显示隐藏文本)
         :return:
         """
         self.text = re.sub(r'\[(.*?)]-\((.*?)\)', r'<span title="\2">\1</span>', self.text)
 
     def split_line(self):
+        """
+        添
+        ***
+        加
+        ___
+        分
+        ---
+        隔
+        :return:
+        """
         self.text = re.sub(r'([*_-]){3}\n', r'<hr>', self.text)
 
     def __call__(self, *args, **kwargs):
@@ -116,14 +132,14 @@ class Function:
 
     def image(self):
         """
-        实现链接
+        ![链接图片](链接地址)
         :return:
         """
         self.text = re.sub(r'!\[([^\[\]\n]+)]\(([^()\n]+)\)', r'<img src="\2" alt="\1">', self.text)
 
     def link(self):
         """
-        实现链接
+        [链接文本](链接地址)
         :return:
         """
         self.text = re.sub(r'\[([^\[\]\n]+)]\(([^()\n]+)\)', r'<a href="\2">\1</a>', self.text)
@@ -141,11 +157,17 @@ class Function:
 
 
 class Value:
+    """
+    定义: {变量名}: 值
+    赋值: {变量或锚点名}
+    锚点: #{锚点名}
+    """
     def __init__(self, text: str):
         self.text = text
         self.values = {
-            key: value for key, value in re.findall(r'\{([^{}]+)} ?= ?(.+?)(?=\n|$)', text)
+            key: value for key, value in re.findall(r'\{([^{}#]+)} ?= ?(.+?)(?=\n|$)', text)
         }  # 从text中提取所有变量并转换成字典
+        self.anchor = re.findall(r'#\{([^{}]+)}', text)  # TODO
 
     def __call__(self, *args, **kwargs) -> Tuple[str, Dict[str, str]]:
         """
@@ -155,6 +177,9 @@ class Value:
         :return: 赋值后的正文
         """
         text = self.text
+        for item in self.anchor:
+            text = re.sub(r'#\{(' + item + ')}', r'<span id="\1"></span>', text)  # 添加锚点
+            text = re.sub(r'\{' + item + '}', fr'<a href="#{item}">{item}</a>', text)  # 添加页内链接
         for k, v in self.values.items():
             text = re.sub(r'\{' + k + '} ?= ?(.+?)(?=\n|$)', '', text)  # 移除变量的定义
             text = re.sub(r'\{' + k + '}', fr'{v}', text)  # 给变量赋值
@@ -164,7 +189,7 @@ class Value:
 class CodeBlock:
     def __init__(self, text: str):
         """
-        找出代码块并移除代码标识
+        找出`代码块`并移除代码标识
         :param text: 输入的文本
         """
         self.codes = [i for i in re.findall(r'`([^`]*)`', text) if i != '']  # 找出代码快
@@ -257,6 +282,9 @@ class Escape:
 
 
 class Cite:
+    """
+    > 渲染引用 --[引用来源]
+    """
     def __init__(self, text):
         self.text = text
 
@@ -266,6 +294,21 @@ class Cite:
         return self.text
 
 
+class Syllabus:
+    """
+    1. 找到提纲
+    1.1 找到符合若干个‘数字+点+数字’且首尾都是数字的行
+    """
+    def __init__(self, text):
+        self.text = text
+        self.syllabus = [num for num, txt in re.findall(r'([\.|\d]+) ([^ ]+?)\n', self.text) if not num.endswith('.')]  # 找出提纲
+
+    def __call__(self, *args, **kwargs):
+        for num in self.syllabus:
+            # 检测层级
+            self.text = re.sub(f'({num}) .+?', '', self.text)
+
+
 class Basic:
     def __init__(self, text: str):
         self.text: str = text
@@ -273,7 +316,7 @@ class Basic:
     @staticmethod
     def strong_annotation(text: str) -> str:
         """
-        移除强注释
+        移除|=强注释=|
         :param text: 原始文本
         :return: 移除强注释后的文本
         """
@@ -282,7 +325,7 @@ class Basic:
     @staticmethod
     def week_annotation(text: str) -> str:
         """
-        移除弱注释
+        移除 // 弱注释
         :param text: 原始文本
         :return: 移除弱注释后的文本
         """
@@ -290,7 +333,7 @@ class Basic:
 
     def paragraph(self):
         """
-        为普通的行套上段落标签
+        为普通的行套上<p>段落标签</p>
         """
         # TODO 有点问题
         self.text = re.sub(r'<p>(<.+?>.*?<.+?>)</p>\n',
@@ -336,6 +379,7 @@ def body(text: str) -> Tuple[str, Dict[str, str]]:
     text = Basic.week_annotation(text)  # 移除弱注释
     text, values = Value(text)()  # 提取变量并赋值到文本中
     text = Header(text)()  # 渲染标题
+    Syllabus(text)()
     text = Style(text)()  # 渲染字体样式
     text = Function(text)()  # 渲染特殊功能
     text = Cite(text)()  # 渲染引用
