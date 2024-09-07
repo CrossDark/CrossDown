@@ -118,9 +118,9 @@ class Style:
         return self.text
 
 
-class Function:
+class Link:
     """
-    添加特殊功能
+    添加链接
     """
 
     def __init__(self, text: str):
@@ -158,7 +158,7 @@ class Function:
 
 class Value:
     """
-    定义: {变量名}: 值
+    定义: {变量名} = 值
     赋值: {变量或锚点名}
     锚点: #{锚点名}
     """
@@ -305,7 +305,7 @@ class Syllabus:
 
     def __call__(self, *args, **kwargs):
         for num, txt in self.syllabus.items():
-            self.text = re.sub(f'{".".join(num)} {txt}', f'<h{len(num)}>{".".join(num)} {txt}#{{' + '.'.join(num) + f'}}</h{len(num)}>', self.text)  # 按照层级为提纲添加不同等级的标题并创建锚点
+            self.text = re.sub(f'{".".join(num)} {re.escape(txt)}', f'<h{len(num)}>{".".join(num)} {txt}#{{' + '.'.join(num) + f'}}</h{len(num)}>', self.text)  # 按照层级为提纲添加不同等级的标题并创建锚点
         return self.text
 
 
@@ -357,7 +357,6 @@ def add_indent_to_string(input_string: str, indent_spaces: int = 4):
     给字符串中的每一行前面加上缩进。
     :param input_string: 原始字符串，可以包含多行。
     :param indent_spaces: 每行前面要添加的空格数，默认为4。
-
     :return: 带缩进的新字符串。
     """
     # 使用字符串的splitlines()方法分割原始字符串为行列表
@@ -381,7 +380,7 @@ def body(text: str) -> Tuple[str, Dict[str, str]]:
     text, values = Value(text)()  # 提取变量并赋值到文本中
     text = Header(text)()  # 渲染标题
     text = Style(text)()  # 渲染字体样式
-    text = Function(text)()  # 渲染特殊功能
+    text = Link(text)()  # 渲染特殊功能
     text = Cite(text)()  # 渲染引用
     text = Basic(text)()  # 渲染基础格式
 
@@ -402,9 +401,9 @@ def main(origen: str):
 
 
 if __name__ == '__main__':
-    with open('test.md', encoding='utf-8') as test:
+    with open('Example.mdc', encoding='utf-8') as test:
         cd = main(test.read())
-    with open('test.html', 'w', encoding='utf-8') as html:
+    with open('Example.html', 'w', encoding='utf-8') as html:
         html.write(f"""<!DOCTYPE html>  
 <html lang="zh-CN">  
 <head>  
