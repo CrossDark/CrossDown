@@ -301,12 +301,12 @@ class Syllabus:
     """
     def __init__(self, text):
         self.text = text
-        self.syllabus = [num for num, txt in re.findall(r'([\.|\d]+) ([^ ]+?)\n', self.text) if not num.endswith('.')]  # 找出提纲
+        self.syllabus = {tuple(num.split('.')): txt for num, txt in re.findall(r'([\.|\d]+) ([^ ]+?)\n', self.text) if not num.endswith('.')}  # 找出提纲
 
     def __call__(self, *args, **kwargs):
-        for num in self.syllabus:
-            # 检测层级
-            self.text = re.sub(f'({num}) .+?', '', self.text)
+        for num, txt in self.syllabus.items():
+            self.text = re.sub(f'{".".join(num)} {txt}', f'<h{len(num)}>{".".join(num)} {txt}#{{' + '.'.join(num) + f'}}</h{len(num)}>', self.text)  # 按照层级为提纲添加不同等级的标题并创建锚点
+        return self.text
 
 
 class Basic:
@@ -320,7 +320,7 @@ class Basic:
         :param text: 原始文本
         :return: 移除强注释后的文本
         """
-        return re.sub('\|=[\s\S]=|', '', text)
+        return re.sub('\|=[\s\S]*=\|', '', text, re.DOTALL)
 
     @staticmethod
     def week_annotation(text: str) -> str:
@@ -377,9 +377,9 @@ def body(text: str) -> Tuple[str, Dict[str, str]]:
     """
     Escape(text)
     text = Basic.week_annotation(text)  # 移除弱注释
+    text = Syllabus(text)()  # 渲染提纲
     text, values = Value(text)()  # 提取变量并赋值到文本中
     text = Header(text)()  # 渲染标题
-    Syllabus(text)()
     text = Style(text)()  # 渲染字体样式
     text = Function(text)()  # 渲染特殊功能
     text = Cite(text)()  # 渲染引用
