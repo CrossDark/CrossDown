@@ -254,9 +254,8 @@ class Escape:
         """
         self.text = text
         self.escapes = {
-            i: f'\0\1\2{i}\2\1\0' for i in re.findall(r'\\(.)', text)
+            i: f'\0\1\2{i}\2\1\0' for i in re.findall(r'(\\.)', text)
         }   # 找出要转义的字符
-        print(self.escapes)
 
     def __call__(self, *args, **kwargs):
         """
@@ -266,8 +265,19 @@ class Escape:
         :return: 不含代码的文本
         """
         # TODO
-        for index, item in enumerate(self.escapes):  # 替换代码块为-@@-(ID)-@@-
-            self.text = re.sub(fr'{index}', f'\0\1\2{index}\2\1\0', self.text)  # 同时转译特殊字符
+        for index, item in self.escapes.items():  # 替换代码块为\0\1\2(id)\2\1\0
+            self.text = re.sub(fr'{re.escape(index)}', item, self.text)  # 同时转译特殊字符
+            print(item)
+        return self.text
+
+    def back(self, text):
+        """
+        将被转义的字符放回文本中
+        :param text: 新文本
+        :return: 放回转义字符的文本
+        """
+        for index, item in self.escapes.items():  # 替换\0\1\2(id)\2\1\0为转义字符
+            self.text = re.sub(item, fr'{index}', text)  # 同时转译特殊字符
         return self.text
 
     def restore(self, new_text: str):
@@ -329,7 +339,7 @@ class Basic:
         :param text: 原始文本
         :return: 移除弱注释后的文本
         """
-        return re.sub('// .*?\n', '', text)
+        return re.sub('// .*?\n', '\n', text)
 
     def paragraph(self):
         """
@@ -374,7 +384,8 @@ def body(text: str) -> Tuple[str, Dict[str, str]]:
     :param text: 输入正文
     :return: 输出渲染后的正文
     """
-    Escape(text)
+    escape = Escape(text)  # 转义
+    text = escape()
     text = Basic.week_annotation(text)  # 移除弱注释
     text = Syllabus(text)()  # 渲染提纲
     text, values = Value(text)()  # 提取变量并赋值到文本中
@@ -383,6 +394,7 @@ def body(text: str) -> Tuple[str, Dict[str, str]]:
     text = Link(text)()  # 渲染特殊功能
     text = Cite(text)()  # 渲染引用
     text = Basic(text)()  # 渲染基础格式
+    text = escape.back(text)
 
     # text = Basic.paragraph(text)  # 渲染段落
     return text, values
@@ -401,9 +413,9 @@ def main(origen: str):
 
 
 if __name__ == '__main__':
-    with open('Example.mdc', encoding='utf-8') as test:
+    with open('README.md', encoding='utf-8') as test:
         cd = main(test.read())
-    with open('Example.html', 'w', encoding='utf-8') as html:
+    with open('README.html', 'w', encoding='utf-8') as html:
         html.write(f"""<!DOCTYPE html>  
 <html lang="zh-CN">  
 <head>  

@@ -23,7 +23,9 @@
     <script>  
         mermaid.initialize({startOnLoad:true});  
     </script>
-        <h1>CrossDown示例</h1>
+        <h1>CrossDown</h1>
+    <p>自制的markdown，添加了一些自定义的语法</p>
+    <p>效果请见<a href="https://github.com/CrossDark/CrossDown/blob/main/README.html">README.html</a></p>
     <h1>1 基本语法<span id="1"></span></h1>
     <h2>1.1 标题<span id="1.1"></span></h2>
     <h1>一级标题</h1>
@@ -43,8 +45,11 @@
     <h3>1.2.8 <span title="只有鼠标放在上面才会显示隐藏文本">在指定的文本里面隐藏一段文本</span><span id="1.2.8"></span></h3>
     <h3>1.2.9 分割线<span id="1.2.9"></span></h3>
     <hr><hr><hr><h2>1.3 链接<span id="1.3"></span></h2>
-    <h3>1.3.1 <a href="链接地址">链接文本</a><span id="1.3.1"></span></h3>
-    <h3>1.3.2 <img src="链接地址" alt="链接图片"><span id="1.3.2"></span></h3>
+    <h3>1.3.1 普通链接<span id="1.3.1"></span></h3>
+    <a href="链接地址">链接文本</a>
+    <a href="https://crossdark.com">CrossDark</a>
+    <h3>1.3.2 图片<span id="1.3.2"></span></h3>
+    <p><img src="链接地址" alt="链接图片"></p>
     <h1>2 变量<span id="2"></span></h1>
     <h2>2.1 定义<span id="2.1"></span></h2>
     <h2>2.2 赋值<span id="2.2"></span></h2>
@@ -54,7 +59,7 @@
     <h1>3 代码块<span id="3"></span></h1>
     <h2>3.1 <span class="block">单行</span><span id="3.1"></span></h2>
     <h3>3.1.1 LaTex<span id="3.1.1"></span></h3>
-    <p>\(CO^2\)</p>
+    <p>\(CO_2\)</p>
     <h2>3.2 多行<span id="3.2"></span></h2>
     <h3>3.2.1 YAML<span id="3.2.1"></span></h3>
     <pre><code class="language-yaml">
@@ -80,12 +85,13 @@
         C-->D
     </div>
     <h1>4 转义<span id="4"></span></h1>
-    <p>\\</p>
+    \
     <h1>5 引用<span id="5"></span></h1>
     <blockquote>渲染引用<footer><cite>引用来源</cite></footer></blockquote><h1>6 提纲<span id="6"></span></h1>
     <h1>7 注释<span id="7"></span></h1>
     <h2>7.1 强注释<span id="7.1"></span></h2>
     <h2>7.2 弱注释<span id="7.2"></span></h2>
     <p>只有在 </p>
+    <span class="block">// 代码中的注释弱不会被移除</span>
 </body>  
 </html>
