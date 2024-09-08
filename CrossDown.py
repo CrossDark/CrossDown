@@ -160,14 +160,14 @@ class Value:
     """
     定义: {变量名} = 值
     赋值: {变量或锚点名}
-    锚点: #{锚点名}
+    锚点: {#锚点名}
     """
     def __init__(self, text: str):
         self.text = text
         self.values = {
             key: value for key, value in re.findall(r'\{([^{}#]+)} ?= ?(.+?)(?=\n|$)', text)
         }  # 从text中提取所有变量并转换成字典
-        self.anchor = re.findall(r'#\{([^{}]+)}', text)  # TODO
+        self.anchor = re.findall(r'\{#([^{}#]+)}', text)
 
     def __call__(self, *args, **kwargs) -> Tuple[str, Dict[str, str]]:
         """
@@ -178,7 +178,7 @@ class Value:
         """
         text = self.text
         for item in self.anchor:
-            text = re.sub(r'#\{(' + item + ')}', r'<span id="\1"></span>', text)  # 添加锚点
+            text = re.sub(r'\{#(' + item + ')}', r'<span id="\1"></span>', text)  # 添加锚点
             text = re.sub(r'\{' + item + '}', fr'<a href="#{item}">{item}</a>', text)  # 添加页内链接
         for k, v in self.values.items():
             text = re.sub(r'\{' + k + '} ?= ?(.+?)(?=\n|$)', '', text)  # 移除变量的定义
@@ -242,7 +242,7 @@ class CodeBlock:
         return new_text
 
 
-class Escape:
+class Escape:  # TODO 还有点问题
     """
     转义\后字符
     """
@@ -264,7 +264,6 @@ class Escape:
         :param kwargs:
         :return: 不含代码的文本
         """
-        # TODO
         for index, item in self.escapes.items():  # 替换代码块为\0\1\2(id)\2\1\0
             self.text = re.sub(fr'{re.escape(index)}', item, self.text)  # 同时转译特殊字符
             print(item)
@@ -315,7 +314,7 @@ class Syllabus:
 
     def __call__(self, *args, **kwargs):
         for num, txt in self.syllabus.items():
-            self.text = re.sub(f'{".".join(num)} {re.escape(txt)}', f'<h{len(num)}>{".".join(num)} {txt}#{{' + '.'.join(num) + f'}}</h{len(num)}>', self.text)  # 按照层级为提纲添加不同等级的标题并创建锚点
+            self.text = re.sub(f'{".".join(num)} {re.escape(txt)}', f'<h{len(num)}>{".".join(num)} {txt}{{#' + '.'.join(num) + f'}}</h{len(num)}>', self.text)  # 按照层级为提纲添加不同等级的标题并创建锚点
         return self.text
 
 
