@@ -113,9 +113,9 @@ class Style:
         """
         # self.bold()
         # self.italic()
-        # self.strikethrough()
-        # self.underline()
-        # self.highlight()
+        self.strikethrough()
+        self.underline()
+        self.highlight()
         self.up()
         self.hide()
         # self.split_line()
