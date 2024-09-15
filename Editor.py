@@ -1,5 +1,6 @@
 import sys
-from PyQt6.QtWidgets import QApplication, QMainWindow, QTextEdit, QAction, QMenuBar, QMenu, QFileDialog
+from PyQt6.QtWidgets import QApplication, QMainWindow, QTextEdit, QMenuBar, QMenu, QFileDialog
+from PyQt6.QtGui import QAction
 
 
 class TextEditor(QMainWindow):

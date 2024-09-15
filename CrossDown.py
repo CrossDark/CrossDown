@@ -1,6 +1,10 @@
 from typing import *
 import re
 
+import markdown
+
+import MarkDown
+
 
 class Header:
     def __init__(self, text: str):
@@ -107,14 +111,14 @@ class Style:
         :param kwargs:
         :return:
         """
-        self.bold()
-        self.italic()
-        self.strikethrough()
-        self.underline()
-        self.highlight()
+        # self.bold()
+        # self.italic()
+        # self.strikethrough()
+        # self.underline()
+        # self.highlight()
         self.up()
         self.hide()
-        self.split_line()
+        # self.split_line()
         return self.text
 
 
@@ -265,7 +269,7 @@ class Escape:  # TODO 还有点问题
         :return: 不含代码的文本
         """
         for index, item in self.escapes.items():  # 替换代码块为\0\1\2(id)\2\1\0
-            self.text = re.sub(fr'{re.escape(index)}', item, self.text)  # 同时转译特殊字符
+            self.text = re.sub(fr'{re.escape(index)}', re.escape(item), self.text)  # 同时转译特殊字符
             print(item)
         return self.text
 
@@ -276,7 +280,8 @@ class Escape:  # TODO 还有点问题
         :return: 放回转义字符的文本
         """
         for index, item in self.escapes.items():  # 替换\0\1\2(id)\2\1\0为转义字符
-            self.text = re.sub(item, fr'{index}', text)  # 同时转译特殊字符
+            print(item)
+            self.text = re.sub(item, '', text)  # 同时转译特殊字符
         return self.text
 
     def restore(self, new_text: str):
@@ -314,7 +319,8 @@ class Syllabus:
 
     def __call__(self, *args, **kwargs):
         for num, txt in self.syllabus.items():
-            self.text = re.sub(f'{".".join(num)} {re.escape(txt)}', f'<h{len(num)}>{".".join(num)} {txt}{{#' + '.'.join(num) + f'}}</h{len(num)}>', self.text)  # 按照层级为提纲添加不同等级的标题并创建锚点
+            self.text = re.sub(f'{".".join(num)} {re.escape(txt)}', f'{"#" * len(num)}{".".join(num)} {txt}{{#' + '.'.join(num) + f'}}\n', self.text)  # 按照层级为提纲添加不同等级的标题并创建锚点
+            print(self.text)
         return self.text
 
 
@@ -388,12 +394,13 @@ def body(text: str) -> Tuple[str, Dict[str, str]]:
     text = Basic.week_annotation(text)  # 移除弱注释
     text = Syllabus(text)()  # 渲染提纲
     text, values = Value(text)()  # 提取变量并赋值到文本中
-    text = Header(text)()  # 渲染标题
+    # text = Header(text)()  # 渲染标题
     text = Style(text)()  # 渲染字体样式
-    text = Link(text)()  # 渲染特殊功能
-    text = Cite(text)()  # 渲染引用
-    text = Basic(text)()  # 渲染基础格式
-    text = escape.back(text)
+    # text = Link(text)()  # 渲染特殊功能
+    # text = Cite(text)()  # 渲染引用
+    # text = Basic(text)()  # 渲染基础格式
+    text = markdown.markdown(text, extensions=['markdown.extensions.extra'])  # 渲染标准markdown
+    text = escape.back(text)  # 放回被转义的字符
 
     # text = Basic.paragraph(text)  # 渲染段落
     return text, values
