@@ -3,8 +3,6 @@ import re
 
 import markdown
 
-import MarkDown
-
 
 class Header:
     def __init__(self, text: str):
