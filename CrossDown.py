@@ -318,7 +318,6 @@ class Syllabus:
     def __call__(self, *args, **kwargs):
         for num, txt in self.syllabus.items():
             self.text = re.sub(f'{".".join(num)} {re.escape(txt)}', f'{"#" * len(num)}{".".join(num)} {txt}{{#' + '.'.join(num) + f'}}\n', self.text)  # 按照层级为提纲添加不同等级的标题并创建锚点
-            print(self.text)
         return self.text
 
 
