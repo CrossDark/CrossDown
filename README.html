@@ -25,52 +25,52 @@
     </script>
         <h1>CrossDown</h1>
     <p>自制的markdown，添加了一些自定义的语法
-    效果请见<a href="https://github.com/CrossDark/CrossDown/blob/main/README.html">README.html</a>
-    1 基本语法
-    1.1 标题</p>
+    效果请见<a href="https://github.com/CrossDark/CrossDown/blob/main/README.html">README.html</a></p>
+    <h1>1<span id="1"></span> 基本语法</h1>
+    <h2>1.1<span id="1.1"></span> 标题</h2>
     <h1>一级标题</h1>
     <h2>二级标题</h2>
     <h3>三级标题</h3>
     <h4>四级标题</h4>
     <h5>五级标题</h5>
     <h6>六级标题</h6>
-    <p>1.2 样式
-    1.2.1 <em>斜体</em>
-    1.2.2 <strong>粗体</strong>
-    1.2.3 <strong><em>粗斜体</em></strong>
-    1.2.4 <u>下划线</u>
-    1.2.5 <s>删除线</s>
-    1.2.6 <mark>高亮</mark>
-    1.2.7 <ruby>在文本的正上方添加一行小文本<rt>主要用于标拼音</rt></ruby>
-    1.2.8 <span title="只有鼠标放在上面才会显示隐藏文本">在指定的文本里面隐藏一段文本</span>
-    1.2.9 分割线</p>
+    <h2>1.2<span id="1.2"></span> 样式</h2>
+    <h3>1.2.1<span id="1.2.1"></span> <em>斜体</em></h3>
+    <h3>1.2.2<span id="1.2.2"></span> <strong>粗体</strong></h3>
+    <h3>1.2.3<span id="1.2.3"></span> <strong><em>粗斜体</em></strong></h3>
+    <h3>1.2.4<span id="1.2.4"></span> <u>下划线</u></h3>
+    <h3>1.2.5<span id="1.2.5"></span> <s>删除线</s></h3>
+    <h3>1.2.6<span id="1.2.6"></span> <mark>高亮</mark></h3>
+    <h3>1.2.7<span id="1.2.7"></span> <ruby>在文本的正上方添加一行小文本<rt>主要用于标拼音</rt></ruby></h3>
+    <h3>1.2.8<span id="1.2.8"></span> <span title="只有鼠标放在上面才会显示隐藏文本">在指定的文本里面隐藏一段文本</span></h3>
+    <h3>1.2.9<span id="1.2.9"></span> 分割线</h3>
     <hr />
     <hr />
     <hr />
-    <p>1.3 链接
-    1.3.1 普通链接
-    <a href="链接地址">链接文本</a>
-    <a href="https://crossdark.com">CrossDark</a>
-    1.3.2 图片
-    <img alt="链接图片" src="链接地址" />
-    <img alt="sea" src="https://crossdark.com/wp-content/uploads/2024/05/1715259682-sea.jpg" />
-    1.3.3 变量链接
-    <a href="https://crossdark.com">链接文本</a></p>
-    <p>2 变量
-    2.1 定义</p>
-    <p>2.2 赋值
-    值 <a href="#锚点名">锚点名</a>
-    提纲的编号已经自动配置为了锚点,可直接使用{2}
-    2.3 添加锚点
-    <span id="锚点名"></span>
-    3 代码块
-    3.1 <span class="block">单行</span>
-    3.1.1 LaTex
-    <p>\(CO_2\)</p>
-    <p>\(H_2O\)</p>
-    3.2 多行
-    3.2.1 YAML
-    <pre><code class="language-yaml">
+    <h2>1.3<span id="1.3"></span> 链接</h2>
+    <h3>1.3.1<span id="1.3.1"></span> 普通链接</h3>
+    <p><a href="链接地址">链接文本</a>
+    <a href="https://crossdark.com">CrossDark</a></p>
+    <h3>1.3.2<span id="1.3.2"></span> 图片</h3>
+    <p><img alt="链接图片" src="链接地址" />
+    <img alt="sea" src="https://crossdark.com/wp-content/uploads/2024/05/1715259682-sea.jpg" /></p>
+    <h3>1.3.3<span id="1.3.3"></span> 变量链接</h3>
+    <p><a href="https://crossdark.com">链接文本</a></p>
+    <h1>2<span id="2"></span> 变量</h1>
+    <h2>2.1<span id="2.1"></span> 定义</h2>
+    <h2>2.2<span id="2.2"></span> 赋值</h2>
+    <p>值 <a href="#锚点名">锚点名</a>
+    提纲的编号已经自动配置为了锚点,可直接使用<a href="#2">2</a></p>
+    <h2>2.3<span id="2.3"></span> 添加锚点</h2>
+    <p><span id="锚点名"></span></p>
+    <h1>3<span id="3"></span> 代码块</h1>
+    <h2>3.1<span id="3.1"></span> <span class="block">单行</span></h2>
+    <h3>3.1.1<span id="3.1.1"></span> LaTex</h3>
+    <p><p>\(CO_2\)</p>
+    <p>\(H_2O\)</p></p>
+    <h2>3.2<span id="3.2"></span> 多行</h2>
+    <h3>3.2.1<span id="3.2.1"></span> YAML</h3>
+    <p><pre><code class="language-yaml">
     A:
         1. a
         2. b
@@ -79,24 +79,24 @@
         - a
         - b
         - c
-    </code></pre>
-    3.2.2 Python
-    <pre><code class="language-python">
+    </code></pre></p>
+    <h3>3.2.2<span id="3.2.2"></span> Python</h3>
+    <p><pre><code class="language-python">
     print('CrossDown')
-    </code></pre>
-    3.2.3 Mermaid
-    <div class="mermaid">
+    </code></pre></p>
+    <h3>3.2.3<span id="3.2.3"></span> Mermaid</h3>
+    <p><div class="mermaid">
     graph LR
         A-->B
         A-->C
         B-->D
         C-->D
-    </div>
-    4 转义
-    \ 
+    </div></p>
+    <h1>4<span id="4"></span> 转义</h1>
+    <p>\ 
     \a 
-    *
-    5 引用</p>
+    *</p>
+    <h1>5<span id="5"></span> 引用</h1>
     <blockquote>
     <p>一级引用</p>
     <blockquote>
@@ -116,27 +116,46 @@
     </blockquote>
     <p>引文内添加<em>斜体</em><strong>粗体</strong><u>下划线</u><s>删除线</s><mark>高亮</mark></p>
     </blockquote>
-    <p>6 提纲</p>
-    <p>7 注释
-    7.1 强注释</p>
-    <p>7.2 弱注释
-    只有在 
-    <span class="block">// 代码中的注释弱不会被移除</span>
-    8 列表
-    8.1 有序列表
-    1. a
-    2. b
-    3. c
-    4. d</p>
-    <p>8.2 无序列表
-    - A
-    - B
-    - C
-    - D</p>
-    <p>9 表格
-    | 表头1 | 表头2 | 表头3 |<br />
-    | :--: | :--: | :--: |<br />
-    | 单元格1 | 单元格2 | 单元格3 |<br />
-    | 单元格4 | 单元格5 | 单元格6 |</p>
+    <h1>6<span id="6"></span> 提纲</h1>
+    <h1>7<span id="7"></span> 注释</h1>
+    <h2>7.1<span id="7.1"></span> 强注释</h2>
+    <h2>7.2<span id="7.2"></span> 弱注释</h2>
+    <p>只有在 
+    <span class="block">// 代码中的注释弱不会被移除</span></p>
+    <h1>8<span id="8"></span> 列表</h1>
+    <h2>8.1<span id="8.1"></span> 有序列表</h2>
+    <h2>1.<span id="1."></span> a</h2>
+    <h2>2.<span id="2."></span> b</h2>
+    <h2>3.<span id="3."></span> c</h2>
+    <h2>4.<span id="4."></span> d</h2>
+    <h2>8.2<span id="8.2"></span> 无序列表</h2>
+    <ul>
+    <li>A</li>
+    <li>B</li>
+    <li>C</li>
+    <li>D</li>
+    </ul>
+    <h1>9<span id="9"></span> 表格</h1>
+    <table>
+    <thead>
+    <tr>
+    <th style="text-align: center;">表头1</th>
+    <th style="text-align: center;">表头2</th>
+    <th style="text-align: center;">表头3</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+    <td style="text-align: center;">单元格1</td>
+    <td style="text-align: center;">单元格2</td>
+    <td style="text-align: center;">单元格3</td>
+    </tr>
+    <tr>
+    <td style="text-align: center;">单元格4</td>
+    <td style="text-align: center;">单元格5</td>
+    <td style="text-align: center;">单元格6</td>
+    </tr>
+    </tbody>
+    </table>
 </body>  
 </html>

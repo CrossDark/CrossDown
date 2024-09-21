@@ -164,6 +164,7 @@ class Value:
     赋值: {变量或锚点名}
     锚点: {#锚点名}
     """
+
     def __init__(self, text: str):
         self.text = text
         self.values = {
@@ -225,7 +226,8 @@ class CodeBlock:
                 if head in ('', 'yaml'):
                     self.codes[index] = f'<pre><code class="language-yaml">{code}</code></pre>'
                 elif head in ('shell', 'python'):
-                    self.codes[index] = f'<pre><code class="language-{head}">{re.sub(f"({head})", "", code)}</code></pre>'
+                    self.codes[
+                        index] = f'<pre><code class="language-{head}">{re.sub(f"({head})", "", code)}</code></pre>'
                 elif head in ('mermaid',):
                     self.codes[index] = f'<div class="{head}">{re.sub(f"({head})", "", code)}</div>'
             elif re.match(r'\$[^$]*\$', code):  # 是LaTex代码(单行)
@@ -257,7 +259,7 @@ class Escape:  # TODO 还有点问题
         self.text = text
         self.escapes = {
             i: f'\0\1\2{i}\2\1\0' for i in re.findall(r'(\\.)', text)
-        }   # 找出要转义的字符
+        }  # 找出要转义的字符
 
     def __call__(self, *args, **kwargs):
         """
@@ -297,11 +299,13 @@ class Cite:
     """
     > 渲染引用 --[引用来源]
     """
+
     def __init__(self, text):
         self.text = text
 
     def __call__(self, *args, **kwargs) -> str:
-        self.text = re.sub('> (.*?) --\[(.*?)]\n', r'<blockquote>\1<footer><cite>\2</cite></footer></blockquote>', self.text)  # 渲染有来源的引用
+        self.text = re.sub('> (.*?) --\[(.*?)]\n', r'<blockquote>\1<footer><cite>\2</cite></footer></blockquote>',
+                           self.text)  # 渲染有来源的引用
         self.text = re.sub('> (.*?)\n', r'<blockquote>\1</blockquote>\n', self.text)  # 渲染没有来源的引用
         return self.text
 
@@ -312,15 +316,19 @@ class Syllabus:
     2 找到符合若干个‘数字+点+数字’且首尾都是数字的行
     每个提纲编号全文只能出现一次
     """
+
     def __init__(self, text: str):
         self.text = text
-        self.syllabus = {tuple(syllabus[0].split('.')): syllabus[1] for syllabus in [re.match(r'([\.|\d]+) ([^ ]+?)\n', i) for i in self.text.split('\n')] if syllabus is not None}  # 找出提纲
-        print(self.syllabus)
 
     def __call__(self, *args, **kwargs):
-        for num, txt in self.syllabus.items():
-            self.text = re.sub(f'{".".join(num)} {re.escape(txt)}', f'{"#" * len(num)}{".".join(num)} {txt}{{#' + '.'.join(num) + f'}}\n', self.text)  # 按照层级为提纲添加不同等级的标题并创建锚点
-        return self.text
+        return '\n'.join([
+            (lambda match, origen:
+             re.sub(f'^({match.groups()[0]})',
+                    fr'{"#" * len(match.groups()[0].split("."))} \1{{#' + match.groups()[0] + '}', origen)
+             if match is not None else origen)  # 对于不是提纲的行,直接返回原始字符
+            (re.match(r'^([\d.]+) ', line), line)  # 匹配提纲号
+            for line in self.text.splitlines()  # 分割并遍历文本的每一行
+        ])
 
 
 class Basic:
