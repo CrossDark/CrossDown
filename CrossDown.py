@@ -309,11 +309,13 @@ class Cite:
 class Syllabus:
     """
     1. 找到提纲
-    1.1 找到符合若干个‘数字+点+数字’且首尾都是数字的行
+    2 找到符合若干个‘数字+点+数字’且首尾都是数字的行
+    每个提纲编号全文只能出现一次
     """
-    def __init__(self, text):
+    def __init__(self, text: str):
         self.text = text
-        self.syllabus = {tuple(num.split('.')): txt for num, txt in re.findall(r'([\.|\d]+) ([^ ]+?)\n', self.text) if not num.endswith('.')}  # 找出提纲
+        self.syllabus = {tuple(syllabus[0].split('.')): syllabus[1] for syllabus in [re.match(r'([\.|\d]+) ([^ ]+?)\n', i) for i in self.text.split('\n')] if syllabus is not None}  # 找出提纲
+        print(self.syllabus)
 
     def __call__(self, *args, **kwargs):
         for num, txt in self.syllabus.items():
@@ -386,8 +388,8 @@ def body(text: str) -> Tuple[str, Dict[str, str]]:
     :param text: 输入正文
     :return: 输出渲染后的正文
     """
-    escape = Escape(text)  # 转义
-    text = escape()
+    # escape = Escape(text)  # 转义
+    # text = escape()
     text = Basic.week_annotation(text)  # 移除弱注释
     text = Syllabus(text)()  # 渲染提纲
     text, values = Value(text)()  # 提取变量并赋值到文本中
@@ -397,7 +399,7 @@ def body(text: str) -> Tuple[str, Dict[str, str]]:
     # text = Cite(text)()  # 渲染引用
     # text = Basic(text)()  # 渲染基础格式
     text = markdown.markdown(text, extensions=['markdown.extensions.extra'])  # 渲染标准markdown
-    text = escape.back(text)  # 放回被转义的字符
+    # text = escape.back(text)  # 放回被转义的字符
 
     # text = Basic.paragraph(text)  # 渲染段落
     return text, values
