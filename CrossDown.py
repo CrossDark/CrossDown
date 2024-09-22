@@ -232,6 +232,8 @@ class CodeBlock:
                     self.codes[index] = f'<div class="{head}">{re.sub(f"({head})", "", code)}</div>'
             elif re.match(r'\$[^$]*\$', code):  # 是LaTex代码(单行)
                 self.codes[index] = re.sub(fr'\$([^$]*)\$', r'<p>\(\1\)</p>', code)
+            elif re.match(r'¥[^$]*¥', code):  # 是数学函数(单行)
+                self.codes[index] = re.sub(fr'¥([^$]*)¥', r'<p>\(\1\)</p>', code)
             else:  # 是突出块
                 self.codes[index] = f'<span class="block">{code}</span>'
 
@@ -326,7 +328,9 @@ class Syllabus:
              re.sub(f'^({match.groups()[0]})',
                     fr'{"#" * len(match.groups()[0].split("."))} \1{{#' + match.groups()[0] + '}', origen)
              if match is not None else origen)  # 对于不是提纲的行,直接返回原始字符
-            (re.match(r'^([\d.]+) ', line), line)  # 匹配提纲号
+            ((lambda x: re.match(r'^([\d.]+) ', x)  # 判断是否是提纲
+                if not any((x.startswith('.'), re.search('\. ', x) is not None))
+                else None)(line), line)  # 排除.在提纲号开头或结尾的情况
             for line in self.text.splitlines()  # 分割并遍历文本的每一行
         ])
 
