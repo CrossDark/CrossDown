@@ -10,30 +10,6 @@ except ModuleNotFoundError:
     EXTRA_ABLE = False
 
 
-class Header:
-    def __init__(self, text: str):
-        self.text = text
-
-    def __call__(self, *args, **kwargs):
-        """
-        渲染标题
-        # 一级标题
-        ## 二级标题
-        ### 三级标题
-        #### 四级标题
-        ##### 五级标题
-        ###### 六级标题
-        :return: 处理后的文本
-        """
-        h6 = re.sub(r'###### (.*?)\n', r'<h6>\1</h6>\n', self.text)  # H6
-        h5 = re.sub(r'##### (.*?)\n', r'<h5>\1</h5>\n', h6)  # H5
-        h4 = re.sub(r'#### (.*?)\n', r'<h4>\1</h4>\n', h5)  # H4
-        h3 = re.sub(r'### (.*?)\n', r'<h3>\1</h3>\n', h4)  # H3
-        h2 = re.sub(r'## (.*?)\n', r'<h2>\1</h2>\n', h3)  # H2
-        h1 = re.sub(r'# (.*?)\n', r'<h1>\1</h1>\n', h2)  # H1
-        return h1
-
-
 class Style:
     """
     渲染字体样式
@@ -45,20 +21,6 @@ class Style:
         :param text: cd文本
         """
         self.text = text
-
-    def italic(self):
-        """
-        *斜体*
-        :return:
-        """
-        self.text = re.sub(r'\*([^*\n]+)\*', r'<i>\1</i>', self.text)
-
-    def bold(self):
-        """
-        **粗体**
-        :return:
-        """
-        self.text = re.sub(r'\*\*([^*\n]+)\*\*', r'<b>\1</b>', self.text)
 
     def underline(self):
         """
@@ -95,19 +57,6 @@ class Style:
         """
         self.text = re.sub(r'\[(.*?)]-\((.*?)\)', r'<span title="\2">\1</span>', self.text)
 
-    def split_line(self):
-        """
-        添
-        ***
-        加
-        ___
-        分
-        ---
-        隔
-        :return:
-        """
-        self.text = re.sub(r'([*_-]){3}\n', r'<hr>', self.text)
-
     def __call__(self, *args, **kwargs):
         """
         一键运行
@@ -115,52 +64,11 @@ class Style:
         :param kwargs:
         :return:
         """
-        # self.bold()
-        # self.italic()
         self.strikethrough()
         self.underline()
         self.highlight()
         self.up()
         self.hide()
-        # self.split_line()
-        return self.text
-
-
-class Link:
-    """
-    添加链接
-    """
-
-    def __init__(self, text: str):
-        """
-        初始化
-        :param text: cd文本
-        """
-        self.text = text
-
-    def image(self):
-        """
-        ![链接图片](链接地址)
-        :return:
-        """
-        self.text = re.sub(r'!\[([^\[\]\n]+)]\(([^()\n]+)\)', r'<img src="\2" alt="\1">', self.text)
-
-    def link(self):
-        """
-        [链接文本](链接地址)
-        :return:
-        """
-        self.text = re.sub(r'\[([^\[\]\n]+)]\(([^()\n]+)\)', r'<a href="\2">\1</a>', self.text)
-
-    def __call__(self, *args, **kwargs):
-        """
-        一键运行
-        :param args:
-        :param kwargs:
-        :return:
-        """
-        self.image()
-        self.link()
         return self.text
 
 
@@ -269,70 +177,6 @@ class CodeBlock:
         return new_text
 
 
-class Escape:  # TODO 还有点问题
-    """
-    转义\后字符
-    """
-
-    def __init__(self, text: str):
-        """
-        找出转义符并转义
-        :param text: 输入的文本
-        """
-        self.text = text
-        self.escapes = {
-            i: f'\0\1\2{i}\2\1\0' for i in re.findall(r'(\\.)', text)
-        }  # 找出要转义的字符
-
-    def __call__(self, *args, **kwargs):
-        """
-        临时移除代码块
-        :param args:
-        :param kwargs:
-        :return: 不含代码的文本
-        """
-        for index, item in self.escapes.items():  # 替换代码块为\0\1\2(id)\2\1\0
-            self.text = re.sub(fr'{re.escape(index)}', re.escape(item), self.text)  # 同时转译特殊字符
-            print(item)
-        return self.text
-
-    def back(self, text):
-        """
-        将被转义的字符放回文本中
-        :param text: 新文本
-        :return: 放回转义字符的文本
-        """
-        for index, item in self.escapes.items():  # 替换\0\1\2(id)\2\1\0为转义字符
-            print(item)
-            self.text = re.sub(item, '', text)  # 同时转译特殊字符
-        return self.text
-
-    def restore(self, new_text: str):
-        """
-        将渲染好的代码重新放回处理好的正文
-        :param new_text: 处理好的正文
-        :return: 加上代码的文章
-        """
-        for index, item in enumerate(self.escapes):
-            new_text = re.sub(fr'-@@-{index}-@@-', f'{item}', new_text, flags=re.DOTALL)
-        return new_text
-
-
-class Cite:
-    """
-    > 渲染引用 --[引用来源]
-    """
-
-    def __init__(self, text):
-        self.text = text
-
-    def __call__(self, *args, **kwargs) -> str:
-        self.text = re.sub('> (.*?) --\[(.*?)]\n', r'<blockquote>\1<footer><cite>\2</cite></footer></blockquote>',
-                           self.text)  # 渲染有来源的引用
-        self.text = re.sub('> (.*?)\n', r'<blockquote>\1</blockquote>\n', self.text)  # 渲染没有来源的引用
-        return self.text
-
-
 class Syllabus:
     """
     1. 找到提纲
@@ -343,7 +187,7 @@ class Syllabus:
     def __init__(self, text: str):
         self.text = text
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, *args, **kwargs) -> str:
         return '\n'.join([
             (lambda match, origen:
              re.sub(f'^({match.groups()[0]})',  # 按照提纲等级添加#和锚点
@@ -381,26 +225,6 @@ class Basic:
         """
         return re.sub('// .*?\n', '\n', text)
 
-    def paragraph(self):
-        """
-        为普通的行套上<p>段落标签</p>
-        """
-        # TODO 有点问题
-        self.text = re.sub(r'<p>(<.+?>.*?<.+?>)</p>\n',
-                           r'\1\n',  # 移除已被标签包裹的行的额外的<p>标签
-                           '\n'.join(
-                               [
-                                   f'<p>{line}</p>' if not re.search('\0.+?\0', line) else line  # 识别-@@-n-@@-并保留
-                                   for line in self.text.splitlines()  # 把所有非空的行都套上<p>标签
-                                   if not re.search(r'^\s*\n?$', line)  # 识别空行或空白行
-                               ]
-                           )
-                           )
-
-    def __call__(self, *args, **kwargs):
-        self.paragraph()
-        return self.text
-
 
 def add_indent_to_string(input_string: str, indent_spaces: int = 4):
     """
@@ -424,20 +248,11 @@ def body(text: str) -> Tuple[str, Dict[str, str]]:
     :param text: 输入正文
     :return: 输出渲染后的正文
     """
-    # escape = Escape(text)  # 转义
-    # text = escape()
     text = Basic.week_annotation(text)  # 移除弱注释
     text = Syllabus(text)()  # 渲染提纲
     text, values = Value(text)()  # 提取变量并赋值到文本中
-    # text = Header(text)()  # 渲染标题
     text = Style(text)()  # 渲染字体样式
-    # text = Link(text)()  # 渲染特殊功能
-    # text = Cite(text)()  # 渲染引用
-    # text = Basic(text)()  # 渲染基础格式
     text = markdown.markdown(text, extensions=['markdown.extensions.extra'])  # 渲染标准markdown
-    # text = escape.back(text)  # 放回被转义的字符
-
-    # text = Basic.paragraph(text)  # 渲染段落
     return text, values
 
 
