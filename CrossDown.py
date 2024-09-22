@@ -3,6 +3,12 @@ import re
 
 import markdown
 
+try:  # 检测当前平台是否支持扩展语法
+    import Extra
+    EXTRA_ABLE = True
+except ModuleNotFoundError:
+    EXTRA_ABLE = False
+
 
 class Header:
     def __init__(self, text: str):
