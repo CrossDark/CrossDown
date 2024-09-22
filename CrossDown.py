@@ -4,7 +4,7 @@ import re
 import markdown
 
 try:  # 检测当前平台是否支持扩展语法
-    import Extra
+    import CrossMore
     EXTRA_ABLE = True
 except ModuleNotFoundError:
     EXTRA_ABLE = False
@@ -239,7 +239,20 @@ class CodeBlock:
             elif re.match(r'\$[^$]*\$', code):  # 是LaTex代码(单行)
                 self.codes[index] = re.sub(fr'\$([^$]*)\$', r'<p>\(\1\)</p>', code)
             elif re.match(r'¥[^$]*¥', code):  # 是数学函数(单行)
-                self.codes[index] = re.sub(fr'¥([^$]*)¥', r'<p>\(\1\)</p>', code)
+                if EXTRA_ABLE:
+                    expression, range_ = re.findall(r'¥([^$]*)¥(€[^$]*€)?', code)[0]  # 分离表达式与范围(如果有)
+                    x_r = (-10, 10)
+                    y_r = (-20, 20)
+                    if range_ != '':  # 定义了范围
+                        ranges = range_[1:-1].split('|')
+                        if len(ranges) in (1, 2):  # 定义的范围正确
+                            x_r = tuple(int(i) for i in ranges[0].split(','))
+                            if len(ranges) == 2:  # 定义了y范围
+                                y_r = tuple(int(i) for i in ranges[1].split(','))
+                    self.codes[index] = CrossMore.function_drawing(function=lambda x: eval(expression.split('=')[1]), x_range=x_r, y_range=y_r)
+
+                else:
+                    self.codes[index] = '<mark>该平台不支持扩展语法</mark>'
             else:  # 是突出块
                 self.codes[index] = f'<span class="block">{code}</span>'
 

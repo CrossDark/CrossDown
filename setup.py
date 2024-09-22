@@ -12,7 +12,10 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/CrossDark/CrossDown",
-    packages=setuptools.find_packages(),
+    py_modules=[
+        'CrossDown',
+        'CrossMore',
+    ],
     install_requires=[
         'markdown',
     ],

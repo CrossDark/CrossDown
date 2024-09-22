@@ -4,7 +4,7 @@ import base64
 from io import BytesIO
 
 
-def plot_function_to_base64(function, x_range=(-10, 10), y_range=(-20, 20), dpi=100):
+def function_drawing(function, x_range=(-10, 10), y_range=(-20, 20), dpi=100):
     # 创建一个图像和坐标轴对象
     fig, ax = plt.subplots()
 
