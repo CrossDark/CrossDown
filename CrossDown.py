@@ -249,7 +249,9 @@ class CodeBlock:
                             x_r = tuple(int(i) for i in ranges[0].split(','))
                             if len(ranges) == 2:  # 定义了y范围
                                 y_r = tuple(int(i) for i in ranges[1].split(','))
-                    self.codes[index] = CrossMore.function_drawing(function=lambda x: eval(expression.split('=')[1]), x_range=x_r, y_range=y_r)
+                    self.codes[index] = CrossMore.function_drawing(  # 绘制函数图像
+                        function=lambda x: eval(expression.split('=')[1]), x_range=x_r, y_range=y_r
+                    )
 
                 else:
                     self.codes[index] = '<mark>该平台不支持扩展语法</mark>'
@@ -344,11 +346,14 @@ class Syllabus:
     def __call__(self, *args, **kwargs):
         return '\n'.join([
             (lambda match, origen:
-             re.sub(f'^({match.groups()[0]})',
+             re.sub(f'^({match.groups()[0]})',  # 按照提纲等级添加#和锚点
                     fr'{"#" * len(match.groups()[0].split("."))} \1{{#' + match.groups()[0] + '}', origen)
              if match is not None else origen)  # 对于不是提纲的行,直接返回原始字符
             ((lambda x: re.match(r'^([\d.]+) ', x)  # 判断是否是提纲
-                if not any((x.startswith('.'), re.search('\. ', x) is not None))
+                if not any((x.startswith('.'),  # 以.开头
+                            re.search('\. ', x) is not None,  # 存在.+空格
+                            re.search('\.{2,}', x),  # 存在连续的.
+                            ))
                 else None)(line), line)  # 排除.在提纲号开头或结尾的情况
             for line in self.text.splitlines()  # 分割并遍历文本的每一行
         ])
