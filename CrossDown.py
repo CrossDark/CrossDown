@@ -252,7 +252,11 @@ def body(text: str) -> Tuple[str, Dict[str, str]]:
     text = Syllabus(text)()  # 渲染提纲
     text, values = Value(text)()  # 提取变量并赋值到文本中
     text = Style(text)()  # 渲染字体样式
-    text = markdown.markdown(text, extensions=['markdown.extensions.extra'])  # 渲染标准markdown
+    text = markdown.markdown(text, extensions=[
+        'markdown.extensions.extra',  # 扩展语法
+        'markdown.extensions.codehilite',  # 语法高亮拓展
+        'markdown.extensions.toc',  # 自动生成目录
+    ])  # 渲染标准markdown
     return text, values
 
 
