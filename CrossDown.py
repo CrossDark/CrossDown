@@ -256,6 +256,8 @@ def body(text: str) -> Tuple[str, Dict[str, str]]:
         'markdown.extensions.extra',  # 扩展语法
         'markdown.extensions.codehilite',  # 语法高亮拓展
         'markdown.extensions.toc',  # 自动生成目录
+        'markdown.extensions.admonition',  # 警告扩展
+        'markdown.extensions.meta',  # 元数据
     ])  # 渲染标准markdown
     return text, values
 

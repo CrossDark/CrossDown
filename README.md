@@ -1,3 +1,11 @@
+[TOC]
+
+---  
+title: "Markdown文档标题"  
+author: "作者姓名"  
+date: "2024-09-26"  
+---
+
 # CrossDown
 自制的markdown，添加了一些自定义的语法
 效果请见[README.html](https://github.com/CrossDark/CrossDown/blob/main/README.html)
@@ -198,3 +206,6 @@ graph LR
 |:----:|:----:|:----:|  
 | 单元格1 | 单元格2 | 单元格3 |  
 | 单元格4 | 单元格5 | 单元格6 |
+
+10 警告
+!!! 这是一条警告
