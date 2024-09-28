@@ -10,6 +10,35 @@ except ModuleNotFoundError:
     EXTRA_ABLE = False
 
 
+HEAD = """
+<script type="text/javascript" async
+      src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+    </script>
+<link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/prismjs/prism.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-yaml.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<style>
+.block {
+    background-color: grey; /* 灰色背景 */  
+    color: white; /* 白色文字 */  
+}
+</style> 
+"""
+
+
+BODY = """
+<script>  
+    mermaid.initialize({{startOnLoad:true}});  
+</script>
+<script>  
+document.addEventListener('DOMContentLoaded', function() {  
+    emojify.run();  
+});  
+</script>
+"""
+
+
 class Style:
     """
     渲染字体样式
@@ -226,7 +255,7 @@ class Basic:
         return re.sub('// .*?\n', '\n', text)
 
 
-def add_indent_to_string(input_string: str, indent_spaces: int = 4):
+def indent(input_string: str, indent_spaces: int = 4):
     """
     给字符串中的每一行前面加上缩进。
     :param input_string: 原始字符串，可以包含多行。
@@ -284,26 +313,12 @@ if __name__ == '__main__':
     <meta charset="UTF-8">  
     <meta name="viewport" content="width=device-width, initial-scale=1.0">  
     <title>UTF-8编码示例</title>  
-    <script type="text/javascript" async
-      src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
-    </script>
-    <link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-yaml.min.js"></script>
-    <style>  
-    .block {{  
-        background-color: grey; /* 灰色背景 */  
-        color: white; /* 白色文字 */  
-    }}
-    </style> 
-    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    {indent(HEAD)}
     <!-- 可以在这里添加其他元数据和CSS链接 -->  
 </head>  
 <body>
-    <script>  
-        mermaid.initialize({{startOnLoad:true}});  
-    </script>
-    {add_indent_to_string(cd, 4)}
+    {indent(BODY)}
+    {indent(cd, 4)}
 </body>  
 </html>
 """)
