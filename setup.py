@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="CrossDown",
-    version="0.11.0",
+    version="0.11.2",
     author="CrossDark",
     author_email="liuhanbo333@icloud.com",
     description="CrossDark's MarkDown",
@@ -18,6 +18,8 @@ setuptools.setup(
     ],
     install_requires=[
         'markdown',
+        'matplotlib',
+        'numpy',
     ],
     classifiers=[
         'Programming Language :: Python :: 3.11',

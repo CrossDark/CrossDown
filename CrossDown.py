@@ -6,48 +6,53 @@ import markdown
 
 try:  # 检测当前平台是否支持扩展语法
     import CrossMore
+
     EXTRA_ABLE = True
 except ModuleNotFoundError:
     EXTRA_ABLE = False
 
 __all__ = [
-    'main'
+    'main',  # 主函数
+    'indent',  # 添加空格
+    'body',  # 主题函数
+    'Style',  # 风格
+    'Value',  # 变量
+    'CodeBlock',  # 代码块
+    'Syllabus',  # 提纲
+    'Basic',  # 基础
+    'HEAD',
+    'BODY',
 ]
-
-__version__ = '0.11.1'
+__version__ = '0.11.2'
 __author__ = 'CrossDark'
 __email__ = 'liuhanbo333@icloud.com'
 __source__ = 'https://crossdark.net/'
 __license__ = """MIT"""
 
+HEAD = (
+    '<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>',
+    '<link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css" rel="stylesheet" />',
+    '<script src="https://cdn.jsdelivr.net/npm/prismjs/prism.js"></script>',
+    '<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-yaml.min.js"></script>',
+    '<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>',
+    '<style>',
+    '   .block {',
+    '   background-color: grey; /* 灰色背景 */',
+    '   color: white; /* 白色文字 */',
+    '}',
+    '</style>'
+)
 
-HEAD = """
-<script type="text/javascript" async
-      src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
-    </script>
-<link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/prismjs/prism.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-yaml.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-<style>
-.block {
-    background-color: grey; /* 灰色背景 */  
-    color: white; /* 白色文字 */  
-}
-</style> 
-"""
-
-
-BODY = """
-<script>  
-    mermaid.initialize({{startOnLoad:true}});  
-</script>
-<script>  
-document.addEventListener('DOMContentLoaded', function() {  
-    emojify.run();  
-});  
-</script>
-"""
+BODY = (
+    '<script>',
+    '   mermaid.initialize({{startOnLoad:true}});',
+    '</script>',
+    '<script>',
+    '   document.addEventListener("DOMContentLoaded", function() {',
+    '   emojify.run();',
+    '});',
+    '</script>',
+)
 
 
 class Style:
@@ -234,11 +239,11 @@ class Syllabus:
                     fr'{"#" * len(match.groups()[0].split("."))} \1{{#' + match.groups()[0] + '}', origen)
              if match is not None else origen)  # 对于不是提纲的行,直接返回原始字符
             ((lambda x: re.match(r'^([\d.]+) ', x)  # 判断是否是提纲
-                if not any((x.startswith('.'),  # 以.开头
-                            re.search('\. ', x) is not None,  # 存在.+空格
-                            re.search('\.{2,}', x),  # 存在连续的.
-                            ))
-                else None)(line), line)  # 排除.在提纲号开头或结尾的情况
+            if not any((x.startswith('.'),  # 以.开头
+                        re.search('\. ', x) is not None,  # 存在.+空格
+                        re.search('\.{2,}', x),  # 存在连续的.
+                        ))
+            else None)(line), line)  # 排除.在提纲号开头或结尾的情况
             for line in self.text.splitlines()  # 分割并遍历文本的每一行
         ])
 
@@ -266,16 +271,17 @@ class Basic:
         return re.sub('// .*?\n', '\n', text)
 
 
-def indent(input_string: str, indent_spaces: int = 4) -> str:
+def indent(input_: Union[str, List, Tuple], indent_spaces: int = 4) -> str:
     """
     给字符串中的每一行前面加上缩进。
-    :param input_string: 原始字符串，可以包含多行。
+    :param input_: 原始字符串，可以包含多行。
     :param indent_spaces: 每行前面要添加的空格数，默认为4。
     :return: 带缩进的新字符串。
     """
-    # 使用字符串的splitlines()方法分割原始字符串为行列表
+    # 使用字符串的splitlines()方法分割原始字符串为行列表,如果是可迭代对象则直接遍历
     # 遍历行列表，给每行前面加上相应的缩进，并重新组合成字符串
-    return "\n".join(f"{' ' * indent_spaces}{line}" for line in input_string.splitlines())
+    return "\n".join(
+        f"{' ' * indent_spaces}{line}" for line in (lambda x: x.splitlines() if isinstance(x, str) else x)(input_))
 
 
 def body(text: str) -> Tuple[str, Dict[str, str]]:
@@ -324,12 +330,12 @@ if __name__ == '__main__':
     <meta charset="UTF-8">  
     <meta name="viewport" content="width=device-width, initial-scale=1.0">  
     <title>UTF-8编码示例</title>  
-    {indent(HEAD)}
+{indent(HEAD)}
     <!-- 可以在这里添加其他元数据和CSS链接 -->  
 </head>  
 <body>
-    {indent(BODY)}
-    {indent(cd, 4)}
+{indent(BODY)}
+{indent(cd, 4)}
 </body>  
 </html>
 """)
