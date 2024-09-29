@@ -1,6 +1,7 @@
+import time
 from typing import *
 import re
-
+import emoji
 import markdown
 
 try:  # 检测当前平台是否支持扩展语法
@@ -8,6 +9,16 @@ try:  # 检测当前平台是否支持扩展语法
     EXTRA_ABLE = True
 except ModuleNotFoundError:
     EXTRA_ABLE = False
+
+__all__ = [
+    'main'
+]
+
+__version__ = '0.11.1'
+__author__ = 'CrossDark'
+__email__ = 'liuhanbo333@icloud.com'
+__source__ = 'https://crossdark.net/'
+__license__ = """MIT"""
 
 
 HEAD = """
@@ -86,12 +97,12 @@ class Style:
         """
         self.text = re.sub(r'\[(.*?)]-\((.*?)\)', r'<span title="\2">\1</span>', self.text)
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, *args, **kwargs) -> str:
         """
         一键运行
         :param args:
         :param kwargs:
-        :return:
+        :return: 处理后的文本
         """
         self.strikethrough()
         self.underline()
@@ -141,7 +152,7 @@ class CodeBlock:
         self.codes = [i for i in re.findall(r'`([^`]*)`', text) if i != '']  # 找出代码快
         self.text = re.sub(r'``', '', text)  # 移除代码标识`
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, *args, **kwargs) -> str:
         """
         临时移除代码块
         :param args:
@@ -195,7 +206,7 @@ class CodeBlock:
             else:  # 是突出块
                 self.codes[index] = f'<span class="block">{code}</span>'
 
-    def restore(self, new_text: str):
+    def restore(self, new_text: str) -> str:
         """
         将渲染好的代码重新放回处理好的正文
         :param new_text: 处理好的正文
@@ -255,7 +266,7 @@ class Basic:
         return re.sub('// .*?\n', '\n', text)
 
 
-def indent(input_string: str, indent_spaces: int = 4):
+def indent(input_string: str, indent_spaces: int = 4) -> str:
     """
     给字符串中的每一行前面加上缩进。
     :param input_string: 原始字符串，可以包含多行。
@@ -263,12 +274,8 @@ def indent(input_string: str, indent_spaces: int = 4):
     :return: 带缩进的新字符串。
     """
     # 使用字符串的splitlines()方法分割原始字符串为行列表
-    lines = input_string.splitlines()
-
     # 遍历行列表，给每行前面加上相应的缩进，并重新组合成字符串
-    indented_string = "\n".join(f"{' ' * indent_spaces}{line}" for line in lines)
-
-    return indented_string
+    return "\n".join(f"{' ' * indent_spaces}{line}" for line in input_string.splitlines())
 
 
 def body(text: str) -> Tuple[str, Dict[str, str]]:
@@ -288,11 +295,12 @@ def body(text: str) -> Tuple[str, Dict[str, str]]:
         'markdown.extensions.admonition',  # 警告扩展
         'markdown.extensions.meta',  # 元数据
     ])  # 渲染标准markdown
+    text = emoji.emojize(text)  # 渲染Emoji
     return text, values
 
 
 def main(origen: str):
-    # 预处理、
+    # 预处理
     origen = Basic.strong_annotation(origen)  # 移除强注释
     code_block = CodeBlock(origen)  # 获取代码内容
     text = code_block()  # 暂时移除代码
@@ -304,6 +312,9 @@ def main(origen: str):
 
 
 if __name__ == '__main__':
+    # 开始计时
+    start_time = time.perf_counter_ns()
+    # 主程序
     with open('README.md', encoding='utf-8') as test:
         cd = main(test.read())
     with open('README.html', 'w', encoding='utf-8') as html:
@@ -322,3 +333,7 @@ if __name__ == '__main__':
 </body>  
 </html>
 """)
+    # 停止计时
+    end_time = time.perf_counter_ns()
+    # 输出用时
+    print("运行时间: {:.9f} 秒".format((end_time - start_time) / 1e9))

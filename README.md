@@ -213,6 +213,6 @@ graph LR
 
 11 Emoji
 
-:heart:
+:person_biking:
 
-:smile:
+:grinning_face_with_big_eyes:
