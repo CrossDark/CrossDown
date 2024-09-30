@@ -5,17 +5,14 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="CrossDown",
-    version="0.11.2",
+    version="1.0.0",
     author="CrossDark",
     author_email="liuhanbo333@icloud.com",
     description="CrossDark's MarkDown",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/CrossDark/CrossDown",
-    py_modules=[
-        'CrossDown',
-        'CrossMore',
-    ],
+    packages=setuptools.find_packages(),
     install_requires=[
         'markdown',
         'matplotlib',

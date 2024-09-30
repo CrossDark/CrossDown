@@ -184,6 +184,8 @@ graph LR
 
 7.2 弱注释
 
+<!-- 这是注释 -->
+
 只有在 // 后面才会被移除
 
 `// 代码中的注释弱不会被移除`
@@ -218,3 +220,9 @@ graph LR
 :person_biking:
 
 :grinning_face_with_big_eyes:
+
+12 扩展语法
+
+12.1 警告
+
+!!! danger "Don't try this at home"

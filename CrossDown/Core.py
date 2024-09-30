@@ -6,7 +6,6 @@ from markdown import Markdown
 from typing import *
 import re
 
-
 Extensions = {
     "Extra": "markdown.extensions.extra",
     "Abbreviations": "markdown.extensions.abbr",
@@ -73,7 +72,7 @@ class Style(Preprocessor):
         """
         return re.sub(r'\[(.*?)]-\((.*?)\)', r'<span title="\2">\1</span>', text)
 
-    def run(self, lines):
+    def run(self, lines: List[str]) -> List[str]:
         new_line = []
         for line in lines:
             line = self.strikethrough(line)  # 渲染删除线
@@ -85,12 +84,50 @@ class Style(Preprocessor):
         return new_line
 
 
-class Core(Extension):
+class Syllabus(Preprocessor):
+    def run(self, lines: List[str]) -> List[str]:
+        return [
+            (lambda match, origen:
+             re.sub(f'^({match.groups()[0]})',  # 按照提纲等级添加#和锚点
+                    fr'{"#" * len(match.groups()[0].split("."))} \1{{#' + match.groups()[0] + '}', origen)
+             if match is not None else origen)  # 对于不是提纲的行,直接返回原始字符
+            ((lambda x: re.match(r'^([\d.]+) ', x)  # 判断是否是提纲
+                if not any((x.startswith('.'),  # 以.开头
+                            re.search('\. ', x) is not None,  # 存在.+空格
+                            re.search('\.{2,}', x),  # 存在连续的.
+                            ))
+                else None)(line), line)  # 排除.在提纲号开头或结尾的情况
+            for line in lines  # 分割并遍历文本的每一行
+        ]
+
+
+class Value(Preprocessor):
+    def run(self, lines: List[str]) -> List[str]:
+        values = {  # 从text中提取所有变量并转换成字典
+            key: value for key, value in [
+                (lambda match: match.groups() if match is not None else ('', ''))  # 未定义变量的行统一返回('', '')
+                (re.match(r'\{([^{}#]+)} ?= ?(.+?)(?=\n|$)', line)) for line in lines
+            ]
+        }
+        anchor = [
+                re.match(r'\{#([^{}#]+)}', line) for line in lines
+        ]
+        print(anchor)
+        return lines
+
+
+class Basic(Extension):
     def extendMarkdown(self, md):
         md.registerExtension(self)  # 注册扩展
-        md.preprocessors.register(Style(md), 'custom_preprocessor', 0)
+        md.preprocessors.register(Style(md), 'style', 0)
+        md.preprocessors.register(Syllabus(md), 'syllabus', 0)
 
 
-def main(text):
-    md = Markdown(extensions=[Core()] + list(Extensions.values()))
+class More(Extension):
+    def extendMarkdown(self, md):
+        md.preprocessors.register(Value(md), 'values', 0)
+
+
+def main(text: str) -> Tuple[str, Dict[str, List[str]]]:
+    md = Markdown(extensions=[Basic(), More()] + list(Extensions.values()))
     return md.convert(text), md.Meta
