@@ -1,10 +1,12 @@
-[TOC]
+Title:   My Document
+Summary: A brief description of my document.
+Authors: Waylan Limberg
+         John Doe
+Date:    October 2, 2007
+blank-value: 
+base_url: http://example.com
 
----  
-title: "Markdown文档标题"  
-author: "作者姓名"  
-date: "2024-09-26"  
----
+[TOC]
 
 # CrossDown
 自制的markdown，添加了一些自定义的语法

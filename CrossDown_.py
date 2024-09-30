@@ -6,7 +6,6 @@ import markdown
 
 try:  # 检测当前平台是否支持扩展语法
     import CrossMore
-
     EXTRA_ABLE = True
 except ModuleNotFoundError:
     EXTRA_ABLE = False
