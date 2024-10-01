@@ -89,7 +89,7 @@ class Syllabus(Preprocessor):
         return [
             (lambda match, origen:
              re.sub(f'^({match.groups()[0]})',  # 按照提纲等级添加#和锚点
-                    fr'{"#" * len(match.groups()[0].split("."))} \1{{#' + match.groups()[0] + '}', origen)
+                    fr'{"#" * len(match.groups()[0].split("."))} \1', origen)
              if match is not None else origen)  # 对于不是提纲的行,直接返回原始字符
             ((lambda x: re.match(r'^([\d.]+) ', x)  # 判断是否是提纲
                 if not any((x.startswith('.'),  # 以.开头
@@ -116,6 +116,16 @@ class Value(Preprocessor):
         return lines
 
 
+class Header(Treeprocessor):
+    def run(self, root):
+        """
+        通过修改AST来给标题添加锚点
+        """
+        for header in root.iter():
+            if header.tag in ('h1', 'h2', 'h3', 'h4', 'h5', 'h6'):  # 查找标题
+                header.set('id', header.text.split(' ')[0])  # 给标题添加锚点
+
+
 class Basic(Extension):
     def extendMarkdown(self, md):
         md.registerExtension(self)  # 注册扩展
@@ -128,6 +138,11 @@ class More(Extension):
         md.preprocessors.register(Value(md), 'values', 0)
 
 
+class Decorate(Extension):
+    def extendMarkdown(self, md):
+        md.treeprocessors.register(Header(md), 'header', 0)
+
+
 def main(text: str) -> Tuple[str, Dict[str, List[str]]]:
-    md = Markdown(extensions=[Basic(), More()] + list(Extensions.values()))
+    md = Markdown(extensions=[Basic(), More()] + list(Extensions.values()) + [Decorate()])
     return md.convert(text), md.Meta
