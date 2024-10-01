@@ -27,6 +27,13 @@ Extensions = {
 }
 
 
+try:  # 检测当前平台是否支持扩展语法
+    import Extra
+    Extensions += Extra.EXTRA
+except ModuleNotFoundError:
+    EXTRA_ABLE = False
+
+
 class Style(Preprocessor):
     """
     渲染字体样式
@@ -105,15 +112,11 @@ class Value(Preprocessor):
     def run(self, lines: List[str]) -> List[str]:
         values = {  # 从text中提取所有变量并转换成字典
             key: value for key, value in [
-                (lambda match: match.groups() if match is not None else ('', ''))  # 未定义变量的行统一返回('', '')
+                (lambda match: match.groups() if match is not None else ('\1', '\2'))  # 未定义变量的行统一返回('', '')
                 (re.match(r'\{([^{}#]+)} ?= ?(.+?)(?=\n|$)', line)) for line in lines
             ]
         }
-        anchor = [
-                re.match(r'\{#([^{}#]+)}', line) for line in lines
-        ]
-        print(anchor)
-        return lines
+        return [re.sub(line, values[line], line) if any(value in line for value in values) in values.keys() else line for line in lines]  # TODO
 
 
 class Header(Treeprocessor):
