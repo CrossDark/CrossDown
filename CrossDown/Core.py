@@ -110,13 +110,22 @@ class Syllabus(Preprocessor):
 
 class Value(Preprocessor):
     def run(self, lines: List[str]) -> List[str]:
-        values = {  # 从text中提取所有变量并转换成字典
-            key: value for key, value in [
-                (lambda match: match.groups() if match is not None else ('\1', '\2'))  # 未定义变量的行统一返回('', '')
-                (re.match(r'\{([^{}#]+)} ?= ?(.+?)(?=\n|$)', line)) for line in lines
-            ]
-        }
-        return [re.sub(line, values[line], line) if any(value in line for value in values) in values.keys() else line for line in lines]  # TODO
+        values = {
+            key: value.strip()  # 去除值两侧的空白字符
+            for line in lines
+            for match in [re.match(r'\{([^{}#]+)} ?= ?(.+?)(?=\n|$)', line)]
+            if match
+            for key, value in [match.groups()]
+        }  # 识别变量定义
+        print(values)
+        for index, line in enumerate(lines):
+            if any(value in line for value in values):  # 匹配到了变量
+                for key, value in values.items():
+                    if '=' in line:  # 是变量定义
+                        lines.remove(line)  # 删除
+                    else:  # 应该被赋值
+                        lines[index] = re.sub('{' + key + '}', value, line)  # 对变量赋值
+        return lines
 
 
 class Header(Treeprocessor):
