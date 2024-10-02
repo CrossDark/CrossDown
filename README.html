@@ -77,6 +77,7 @@
     <li><a href="#31">3.1 单行</a><ul>
     <li><a href="#311-latex">3.1.1 LaTex</a></li>
     <li><a href="#312">3.1.2 函数</a></li>
+    <li><a href="#313">3.1.3 强调</a></li>
     </ul>
     </li>
     <li><a href="#32">3.2 多行</a><ul>
@@ -155,7 +156,7 @@
     <p>值 {锚点名}</p>
     <p>提纲的编号已经自动配置为了锚点,可直接使用{2}</p>
     <h2 id="2.3">2.3 添加锚点</h2>
-    <p>{#锚点名}</p>
+    <p><span id="锚点名"></span></p>
     <h1 id="3">3 代码块</h1>
     <h2 id="3.1">3.1 <code>单行</code></h2>
     <h3 id="3.1.1">3.1.1 LaTex</h3>
@@ -165,6 +166,8 @@
     <p><code>¥y=x*2+1¥</code>  // 不定义范围</p>
     <p><code>¥y=x**2¥€-50,50€</code>  // 定义了x范围</p>
     <p><code>¥y=x**3¥€-50,50|-100,100€</code>  // 定义了y范围</p>
+    <h3 id="3.1.3">3.1.3 强调</h3>
+    <p><code>{强调文本}</code></p>
     <h2 id="3.2">3.2 多行</h2>
     <h3 id="3.2.1">3.2.1 YAML</h3>
     <p><code>A:
@@ -276,8 +279,8 @@
     <p>:grinning_face_with_big_eyes:</p>
     <h1 id="12">12 扩展语法</h1>
     <h2 id="12.1">12.1 警告</h2>
-    <div class="admonition danger">
-    <p class="admonition-title">Don&rsquo;t try this at home</p>
+    <div class="admonition 危险">
+    <p class="admonition-title">危险</p>
     </div>
 </body>  
 </html>
