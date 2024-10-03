@@ -1,3 +1,4 @@
+import emoji
 from markdown.extensions import Extension
 from markdown.treeprocessors import Treeprocessor
 from markdown.inlinepatterns import Pattern
@@ -82,11 +83,12 @@ class Style(Preprocessor):
     def run(self, lines: List[str]) -> List[str]:
         new_line = []
         for line in lines:
-            line = self.strikethrough(line)  # 渲染删除线
-            line = self.underline(line)  # 渲染下划线
-            line = self.highlight(line)  # 渲染高亮
-            line = self.up(line)  # 渲染上部文本
-            line = self.hide(line)  # 渲染隐藏文本
+            line = re.sub(r'~~([^~\n]+)~~', r'<s>\1</s>', line)  # ~~删除线~~
+            line = re.sub(r'~([^~\n]+)~', r'<u>\1</u>', line)  # ~下划线~
+            line = re.sub(r'==([^=\n]+)==', r'<mark>\1</mark>', line)  # ==高亮==
+            line = re.sub(r'\[(.*?)]\^\((.*?)\)', r'<ruby>\1<rt>\2</rt></ruby>', line)  # [在文本的正上方添加一行小文本]^(主要用于标拼音)
+            line = re.sub(r'\[(.*?)]-\((.*?)\)', r'<span title="\2">\1</span>', line)  # [在指定的文本里面隐藏一段文本]-(只有鼠标放在上面才会显示隐藏文本)
+            line = emoji.emojize(line)  # 渲染Emoji
             new_line.append(line)
         return new_line
 
@@ -145,7 +147,7 @@ class Tag(Treeprocessor):
             elif header.tag == 'ul':  # 是无序列表
                 for i in header:  # 遍历列表内容
                     try:
-                        i[0].set('href', '#' + i[0].text.split(' ')[0])  # 是目录
+                        i[0].set('href', '#' + i[0].text.split(' ')[0])  # 是目录,更改链接为标准格式
                     except IndexError:
                         pass  # 是普通的无序列表
 
