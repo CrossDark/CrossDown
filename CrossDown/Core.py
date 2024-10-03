@@ -126,11 +126,11 @@ class Value(Preprocessor):
                         lines.remove(line)  # 删除
                     else:  # 应该被赋值
                         lines[index] = re.sub('{' + key + '}', value, line)  # 对变量赋值
-            elif any(anchor in line for anchor in anchors):  # 匹配到了锚点
+            if any(anchor in line for anchor in anchors):  # 匹配到了锚点
                 if re.search('\{#', line):  # 是锚点定义
                     lines[index] = re.sub(r'\{#(.+)}', r'<span id="\1"></span>', line)  # 定义锚点
                 else:  # 是页内链接
-                    pass
+                    print(line)
         return lines
 
 
@@ -142,8 +142,12 @@ class Tag(Treeprocessor):
         for header in root.iter():
             if header.tag in ('h1', 'h2', 'h3', 'h4', 'h5', 'h6'):  # 查找标题
                 header.set('id', header.text.split(' ')[0])  # 给标题添加锚点
-            if header.text is not None:  # 不是空行
-                pass
+            elif header.tag == 'ul':  # 是无序列表
+                for i in header:  # 遍历列表内容
+                    try:
+                        i[0].set('id', i[0].text.split(' ')[0])  # 是目录
+                    except IndexError:
+                        pass  # 是普通的无序列表
 
 
 class Basic(Extension):
