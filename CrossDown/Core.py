@@ -145,7 +145,7 @@ class Tag(Treeprocessor):
             elif header.tag == 'ul':  # 是无序列表
                 for i in header:  # 遍历列表内容
                     try:
-                        i[0].set('id', i[0].text.split(' ')[0])  # 是目录
+                        i[0].set('href', '#' + i[0].text.split(' ')[0])  # 是目录
                     except IndexError:
                         pass  # 是普通的无序列表
 
