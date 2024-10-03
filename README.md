@@ -1,10 +1,9 @@
-Title:   My Document
-Summary: A brief description of my document.
-Authors: Waylan Limberg
-         John Doe
-Date:    October 2, 2007
-blank-value: 
-base_url: http://example.com
+Title:   CrossDown示例
+Summary: 够简洁的了
+Authors: CrossDark
+Date:    __date__
+blank-value: g
+base_url: http://crossdark.net:3000/crossdark/CrossDown
 
 [TOC]
 
@@ -226,7 +225,3 @@ graph LR
 :grinning_face_with_big_eyes:
 
 12 扩展语法
-
-12.1 警告
-
-!!! 危险

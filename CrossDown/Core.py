@@ -120,7 +120,6 @@ class Value(Preprocessor):
             for key, value in [match.groups()]
         }  # 识别变量定义
         anchors = re.findall(r'\{#([^{}#]+)}', '\n'.join(lines))  # 识别锚点定义
-        print(anchors)
         for index, line in enumerate(lines):
             if any(value in line for value in values):  # 匹配到了变量
                 for key, value in values.items():
@@ -132,7 +131,11 @@ class Value(Preprocessor):
                 if re.search('\{#', line):  # 是锚点定义
                     lines[index] = re.sub(r'\{#(.+)}', r'<span id="\1"></span>', line)  # 定义锚点
                 else:  # 是页内链接
-                    print(line)
+                    lines[index] = re.sub(r'\{#'
+                                          + (lambda x: x if x in anchors else '\0')  # 识别ID是否为锚点
+                                          ((lambda x: x[0] if x is not None else '\0')  # 排除匹配不成功的情况
+                                           (re.search(r'\{#(.+)}', line))) + '}',  # 匹配链接id
+                                          r'<a href="#\1">\1</a>', line)  # 添加页内链接
         return lines
 
 
