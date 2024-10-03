@@ -120,23 +120,14 @@ class Value(Preprocessor):
             for key, value in [match.groups()]
         }  # 识别变量定义
         anchors = re.findall(r'\{#([^{}#]+)}', '\n'.join(lines))  # 识别锚点定义
-        for index, line in enumerate(lines):
-            if any(value in line for value in values):  # 匹配到了变量
-                for key, value in values.items():
-                    if '=' in line:  # 是变量定义
-                        lines.remove(line)  # 删除
-                    else:  # 应该被赋值
-                        lines[index] = re.sub('{' + key + '}', value, line)  # 对变量赋值
-            if any(anchor in line for anchor in anchors):  # 匹配到了锚点
-                if re.search('\{#', line):  # 是锚点定义
-                    lines[index] = re.sub(r'\{#(.+)}', r'<span id="\1"></span>', line)  # 定义锚点
-                else:  # 是页内链接
-                    lines[index] = re.sub(r'\{#'
-                                          + (lambda x: x if x in anchors else '\0')  # 识别ID是否为锚点
-                                          ((lambda x: x[0] if x is not None else '\0')  # 排除匹配不成功的情况
-                                           (re.search(r'\{#(.+)}', line))) + '}',  # 匹配链接id
-                                          r'<a href="#\1">\1</a>', line)  # 添加页内链接
-        return lines
+        text = '\n'.join(lines)  # 先合并成一行
+        for item in anchors:
+            text = re.sub(r'\{#(' + item + ')}', r'<span id="\1"></span>', text)  # 添加锚点
+            text = re.sub(r'\{' + item + '}', fr'<a href="#{item}">{item}</a>', text)  # 添加页内链接
+        for k, v in values.items():
+            text = re.sub(r'\{' + k + '} ?= ?(.+?)(?=\n|$)', '', text)  # 移除变量的定义
+            text = re.sub(r'\{' + k + '}', fr'{v}', text)  # 给变量赋值
+        return text.split('\n')  # 再分割为列表
 
 
 class Tag(Treeprocessor):
