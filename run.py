@@ -17,6 +17,7 @@ if __name__ == '__main__':
     <meta charset="UTF-8">  
     <meta name="viewport" content="width=device-width, initial-scale=1.0">  
     <title>UTF-8编码示例</title>  
+    <link href="style.css" rel="stylesheet" />
 {indent(HEAD)}
     <!-- 可以在这里添加其他元数据和CSS链接 -->  
 </head>  

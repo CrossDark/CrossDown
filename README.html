@@ -4,6 +4,7 @@
     <meta charset="UTF-8">  
     <meta name="viewport" content="width=device-width, initial-scale=1.0">  
     <title>UTF-8编码示例</title>  
+    <link href="style.css" rel="stylesheet" />
     <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.js"></script>
@@ -55,7 +56,7 @@
     <li><a href="#1.2.5">1.2.5 删除线</a></li>
     <li><a href="#1.2.6">1.2.6 高亮</a></li>
     <li><a href="#1.2.7">1.2.7 在文本的正上方添加一行小文本主要用于标拼音</a></li>
-    <li><a href="#1.2.8">1.2.8 [在指定的文本里面隐藏一段文本]-(只有鼠标放在上面才会显示隐藏文本)</a></li>
+    <li><a href="#1.2.8">1.2.8 在指定的文本里面隐藏一段文本只有鼠标放在上面才会显示隐藏文本</a></li>
     <li><a href="#1.2.9">1.2.9 分割线</a></li>
     </ul>
     </li>
@@ -67,54 +68,55 @@
     </li>
     </ul>
     </li>
-    <li><a href="#2">2 变量</a><ul>
+    <li><a href="#2">2 缩写</a><ul>
     <li><a href="#2.1">2.1 定义</a></li>
     <li><a href="#2.2">2.2 赋值</a></li>
-    <li><a href="#2.3">2.3 添加锚点</a></li>
     </ul>
     </li>
-    <li><a href="#3">3 代码块</a><ul>
-    <li><a href="#3.1">3.1 单行</a><ul>
-    <li><a href="#3.1.1">3.1.1 LaTex</a></li>
-    <li><a href="#3.1.2">3.1.2 函数</a></li>
-    <li><a href="#3.1.3">3.1.3 强调</a></li>
+    <li><a href="#3">3 锚点</a></li>
+    <li><a href="#4">4 代码块</a><ul>
+    <li><a href="#4.1">4.1 单行</a><ul>
+    <li><a href="#4.1.1">4.1.1 LaTex</a></li>
+    <li><a href="#4.1.2">4.1.2 函数</a></li>
+    <li><a href="#4.1.3">4.1.3 强调</a></li>
     </ul>
     </li>
-    <li><a href="#3.2">3.2 多行</a><ul>
-    <li><a href="#3.2.1">3.2.1 YAML</a></li>
-    <li><a href="#3.2.2">3.2.2 Python</a></li>
-    <li><a href="#3.2.3">3.2.3 Mermaid</a></li>
+    <li><a href="#4.2">4.2 多行</a><ul>
+    <li><a href="#4.2.1">4.2.1 YAML</a></li>
+    <li><a href="#4.2.2">4.2.2 Python</a></li>
+    <li><a href="#4.2.3">4.2.3 Mermaid</a></li>
+    </ul>
+    </li>
+    <li><a href="#4.3">4.3 代码高亮</a></li>
+    </ul>
+    </li>
+    <li><a href="#5">5 转义</a></li>
+    <li><a href="#6">6 引用</a></li>
+    <li><a href="#7">7 提纲</a><ul>
+    <li><a href="#7.1">7.1 提纲号</a><ul>
+    <li><a href="#7.1.1">7.1.1 提纲号示例</a></li>
     </ul>
     </li>
     </ul>
     </li>
-    <li><a href="#4">4 转义</a></li>
-    <li><a href="#5">5 引用</a></li>
-    <li><a href="#6">6 提纲</a><ul>
-    <li><a href="#6.1">6.1 提纲号</a><ul>
-    <li><a href="#6.1.1">6.1.1 提纲号示例</a></li>
+    <li><a href="#8">8 注释</a><ul>
+    <li><a href="#8.1">8.1 强注释</a></li>
+    <li><a href="#8.2">8.2 弱注释</a></li>
     </ul>
     </li>
+    <li><a href="#9">9 列表</a><ul>
+    <li><a href="#9.1">9.1 有序列表</a></li>
+    <li><a href="#9.2">9.2 无序列表</a></li>
     </ul>
     </li>
-    <li><a href="#7">7 注释</a><ul>
-    <li><a href="#7.1">7.1 强注释</a></li>
-    <li><a href="#7.2">7.2 弱注释</a></li>
-    </ul>
-    </li>
-    <li><a href="#8">8 列表</a><ul>
-    <li><a href="#8.1">8.1 有序列表</a></li>
-    <li><a href="#8.2">8.2 无序列表</a></li>
-    </ul>
-    </li>
-    <li><a href="#9">9 表格</a></li>
-    <li><a href="#10">10 警告</a></li>
-    <li><a href="#11">11 Emoji</a></li>
-    <li><a href="#12">12 扩展语法</a></li>
+    <li><a href="#10">10 表格</a></li>
+    <li><a href="#11">11 警告</a></li>
+    <li><a href="#12">12 Emoji</a></li>
+    <li><a href="#13">13 扩展语法</a></li>
     </ul>
     </div>
     <h1 id="CrossDown">CrossDown</h1>
-    <p>自制的markdown，添加了一些自定义的语法<br />
+    <p>自制的markdown,添加了一些自定义的语法<br />
     效果请见<a href="https://github.com/CrossDark/CrossDown/blob/main/README.html">README.html</a></p>
     <h1 id="1">1 基本语法</h1>
     <h2 id="1.1">1.1 标题</h2>
@@ -132,7 +134,7 @@
     <h3 id="1.2.5">1.2.5 <s>删除线</s></h3>
     <h3 id="1.2.6">1.2.6 <mark>高亮</mark></h3>
     <h3 id="1.2.7">1.2.7 <ruby>在文本的正上方添加一行小文本<rt>主要用于标拼音</rt></ruby></h3>
-    <h3 id="1.2.8">1.2.8 [在指定的文本里面隐藏一段文本]-(只有鼠标放在上面才会显示隐藏文本)</h3>
+    <h3 id="1.2.8">1.2.8 <ruby>在指定的文本里面隐藏一段文本<rt>只有鼠标放在上面才会显示隐藏文本</rt></ruby></h3>
     <h3 id="1.2.9">1.2.9 分割线</h3>
     <hr />
     <hr />
@@ -147,49 +149,57 @@
     <p><img alt="sea" src="https://crossdark.com/wp-content/uploads/2024/05/1715259682-sea.jpg" /></p>
     <h3 id="1.3.3">1.3.3 变量链接</h3>
     <p><a href="https://crossdark.com">链接文本</a></p>
-    <h1 id="2">2 变量</h1>
+    <h1 id="2">2 <abbr title="长的文本">缩写</abbr></h1>
     <h2 id="2.1">2.1 定义</h2>
     <h2 id="2.2">2.2 赋值</h2>
-    <p>值 <a href="#锚点名">锚点名</a></p>
-    <p>提纲的编号已经自动配置为了锚点,可直接使用{2}</p>
-    <h2 id="2.3">2.3 添加锚点</h2>
+    <p>直接在文本中使用 <abbr title="长的文本">缩写</abbr> 即可</p>
+    <h1 id="3">3 锚点</h1>
     <p><span id="锚点名"></span></p>
-    <h1 id="3">3 代码块</h1>
-    <h2 id="3.1">3.1 <code>单行</code></h2>
-    <h3 id="3.1.1">3.1.1 LaTex</h3>
+    <h1 id="4">4 代码块</h1>
+    <h2 id="4.1">4.1 <code>单行</code></h2>
+    <h3 id="4.1.1">4.1.1 LaTex</h3>
     <p><code>$CO_2$</code></p>
     <p><code>$H_2O$</code></p>
-    <h3 id="3.1.2">3.1.2 函数</h3>
+    <h3 id="4.1.2">4.1.2 函数</h3>
     <p><code>¥y=x*2+1¥</code>  // 不定义范围</p>
     <p><code>¥y=x**2¥€-50,50€</code>  // 定义了x范围</p>
     <p><code>¥y=x**3¥€-50,50|-100,100€</code>  // 定义了y范围</p>
-    <h3 id="3.1.3">3.1.3 强调</h3>
+    <h3 id="4.1.3">4.1.3 强调</h3>
     <p><code>{强调文本}</code></p>
-    <h2 id="3.2">3.2 多行</h2>
-    <h3 id="3.2.1">3.2.1 YAML</h3>
-    <p><code>A:
-        1. a
-        2. b
-        3. c
-    B:
-        - a
-        - b
-        - c</code></p>
-    <h3 id="3.2.2">3.2.2 Python</h3>
-    <p><code>python
-    print('CrossDown')</code></p>
-    <h3 id="3.2.3">3.2.3 Mermaid</h3>
-    <p><code>mermaid
-    graph LR
-        A--&gt;B
-        A--&gt;C
-        B--&gt;D
-        C--&gt;D</code></p>
-    <h1 id="4">4 转义</h1>
+    <h2 id="4.2">4.2 多行</h2>
+    <h3 id="4.2.1">4.2.1 YAML</h3>
+    <div class="codehilite"><pre><span></span><code><span class="nt">A</span><span class="p">:</span>
+    <span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">1. a</span>
+    <span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">2. b</span>
+    <span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">3. c</span>
+    <span class="nt">B</span><span class="p">:</span>
+    <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">a</span>
+    <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">b</span>
+    <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">c</span>
+    </code></pre></div>
+    
+    <h3 id="4.2.2">4.2.2 Python</h3>
+    <div class="codehilite"><pre><span></span><code><span class="p">:::</span><span class="n">python</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;CrossDown&#39;</span><span class="p">)</span>
+    </code></pre></div>
+    
+    <h3 id="4.2.3">4.2.3 Mermaid</h3>
+    <div class="codehilite"><pre><span></span><code><span class="nf">graph</span><span class="w"> </span><span class="n">LR</span>
+    <span class="w">    </span><span class="n">A</span><span class="o">--&gt;</span><span class="n">B</span>
+    <span class="w">    </span><span class="n">A</span><span class="o">--&gt;</span><span class="n">C</span>
+    <span class="w">    </span><span class="n">B</span><span class="o">--&gt;</span><span class="n">D</span>
+    <span class="w">    </span><span class="n">C</span><span class="o">--&gt;</span><span class="n">D</span>
+    </code></pre></div>
+    
+    <h2 id="4.3">4.3 代码高亮</h2>
+    <div class="codehilite"><pre><span></span><code>
+    </code></pre></div>
+    
+    <h1 id="5">5 转义</h1>
     <p>\ </p>
     <p>\a </p>
     <p>*</p>
-    <h1 id="5">5 引用</h1>
+    <h1 id="6">6 引用</h1>
     <blockquote>
     <p>一级引用</p>
     <blockquote>
@@ -209,43 +219,43 @@
     </blockquote>
     <p>引文内添加<em>斜体</em><strong>粗体</strong>~下划线<s>~删除线</s><mark>高亮</mark></p>
     </blockquote>
-    <h1 id="6">6 提纲</h1>
-    <h2 id="6.1">6.1 提纲号</h2>
+    <h1 id="7">7 提纲</h1>
+    <h2 id="7.1">7.1 提纲号</h2>
     <p>以数字和点组成,通过空格与提纲名分隔,例如:</p>
-    <h3 id="6.1.1">6.1.1 提纲号示例</h3>
+    <h3 id="7.1.1">7.1.1 提纲号示例</h3>
     <p>点不能出现在开头或结尾,例如</p>
-    <p>.6.1.2 错误示范</p>
-    <p>6.1.3. 错误示范</p>
+    <p>.7.1.2 错误示范</p>
+    <p>7.1.3. 错误示范</p>
     <p>不能出现两个及以上连续的点,例如:</p>
-    <p>6..1&hellip;4 错误示范</p>
-    <p>提纲号会被自动配置为锚点,可直接使用{6}{6.1}</p>
-    <h1 id="7">7 注释</h1>
-    <h2 id="7.1">7.1 强注释</h2>
+    <p>7..1&hellip;4 错误示范</p>
+    <p>提纲号会被自动配置为锚点,可直接使用{7}76.1}</p>
+    <h1 id="8">8 注释</h1>
+    <h2 id="8.1">8.1 强注释</h2>
     <p>|=<br />
     无论如何都会被移除<br />
     <code>放在代码块里也没用</code><br />
     =|</p>
-    <h2 id="7.2">7.2 弱注释</h2>
+    <h2 id="8.2">8.2 弱注释</h2>
     <!-- 这是注释 -->
     
     <p>只有在 // 后面才会被移除</p>
     <p><code>// 代码中的注释弱不会被移除</code></p>
-    <h1 id="8">8 列表</h1>
-    <h2 id="8.1">8.1 有序列表</h2>
+    <h1 id="9">9 列表</h1>
+    <h2 id="9.1">9.1 有序列表</h2>
     <ol>
     <li>a</li>
     <li>b</li>
     <li>c</li>
     <li>d</li>
     </ol>
-    <h2 id="8.2">8.2 无序列表</h2>
+    <h2 id="9.2">9.2 无序列表</h2>
     <ul>
     <li>A</li>
     <li>B</li>
     <li>C</li>
     <li>D</li>
     </ul>
-    <h1 id="9">9 表格</h1>
+    <h1 id="10">10 表格</h1>
     <table>
     <thead>
     <tr>
@@ -267,13 +277,14 @@
     </tr>
     </tbody>
     </table>
-    <h1 id="10">10 警告</h1>
-    <div class="admonition 这是一条警告">
-    <p class="admonition-title">这是一条警告</p>
+    <h1 id="11">11 警告</h1>
+    <div class="admonition warning">
+    <p class="admonition-title">警告标题</p>
+    <p>警告内容</p>
     </div>
-    <h1 id="11">11 Emoji</h1>
+    <h1 id="12">12 Emoji</h1>
     <p>:person_biking:</p>
     <p>:grinning_face_with_big_eyes:</p>
-    <h1 id="12">12 扩展语法</h1>
+    <h1 id="13">13 扩展语法</h1>
 </body>  
 </html>
