@@ -8,7 +8,7 @@ base_url: http://crossdark.net:3000/crossdark/CrossDown
 [TOC]
 
 # CrossDown
-自制的markdown，添加了一些自定义的语法
+自制的markdown,添加了一些自定义的语法
 效果请见[README.html](https://github.com/CrossDark/CrossDown/blob/main/README.html)
 
 1 基本语法
@@ -68,19 +68,17 @@ ___
 
 [变量]: https://crossdark.com
 
-2 变量
+2 缩写
 
 2.1 定义
 
-{变量名} = 值
+*[缩写]: 长的文本
 
 2.2 赋值
 
-{变量名} {锚点名}
+直接在文本中使用缩写即可
 
-提纲的编号已经自动配置为了锚点,可直接使用{2}
-
-2.3 添加锚点
+2.3 锚点
 
 {#锚点名}
 
