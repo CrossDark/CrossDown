@@ -1,8 +1,10 @@
+import xml
 import emoji
 from markdown.extensions import Extension
 from markdown.treeprocessors import Treeprocessor
-from markdown.inlinepatterns import Pattern
+from markdown.inlinepatterns import Pattern as Pattern_
 from markdown.preprocessors import Preprocessor
+from markdown.inlinepatterns import InlineProcessor
 from markdown import Markdown
 from typing import *
 import re
@@ -35,62 +37,92 @@ except ModuleNotFoundError:
     EXTRA_ABLE = False
 
 
-class Style(Preprocessor):
+class BasicSimple(InlineProcessor):
+    """
+    可通过简单的正则表达式和HTML标签实现的样式
+    """
+    def __init__(self, pattern: str, tag: str):
+        """
+        初始化
+        :param pattern: 正则表达式
+        :param tag: html标签
+        """
+        super().__init__(pattern)
+        self.tag = tag
+
+    def handleMatch(self, match, match_line):
+        tag = xml.etree.ElementTree.Element(self.tag)  # 创建标签
+        tag.text = match.group(1)  # 获取匹配到的文本并设置为标签的内容
+
+        return tag, match.start(), match.end()
+
+
+class BasicDifficult(InlineProcessor):
+    """
+    不能通过简单的正则表达式和HTML标签实现的样式
+    """
+    def __init__(self, pattern: str, outer_tag: str, inner_tag: str):
+        """
+        初始化
+        :param pattern: 正则表达式
+        :param outer_tag: 外层html标签
+        :param inner_tag: 内层html标签
+        """
+        super().__init__(pattern)
+        self.outer_tag = outer_tag
+        self.inner_tag = inner_tag
+
+    def handleMatch(self, match, match_line):
+        outer_tag = xml.etree.ElementTree.Element(self.outer_tag)  # 创建外层标签
+        inner_tag = xml.etree.ElementTree.SubElement(outer_tag, self.inner_tag)  # 创建内层标签
+        outer_tag.text = match.group(1)  # 设置外层标签文本
+        inner_tag.text = match.group(2)  # 设置内层标签文本
+
+        return outer_tag, match.start(), match.end()
+
+
+class BasicPro(InlineProcessor):
+    """
+    不能通过简单的正则表达式和HTML标签实现的样式
+    """
+    def __init__(self, pattern: str, tag: str, key: str, value: str):
+        """
+        初始化
+        :param pattern: 正则表达式
+        :param tag: html标签
+        :param key: html标签属性
+        :param value: html标签属性的值
+        """
+        super().__init__(pattern)
+        self.tag = tag
+        self.key = key
+        self.value = value
+
+    def handleMatch(self, match, match_line):
+        outer_tag = xml.etree.ElementTree.Element(self.outer_tag)  # 创建外层标签
+        inner_tag = xml.etree.ElementTree.SubElement(outer_tag, self.inner_tag)  # 创建内层标签
+        outer_tag.text = match.group(1)  # 设置外层标签文本
+        inner_tag.text = match.group(2)  # 设置内层标签文本
+
+        return outer_tag, match.start(), match.end()
+
+
+class Basic(Extension):
     """
     渲染字体样式
     """
 
-    @staticmethod
-    def underline(text):
-        """
-        ~下划线~
-        :return: text
-        """
-        return re.sub(r'~([^~\n]+)~', r'<u>\1</u>', text)
-
-    @staticmethod
-    def strikethrough(text):
-        """
-        ~~删除线~~
-        :return: text
-        """
-        return re.sub(r'~~([^~\n]+)~~', r'<s>\1</s>', text)
-
-    @staticmethod
-    def highlight(text):
-        """
-        ==高亮==
-        :return: text
-        """
-        return re.sub(r'==([^=\n]+)==', r'<mark>\1</mark>', text)
-
-    @staticmethod
-    def up(text):
-        """
-        [在文本的正上方添加一行小文本]^(主要用于标拼音)
-        :return: text
-        """
-        return re.sub(r'\[(.*?)]\^\((.*?)\)', r'<ruby>\1<rt>\2</rt></ruby>', text)
-
-    @staticmethod
-    def hide(text):
-        """
-        [在指定的文本里面隐藏一段文本]-(只有鼠标放在上面才会显示隐藏文本)
-        :return: text
-        """
-        return re.sub(r'\[(.*?)]-\((.*?)\)', r'<span title="\2">\1</span>', text)
-
-    def run(self, lines: List[str]) -> List[str]:
-        new_line = []
-        for line in lines:
-            line = re.sub(r'~~([^~\n]+)~~', r'<s>\1</s>', line)  # ~~删除线~~
-            line = re.sub(r'~([^~\n]+)~', r'<u>\1</u>', line)  # ~下划线~
-            line = re.sub(r'==([^=\n]+)==', r'<mark>\1</mark>', line)  # ==高亮==
-            line = re.sub(r'\[(.*?)]\^\((.*?)\)', r'<ruby>\1<rt>\2</rt></ruby>', line)  # [在文本的正上方添加一行小文本]^(主要用于标拼音)
-            line = re.sub(r'\[(.*?)]-\((.*?)\)', r'<span title="\2">\1</span>', line)  # [在指定的文本里面隐藏一段文本]-(只有鼠标放在上面才会显示隐藏文本)
-            line = emoji.emojize(line)  # 渲染Emoji
-            new_line.append(line)
-        return new_line
+    def extendMarkdown(self, md):
+        md.registerExtension(self)  # 注册扩展
+        md.inlinePatterns.register(BasicSimple(r'~~(.*?)~~', tag='s'), 'strikethrough', 0)  # ~~删除线~~
+        md.inlinePatterns.register(BasicSimple(r'~(.*?)~', tag='u'), 'underline', 0)  # ~下划线~
+        md.inlinePatterns.register(BasicSimple(r'==(.*?)==', tag='mark'), 'high_light', 0)  # ==高亮==
+        md.inlinePatterns.register(BasicDifficult(
+            r'\[(.*?)]\^\((.*?)\)', outer_tag='ruby', inner_tag='rt'), 'up', 0
+        )  # [在文本的正上方添加一行小文本]^(主要用于标拼音)
+        md.inlinePatterns.register(BasicDifficult(
+            r'\[(.*?)]-\((.*?)\)', outer_tag='ruby', inner_tag='rt'), 'hide', 0
+        )  # [在指定的文本里面隐藏一段文本]-(只有鼠标放在上面才会显示隐藏文本)
 
 
 class Syllabus(Preprocessor):
@@ -146,14 +178,13 @@ class Tag(Treeprocessor):
                         pass  # 是普通的无序列表
 
 
-class Basic(Extension):
+class Basic_(Extension):
     """
     基本扩展
     """
 
     def extendMarkdown(self, md):
         md.registerExtension(self)  # 注册扩展
-        md.preprocessors.register(Style(md), 'style', 0)
         md.preprocessors.register(Syllabus(md), 'syllabus', 0)
 
 
@@ -176,5 +207,5 @@ class Decorate(Extension):
 
 
 def main(text: str) -> Tuple[str, Dict[str, List[str]]]:
-    md = Markdown(extensions=[Basic(), More()] + list(Extensions.values()) + [Decorate()], safe_mode=False)
+    md = Markdown(extensions=[Basic(), Basic_(), More()] + list(Extensions.values()) + [Decorate()], safe_mode=False)
     return md.convert(text), md.Meta
