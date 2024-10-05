@@ -120,7 +120,7 @@ class Basic(Extension):
         md.inlinePatterns.register(Nest(
             r'\[(.*?)]\^\((.*?)\)', outer_tag='ruby', inner_tag='rt'), 'up', 0
         )  # [在文本的正上方添加一行小文本]^(主要用于标拼音)
-        md.inlinePatterns.register(BasicDifficult(
+        md.inlinePatterns.register(ID(
             r'\[(.*?)]-\((.*?)\)', outer_tag='ruby', inner_tag='rt'), 'hide', 0
         )  # [在指定的文本里面隐藏一段文本]-(只有鼠标放在上面才会显示隐藏文本)
 
