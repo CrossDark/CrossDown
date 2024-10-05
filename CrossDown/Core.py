@@ -57,9 +57,9 @@ class Simple(InlineProcessor):
         return tag, match.start(), match.end()
 
 
-class BasicDifficult(InlineProcessor):
+class Nest(InlineProcessor):
     """
-    不能通过简单的正则表达式和HTML标签实现的样式
+    需要嵌套HTML标签实现的样式
     """
     def __init__(self, pattern: str, outer_tag: str, inner_tag: str):
         """
@@ -81,9 +81,9 @@ class BasicDifficult(InlineProcessor):
         return outer_tag, match.start(), match.end()
 
 
-class BasicPro(InlineProcessor):
+class ID(InlineProcessor):
     """
-    不能通过简单的正则表达式和HTML标签实现的样式
+    需要对HTML标签设置ID实现的样式
     """
     def __init__(self, pattern: str, tag: str, key: str, value: str):
         """
@@ -117,7 +117,7 @@ class Basic(Extension):
         md.inlinePatterns.register(Simple(r'~~(.*?)~~', tag='s'), 'strikethrough', 0)  # ~~删除线~~
         md.inlinePatterns.register(Simple(r'~(.*?)~', tag='u'), 'underline', 0)  # ~下划线~
         md.inlinePatterns.register(Simple(r'==(.*?)==', tag='mark'), 'high_light', 0)  # ==高亮==
-        md.inlinePatterns.register(BasicDifficult(
+        md.inlinePatterns.register(Nest(
             r'\[(.*?)]\^\((.*?)\)', outer_tag='ruby', inner_tag='rt'), 'up', 0
         )  # [在文本的正上方添加一行小文本]^(主要用于标拼音)
         md.inlinePatterns.register(BasicDifficult(
