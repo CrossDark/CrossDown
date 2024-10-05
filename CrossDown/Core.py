@@ -104,9 +104,25 @@ class ID(InlineProcessor):
         return tag, match.start(), match.end()
 
 
+class Emoji(InlineProcessor):
+    """
+        需要对HTML标签设置ID实现的样式
+        """
+
+    def __init__(self, pattern: str):
+        """
+        初始化
+        :param pattern: 正则表达式
+        """
+        super().__init__(pattern)
+
+    def handleMatch(self, match, match_line):
+        return emoji.emojize(match.group(0)), match.start(), match.end()
+
+
 class Basic(Extension):
     """
-    渲染字体样式
+    渲染基本样式
     """
 
     def extendMarkdown(self, md):
@@ -120,6 +136,9 @@ class Basic(Extension):
         md.inlinePatterns.register(ID(
             r'\[(.*?)]-\((.*?)\)', tag='span', property_='title'), 'hide', 0
         )  # [在指定的文本里面隐藏一段文本]-(只有鼠标放在上面才会显示隐藏文本)
+        md.inlinePatterns.register(Emoji(
+            r':(.+?):'), 'emoji', 0
+        )  # 将emoji短代码转换为emoji字符
 
 
 class Syllabus(Preprocessor):

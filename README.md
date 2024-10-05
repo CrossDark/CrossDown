@@ -222,7 +222,7 @@ graph LR
 
 :person_biking:
 
-:grinning_face_with_big_eyes:
+这是一个笑脸:grinning_face_with_big_eyes:图案
 
 13 脚注
 
@@ -236,4 +236,10 @@ graph LR
 
 13.3 放置
 
+通过一下代码可以将文章中所有的脚注定义集中于一处
+
 ///Footnotes Go Here///
+
+否则所有定义将被集中在文章末尾
+
+14 扩展
