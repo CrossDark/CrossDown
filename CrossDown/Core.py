@@ -85,7 +85,7 @@ class ID(InlineProcessor):
     """
     需要对HTML标签设置ID实现的样式
     """
-    def __init__(self, pattern: str, tag: str, key: str, value: str):
+    def __init__(self, pattern: str, tag: str, property: str):
         """
         初始化
         :param pattern: 正则表达式
@@ -95,16 +95,14 @@ class ID(InlineProcessor):
         """
         super().__init__(pattern)
         self.tag = tag
-        self.key = key
-        self.value = value
+        self.property = property
 
     def handleMatch(self, match, match_line):
-        outer_tag = xml.etree.ElementTree.Element(self.outer_tag)  # 创建外层标签
-        inner_tag = xml.etree.ElementTree.SubElement(outer_tag, self.inner_tag)  # 创建内层标签
-        outer_tag.text = match.group(1)  # 设置外层标签文本
-        inner_tag.text = match.group(2)  # 设置内层标签文本
+        tag = xml.etree.ElementTree.Element(self.tag)  # 创建标签
+        tag.text = match.groups(1)
+        tag.set(self.property, match.groups(2))
 
-        return outer_tag, match.start(), match.end()
+        return tag, match.start(), match.end()
 
 
 class Basic(Extension):
@@ -121,7 +119,7 @@ class Basic(Extension):
             r'\[(.*?)]\^\((.*?)\)', outer_tag='ruby', inner_tag='rt'), 'up', 0
         )  # [在文本的正上方添加一行小文本]^(主要用于标拼音)
         md.inlinePatterns.register(ID(
-            r'\[(.*?)]-\((.*?)\)', outer_tag='ruby', inner_tag='rt'), 'hide', 0
+            r'\[(.*?)]-\((.*?)\)', tag='ruby', property='rt'), 'hide', 0
         )  # [在指定的文本里面隐藏一段文本]-(只有鼠标放在上面才会显示隐藏文本)
 
 
