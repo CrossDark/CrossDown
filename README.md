@@ -230,4 +230,8 @@ graph LR
 
 :grinning_face_with_big_eyes:
 
-13 扩展语法
+13 脚注
+
+这是一个[^脚注]
+
+[^脚注]: 一段长的文本用于说明
