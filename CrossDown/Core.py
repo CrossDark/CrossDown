@@ -143,32 +143,16 @@ class Syllabus_(InlineProcessor):
 
 class Syllabus(BlockProcessor):
     # 定义提纲的正则表达式
-    ALERT_RE = r'(\d+(\.\d+)*)\s+(.*)'
+    syllabus_re = r'(\d+(\.\d+)*)\s+(.*)'
 
     def test(self, parent, block):
         # 检查当前块是否匹配我们的正则表达式
-        return bool(self.ALERT_RE.match(block))
+        return re.match(self.syllabus_re, block)
 
     def run(self, parent, blocks):
         # 处理匹配的块
-        block = blocks.pop(0)
-        m = self.ALERT_RE.search(block)
-        if m:
-            before = block[:m.start()]  # 匹配之前的文本
-            after = block[m.end():]  # 匹配之后的文本
-            if before:
-                # 如果匹配之前有文本，则创建一个新的段落来包含它
-                p = etree.SubElement(parent, 'p')
-                p.text = before.strip()
-                # 创建包含警告内容的 div 元素
-            div = etree.SubElement(parent, 'div', {'class': 'alert'})
-            div.text = m.group(1).strip()
-            # 如果匹配之后还有文本，则将其重新添加到块列表中以便后续处理
-            if after.strip():
-                blocks.insert(0, after)
-        else:
-            # 如果没有匹配，则保留原始块以便后续处理器处理
-            return False
+        for num, block in enumerate(blocks):
+            pass
 
 
 class BoxBlockProcessor(BlockProcessor):
@@ -188,7 +172,7 @@ class BoxBlockProcessor(BlockProcessor):
                     # remove fence
                     blocks[block_num] = re.sub(self.RE_FENCE_END, '', block)
                     # render fenced area inside a new div
-                    e = etree.SubElement(parent, 'div')
+                    e = xml.etree.ElementTree.SubElement(parent, 'div')
                     e.set('style', 'display: inline-block; border: 1px solid red;')
                     self.parser.parseBlocks(e, blocks[0:block_num + 1])
                     # remove used blocks
@@ -198,7 +182,6 @@ class BoxBlockProcessor(BlockProcessor):
             # No closing marker!  Restore and do nothing
             blocks[0] = original_block
             return False  # equivalent to our test() routine returning False
-
 
 
 class Basic(Extension):
