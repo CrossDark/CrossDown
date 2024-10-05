@@ -37,7 +37,7 @@ except ModuleNotFoundError:
     EXTRA_ABLE = False
 
 
-class BasicSimple(InlineProcessor):
+class Simple(InlineProcessor):
     """
     可通过简单的正则表达式和HTML标签实现的样式
     """
@@ -57,9 +57,9 @@ class BasicSimple(InlineProcessor):
         return tag, match.start(), match.end()
 
 
-class BasicDifficult(InlineProcessor):
+class Nest(InlineProcessor):
     """
-    不能通过简单的正则表达式和HTML标签实现的样式
+    需要嵌套HTML标签实现的样式
     """
     def __init__(self, pattern: str, outer_tag: str, inner_tag: str):
         """
@@ -81,30 +81,27 @@ class BasicDifficult(InlineProcessor):
         return outer_tag, match.start(), match.end()
 
 
-class BasicPro(InlineProcessor):
+class ID(InlineProcessor):
     """
-    不能通过简单的正则表达式和HTML标签实现的样式
+    需要对HTML标签设置ID实现的样式
     """
-    def __init__(self, pattern: str, tag: str, key: str, value: str):
+    def __init__(self, pattern: str, tag: str, property: str):
         """
         初始化
         :param pattern: 正则表达式
         :param tag: html标签
-        :param key: html标签属性
-        :param value: html标签属性的值
+        :param property: html标签属性名称
         """
         super().__init__(pattern)
         self.tag = tag
-        self.key = key
-        self.value = value
+        self.property = property
 
     def handleMatch(self, match, match_line):
-        outer_tag = xml.etree.ElementTree.Element(self.outer_tag)  # 创建外层标签
-        inner_tag = xml.etree.ElementTree.SubElement(outer_tag, self.inner_tag)  # 创建内层标签
-        outer_tag.text = match.group(1)  # 设置外层标签文本
-        inner_tag.text = match.group(2)  # 设置内层标签文本
+        tag = xml.etree.ElementTree.Element(self.tag)  # 创建标签
+        tag.text = match.groups(1)  # 设置标签内容
+        tag.set(self.property, match.groups(2))  # 设置标签属性
 
-        return outer_tag, match.start(), match.end()
+        return tag, match.start(), match.end()
 
 
 class Basic(Extension):
@@ -114,14 +111,14 @@ class Basic(Extension):
 
     def extendMarkdown(self, md):
         md.registerExtension(self)  # 注册扩展
-        md.inlinePatterns.register(BasicSimple(r'~~(.*?)~~', tag='s'), 'strikethrough', 0)  # ~~删除线~~
-        md.inlinePatterns.register(BasicSimple(r'~(.*?)~', tag='u'), 'underline', 0)  # ~下划线~
-        md.inlinePatterns.register(BasicSimple(r'==(.*?)==', tag='mark'), 'high_light', 0)  # ==高亮==
-        md.inlinePatterns.register(BasicDifficult(
+        md.inlinePatterns.register(Simple(r'~~(.*?)~~', tag='s'), 'strikethrough', 0)  # ~~删除线~~
+        md.inlinePatterns.register(Simple(r'~(.*?)~', tag='u'), 'underline', 0)  # ~下划线~
+        md.inlinePatterns.register(Simple(r'==(.*?)==', tag='mark'), 'high_light', 0)  # ==高亮==
+        md.inlinePatterns.register(Nest(
             r'\[(.*?)]\^\((.*?)\)', outer_tag='ruby', inner_tag='rt'), 'up', 0
         )  # [在文本的正上方添加一行小文本]^(主要用于标拼音)
-        md.inlinePatterns.register(BasicDifficult(
-            r'\[(.*?)]-\((.*?)\)', outer_tag='ruby', inner_tag='rt'), 'hide', 0
+        md.inlinePatterns.register(ID(
+            r'\[(.*?)]-\((.*?)\)', tag='span', property='title'), 'hide', 0
         )  # [在指定的文本里面隐藏一段文本]-(只有鼠标放在上面才会显示隐藏文本)
 
 
