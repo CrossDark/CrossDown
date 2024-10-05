@@ -90,8 +90,7 @@ class ID(InlineProcessor):
         初始化
         :param pattern: 正则表达式
         :param tag: html标签
-        :param key: html标签属性
-        :param value: html标签属性的值
+        :param property: html标签属性名称
         """
         super().__init__(pattern)
         self.tag = tag
@@ -99,8 +98,8 @@ class ID(InlineProcessor):
 
     def handleMatch(self, match, match_line):
         tag = xml.etree.ElementTree.Element(self.tag)  # 创建标签
-        tag.text = match.groups(1)
-        tag.set(self.property, match.groups(2))
+        tag.text = match.groups(1)  # 设置标签内容
+        tag.set(self.property, match.groups(2))  # 设置标签属性
 
         return tag, match.start(), match.end()
 
