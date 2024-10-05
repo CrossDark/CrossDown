@@ -37,7 +37,7 @@ except ModuleNotFoundError:
     EXTRA_ABLE = False
 
 
-class BasicSimple(InlineProcessor):
+class Simple(InlineProcessor):
     """
     可通过简单的正则表达式和HTML标签实现的样式
     """
@@ -114,9 +114,9 @@ class Basic(Extension):
 
     def extendMarkdown(self, md):
         md.registerExtension(self)  # 注册扩展
-        md.inlinePatterns.register(BasicSimple(r'~~(.*?)~~', tag='s'), 'strikethrough', 0)  # ~~删除线~~
-        md.inlinePatterns.register(BasicSimple(r'~(.*?)~', tag='u'), 'underline', 0)  # ~下划线~
-        md.inlinePatterns.register(BasicSimple(r'==(.*?)==', tag='mark'), 'high_light', 0)  # ==高亮==
+        md.inlinePatterns.register(Simple(r'~~(.*?)~~', tag='s'), 'strikethrough', 0)  # ~~删除线~~
+        md.inlinePatterns.register(Simple(r'~(.*?)~', tag='u'), 'underline', 0)  # ~下划线~
+        md.inlinePatterns.register(Simple(r'==(.*?)==', tag='mark'), 'high_light', 0)  # ==高亮==
         md.inlinePatterns.register(BasicDifficult(
             r'\[(.*?)]\^\((.*?)\)', outer_tag='ruby', inner_tag='rt'), 'up', 0
         )  # [在文本的正上方添加一行小文本]^(主要用于标拼音)
