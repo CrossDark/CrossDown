@@ -56,7 +56,7 @@
     <li><a href="#1.2.5">1.2.5 删除线</a></li>
     <li><a href="#1.2.6">1.2.6 高亮</a></li>
     <li><a href="#1.2.7">1.2.7 在文本的正上方添加一行小文本主要用于标拼音</a></li>
-    <li><a href="#1.2.8">1.2.8 在指定的文本里面隐藏一段文本只有鼠标放在上面才会显示隐藏文本</a></li>
+    <li><a href="#1.2.8">1.2.8 在指定的文本里面隐藏一段文本</a></li>
     <li><a href="#1.2.9">1.2.9 分割线</a></li>
     </ul>
     </li>
@@ -111,7 +111,12 @@
     <li><a href="#10">10 表格</a></li>
     <li><a href="#11">11 警告</a></li>
     <li><a href="#12">12 Emoji</a></li>
-    <li><a href="#13">13 扩展语法</a></li>
+    <li><a href="#13">13 脚注</a><ul>
+    <li><a href="#13.1">13.1 使用</a></li>
+    <li><a href="#13.2">13.2 定义</a></li>
+    <li><a href="#13.3">13.3 放置</a></li>
+    </ul>
+    </li>
     </ul>
     </div>
     <h1 id="CrossDown">CrossDown</h1>
@@ -133,7 +138,7 @@
     <h3 id="1.2.5">1.2.5 <s>删除线</s></h3>
     <h3 id="1.2.6">1.2.6 <mark>高亮</mark></h3>
     <h3 id="1.2.7">1.2.7 <ruby>在文本的正上方添加一行小文本<rt>主要用于标拼音</rt></ruby></h3>
-    <h3 id="1.2.8">1.2.8 <ruby>在指定的文本里面隐藏一段文本<rt>只有鼠标放在上面才会显示隐藏文本</rt></ruby></h3>
+    <h3 id="1.2.8">1.2.8 <span title="只有鼠标放在上面才会显示隐藏文本">在指定的文本里面隐藏一段文本</span></h3>
     <h3 id="1.2.9">1.2.9 分割线</h3>
     <hr />
     <hr />
@@ -279,6 +284,18 @@
     <h1 id="12">12 Emoji</h1>
     <p>:person_biking:</p>
     <p>:grinning_face_with_big_eyes:</p>
-    <h1 id="13">13 扩展语法</h1>
+    <h1 id="13">13 脚注</h1>
+    <h2 id="13.1">13.1 使用</h2>
+    <p>这是一个<sup id="fnref:脚注"><a class="footnote-ref" href="#fn:脚注">1</a></sup></p>
+    <h2 id="13.2">13.2 定义</h2>
+    <h2 id="13.3">13.3 放置</h2>
+    <div class="footnote">
+    <hr />
+    <ol>
+    <li id="fn:脚注">
+    <p>一段长的文本用于说明&#160;<a class="footnote-backref" href="#fnref:脚注" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+    </li>
+    </ol>
+    </div>
 </body>  
 </html>
