@@ -158,25 +158,28 @@ class Syllabus(BlockProcessor):
         return False
 
 
-class BoxBlockProcessor(BlockProcessor):
-        RE_FENCE_START = r'^ *!{3,} *\n' # start line, e.g., `   !!!! `
-        RE_FENCE_END = r'\n *!{3,}\s*$'  # last non-blank line, e.g, '!!!\n  \n\n'
+class BoxBlock(BlockProcessor):
+        def __init__(self, parser, re_start, re_end, style):
+            super().__init__(parser)
+            self.re_start = re_start  # start line, e.g., `   !!!!
+            self.re_end = re_end  # last non-blank line, e.g, '!!!\n  \n\n'
+            self.style = style
 
         def test(self, parent, block):
-            return re.match(self.RE_FENCE_START, block)
+            return re.match(self.re_start, block)
 
         def run(self, parent, blocks):
             original_block = blocks[0]
-            blocks[0] = re.sub(self.RE_FENCE_START, '', blocks[0])
+            blocks[0] = re.sub(self.re_start, '', blocks[0])
 
             # Find block with ending fence
             for block_num, block in enumerate(blocks):
-                if re.search(self.RE_FENCE_END, block):
+                if re.search(self.re_end, block):
                     # remove fence
-                    blocks[block_num] = re.sub(self.RE_FENCE_END, '', block)
+                    blocks[block_num] = re.sub(self.re_end, '', block)
                     # render fenced area inside a new div
                     e = xml.etree.ElementTree.SubElement(parent, 'div')
-                    e.set('style', 'display: inline-block; border: 1px solid red;')
+                    e.set('style', self.style)
                     self.parser.parseBlocks(e, blocks[0:block_num + 1])
                     # remove used blocks
                     for i in range(0, block_num + 1):
@@ -214,7 +217,14 @@ class Box(Extension):
 
     def extendMarkdown(self, md):
         md.registerExtension(self)  # 注册扩展
-        md.parser.blockprocessors.register(BoxBlockProcessor(md.parser), 'box', 175)
+        # 红框警告
+        md.parser.blockprocessors.register(BoxBlock(
+            md.parser, r'^ *!{3,} *\n', r'\n *!{3,}\s*$', 'display: inline-block; border: 1px solid red;'
+        ), 'warning_box', 175)  # 块
+        # 黄框提醒
+        md.parser.blockprocessors.register(BoxBlock(
+            md.parser, r'^ *!{2,} *\n', r'\n *!{2,}\s*$', 'display: inline-block; border: 1px solid yellow;'
+        ), 'reminding_box', 175)
 
 
 def main(text: str) -> Tuple[str, Dict[str, List[str]]]:
