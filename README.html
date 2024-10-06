@@ -175,28 +175,25 @@
     <p><code>{强调文本}</code></p>
     <h2 id="4.2">4.2 多行</h2>
     <h3 id="4.2.1">4.2.1 YAML</h3>
-    <div class="codehilite"><pre><span></span><code><span class="nt">A</span><span class="p">:</span>
-    <span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">1. a</span>
-    <span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">2. b</span>
-    <span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">3. c</span>
-    <span class="nt">B</span><span class="p">:</span>
-    <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">a</span>
-    <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">b</span>
-    <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">c</span>
-    </code></pre></div>
-    
+    <pre><code class="language-yaml">A:
+        1. a
+        2. b
+        3. c
+    B:
+        - a
+        - b
+        - c
+    </code></pre>
     <h3 id="4.2.2">4.2.2 Python</h3>
-    <div class="codehilite"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;CrossDown&#39;</span><span class="p">)</span>
-    </code></pre></div>
-    
+    <pre><code class="language-python">print('CrossDown')
+    </code></pre>
     <h3 id="4.2.3">4.2.3 Mermaid</h3>
-    <div class="codehilite"><pre><span></span><code><span class="nf">graph</span><span class="w"> </span><span class="n">LR</span>
-    <span class="w">    </span><span class="n">A</span><span class="o">--&gt;</span><span class="n">B</span>
-    <span class="w">    </span><span class="n">A</span><span class="o">--&gt;</span><span class="n">C</span>
-    <span class="w">    </span><span class="n">B</span><span class="o">--&gt;</span><span class="n">D</span>
-    <span class="w">    </span><span class="n">C</span><span class="o">--&gt;</span><span class="n">D</span>
-    </code></pre></div>
-    
+    <pre><code class="language-mermaid">graph LR
+        A--&gt;B
+        A--&gt;C
+        B--&gt;D
+        C--&gt;D
+    </code></pre>
     <h1 id="5">5 转义</h1>
     <p>\ </p>
     <p>\a </p>
@@ -219,7 +216,7 @@
     </blockquote>
     </blockquote>
     </blockquote>
-    <p>引文内添加klzzwxhklzzwxhklzzwxh:00420039klzzwxh:0040</p>
+    <p>引文内添加klzzwxhklzzwxhklzzwxh:00440041klzzwxh:0042</p>
     </blockquote>
     <h1 id="7">7 提纲</h1>
     <h2 id="7.1">7.1 提纲号</h2>
@@ -248,6 +245,12 @@
     <li>d</li>
     </ol>
     <h2 id="9.2">9.2 无序列表</h2>
+    <ul>
+    <li>A</li>
+    <li>B</li>
+    <li>C</li>
+    <li>D</li>
+    </ul>
     <h1 id="10">10 表格</h1>
     <table>
     <thead>
@@ -295,11 +298,12 @@
     <p>否则所有定义将被集中在文章末尾</p>
     <h1 id="14">14 外框</h1>
     <h2 id="14.1">14.1 警告</h2>
-    <p>!!!警告!!!</p>
+    <p>这是一个<div style="display: inline-block; border: 1px solid red;">警告</div>……</p>
     <div style="display: inline-block; border: 1px solid red;">
     <p>这是一条警告</p>
     </div>
     <h2 id="14.2">14.2 提醒</h2>
+    <p>这是一个<div style="display: inline-block; border: 1px solid yellow;">提醒</div>……</p>
     <div style="display: inline-block; border: 1px solid yellow;">
     <p>这是一条提醒</p>
     </div>

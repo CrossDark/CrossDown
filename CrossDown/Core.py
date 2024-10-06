@@ -20,7 +20,7 @@ Extensions = {
     "Tables": "markdown.extensions.tables",
     # "Smart Strong": "markdown.extensions.smart_strong",
     "Admonition": "markdown.extensions.admonition",
-    "CodeHilite": "markdown.extensions.codehilite",
+    # "CodeHilite": "markdown.extensions.codehilite",
     # "HeaderId": "markdown.extensions.headerid",
     "Meta-Data": "markdown.extensions.meta",
     "New Line to Break": "markdown.extensions.nl2br",
@@ -42,6 +42,7 @@ class Simple(InlineProcessor):
     """
     可通过简单的正则表达式和HTML标签实现的样式
     """
+
     def __init__(self, pattern: str, tag: str):
         """
         初始化
@@ -62,6 +63,7 @@ class Nest(InlineProcessor):
     """
     需要嵌套HTML标签实现的样式
     """
+
     def __init__(self, pattern: str, outer_tag: str, inner_tag: str):
         """
         初始化
@@ -86,21 +88,24 @@ class ID(InlineProcessor):
     """
     需要对HTML标签设置ID实现的样式
     """
-    def __init__(self, pattern: str, tag: str, property_: str):
+
+    def __init__(self, pattern: str, tag: str, property_: str, value: Union[str, bool, int] = None):
         """
         初始化
         :param pattern: 正则表达式
         :param tag: html标签
         :param property_: html标签属性名称
+        :param value: html标签属性的值
         """
         super().__init__(pattern)
         self.tag = tag
         self.property = property_
+        self.value = value
 
     def handleMatch(self, match, match_line):
         tag = xml.etree.ElementTree.Element(self.tag)  # 创建标签
         tag.text = match.group(1)  # 设置标签内容
-        tag.set(self.property, match.group(2))  # 设置标签属性
+        tag.set(self.property, match.group(2) if self.value is None else self.value)  # 设置标签属性,属性的值默认为第二个匹配组
 
         return tag, match.start(), match.end()
 
@@ -159,35 +164,35 @@ class Syllabus(BlockProcessor):
 
 
 class BoxBlock(BlockProcessor):
-        def __init__(self, parser, re_start, re_end, style):
-            super().__init__(parser)
-            self.re_start = re_start  # start line, e.g., `   !!!!
-            self.re_end = re_end  # last non-blank line, e.g, '!!!\n  \n\n'
-            self.style = style
+    def __init__(self, parser, re_start, re_end, style):
+        super().__init__(parser)
+        self.re_start = re_start  # start line, e.g., `   !!!!
+        self.re_end = re_end  # last non-blank line, e.g, '!!!\n  \n\n'
+        self.style = style
 
-        def test(self, parent, block):
-            return re.match(self.re_start, block)
+    def test(self, parent, block):
+        return re.match(self.re_start, block)
 
-        def run(self, parent, blocks):
-            original_block = blocks[0]
-            blocks[0] = re.sub(self.re_start, '', blocks[0])
+    def run(self, parent, blocks):
+        original_block = blocks[0]
+        blocks[0] = re.sub(self.re_start, '', blocks[0])
 
-            # Find block with ending fence
-            for block_num, block in enumerate(blocks):
-                if re.search(self.re_end, block):
-                    # remove fence
-                    blocks[block_num] = re.sub(self.re_end, '', block)
-                    # render fenced area inside a new div
-                    e = xml.etree.ElementTree.SubElement(parent, 'div')
-                    e.set('style', self.style)
-                    self.parser.parseBlocks(e, blocks[0:block_num + 1])
-                    # remove used blocks
-                    for i in range(0, block_num + 1):
-                        blocks.pop(0)
-                    return True  # or could have had no return statement
-            # No closing marker!  Restore and do nothing
-            blocks[0] = original_block
-            return False  # equivalent to our test() routine returning False
+        # Find block with ending fence
+        for block_num, block in enumerate(blocks):
+            if re.search(self.re_end, block):
+                # remove fence
+                blocks[block_num] = re.sub(self.re_end, '', block)
+                # render fenced area inside a new div
+                e = xml.etree.ElementTree.SubElement(parent, 'div')
+                e.set('style', self.style)
+                self.parser.parseBlocks(e, blocks[0:block_num + 1])
+                # remove used blocks
+                for i in range(0, block_num + 1):
+                    blocks.pop(0)
+                return True  # or could have had no return statement
+        # No closing marker!  Restore and do nothing
+        blocks[0] = original_block
+        return False  # equivalent to our test() routine returning False
 
 
 class Basic(Extension):
@@ -218,15 +223,31 @@ class Box(Extension):
     def extendMarkdown(self, md):
         md.registerExtension(self)  # 注册扩展
         # 红框警告
+        md.inlinePatterns.register(ID(
+            r'!{3,}(.+?)!{3,}', tag='div', property_='style', value='display: inline-block; border: 1px solid red;'
+        ), 'warning_in_line', 0
+        )  # 行内
         md.parser.blockprocessors.register(BoxBlock(
             md.parser, r'^ *!{3,} *\n', r'\n *!{3,}\s*$', 'display: inline-block; border: 1px solid red;'
         ), 'warning_box', 175)  # 块
         # 黄框提醒
+        md.inlinePatterns.register(ID(
+            r'!{2,}(.+?)!{2,}', tag='div', property_='style', value='display: inline-block; border: 1px solid yellow;'
+        ), 'reminding_in_line', 0
+        )  # 行内
         md.parser.blockprocessors.register(BoxBlock(
             md.parser, r'^ *!{2,} *\n', r'\n *!{2,}\s*$', 'display: inline-block; border: 1px solid yellow;'
-        ), 'reminding_box', 175)
+        ), 'reminding_box', 175)  # 块
+
+
+class Anchor(Extension):
+    def extendMarkdown(self, md):
+        md.registerExtension(self)  # 注册扩展
+        md.inlinePatterns.register(ID(
+            r'\{#([^{}#]+)}', tag='span', property_='id'), 'hide', 0
+        )  # 定义锚点
 
 
 def main(text: str) -> Tuple[str, Dict[str, List[str]]]:
-    md = Markdown(extensions=[Basic(), Box()] + list(Extensions.values()), safe_mode=False)
+    md = Markdown(extensions=[Basic(), Box(), Anchor()] + list(Extensions.values()), safe_mode=False)
     return md.convert(text), md.Meta
