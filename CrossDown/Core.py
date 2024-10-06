@@ -150,9 +150,12 @@ class Syllabus(BlockProcessor):
         return re.match(self.syllabus_re, block)
 
     def run(self, parent, blocks):
-        # 处理匹配的块
-        for num, block in enumerate(blocks):
-            pass
+        syllabus = re.match(self.syllabus_re, blocks[0])  # 匹配提纲的号和内容
+        header = xml.etree.ElementTree.SubElement(parent, f'h{len(syllabus.group(1).split("."))}')  # 按照提纲号等级创建标题
+        header.set('id', syllabus.group(1))  # 设置提纲ID
+        header.text = syllabus.group(1) + ' ' + syllabus.group(3)  # 设置提纲内容
+        blocks[0] = ''
+        return False
 
 
 class BoxBlockProcessor(BlockProcessor):
@@ -201,9 +204,19 @@ class Basic(Extension):
             r'\[(.*?)]-\((.*?)\)', tag='span', property_='title'), 'hide', 0
         )  # [在指定的文本里面隐藏一段文本]-(只有鼠标放在上面才会显示隐藏文本)
         md.inlinePatterns.register(Emoji(r':(.+?):'), 'emoji', 0)  # 将emoji短代码转换为emoji字符
-        md.inlinePatterns.register(Syllabus(r'(\d+(\.\d+)*)\s+(.*)'), 'syllabus', 0)  # 渲染提纲
+        md.parser.blockprocessors.register(Syllabus(md.parser), 'syllabus', 11)  # 渲染提纲
+
+
+class Box(Extension):
+    """
+    渲染外框
+    """
+
+    def extendMarkdown(self, md):
+        md.registerExtension(self)  # 注册扩展
+        md.parser.blockprocessors.register(BoxBlockProcessor(md.parser), 'box', 175)
 
 
 def main(text: str) -> Tuple[str, Dict[str, List[str]]]:
-    md = Markdown(extensions=[Basic()] + list(Extensions.values()), safe_mode=False)
+    md = Markdown(extensions=[Basic(), Box()] + list(Extensions.values()), safe_mode=False)
     return md.convert(text), md.Meta
