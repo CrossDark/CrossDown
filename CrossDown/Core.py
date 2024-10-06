@@ -89,13 +89,13 @@ class ID(InlineProcessor):
     需要对HTML标签设置ID实现的样式
     """
 
-    def __init__(self, pattern: str, tag: str, property_: str, value: Union[str, bool, int] = None):
+    def __init__(self, pattern: str, tag: str, property_: str, value: Union[str, bool] = None):
         """
         初始化
         :param pattern: 正则表达式
         :param tag: html标签
         :param property_: html标签属性名称
-        :param value: html标签属性的值
+        :param value: html标签属性的值 不设置时为第二个匹配组,设置为整数时则为指定的匹配组,设置为字符串则为原始字符串
         """
         super().__init__(pattern)
         self.tag = tag
@@ -124,26 +124,6 @@ class Emoji(InlineProcessor):
 
     def handleMatch(self, match, match_line):
         return emoji.emojize(match.group(0)), match.start(), match.end()
-
-
-class Syllabus_(InlineProcessor):
-    """
-        需要对HTML标签设置ID实现的样式
-        """
-
-    def __init__(self, pattern: str):
-        """
-        初始化
-        :param pattern: 正则表达式
-        """
-        super().__init__(pattern)
-
-    def handleMatch(self, match, match_line):
-        tag = xml.etree.ElementTree.Element(f'h{len(match.group(1).split("."))}')  # 创建标签
-        tag.text = match.group(1) + ' ' + match.group(3)  # 设置标签内容
-        tag.set('id', match.group(1))  # 设置标签属性
-
-        return tag, match.start(), match.end()
 
 
 class Syllabus(BlockProcessor):
@@ -244,10 +224,13 @@ class Anchor(Extension):
     def extendMarkdown(self, md):
         md.registerExtension(self)  # 注册扩展
         md.inlinePatterns.register(ID(
-            r'\{#([^{}#]+)}', tag='span', property_='id'), 'hide', 0
+            r'\{#([^{}#]+)}', tag='span', property_='id', value=1), 'hide', 0
+        )  # 定义锚点
+        md.inlinePatterns.register(ID(
+            r'\{([^{}#]+)}', tag='span', property_='id', value=1), 'hide', 0
         )  # 定义锚点
 
 
 def main(text: str) -> Tuple[str, Dict[str, List[str]]]:
-    md = Markdown(extensions=[Basic(), Box(), Anchor()] + list(Extensions.values()), safe_mode=False)
+    md = Markdown(extensions=[Basic(), Box()] + list(Extensions.values()), safe_mode=False)
     return md.convert(text), md.Meta
