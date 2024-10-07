@@ -175,6 +175,24 @@ class BoxBlock(BlockProcessor):
         return False  # equivalent to our test() routine returning False
 
 
+class _Anchor(InlineProcessor):
+    def handleMatch(self, match, match_line):
+        tag = xml.etree.ElementTree.Element('span')  # 创建标签
+        tag.text = match.group(1)
+        tag.set('id', match.group(1))  # 设置id
+
+        return tag, match.start(), match.end()
+
+
+class LinkLine(InlineProcessor):
+    def handleMatch(self, match, match_line):
+        tag = xml.etree.ElementTree.Element('a')  # 创建标签
+        tag.set('href', '#' + match.group(1))  # 设置id
+        tag.text = match.group(1)
+
+        return tag, match.start(), match.end()
+
+
 class Basic(Extension):
     """
     渲染基本样式
@@ -223,14 +241,10 @@ class Box(Extension):
 class Anchor(Extension):
     def extendMarkdown(self, md):
         md.registerExtension(self)  # 注册扩展
-        md.inlinePatterns.register(ID(
-            r'\{#([^{}#]+)}', tag='span', property_='id', value=1), 'hide', 0
-        )  # 定义锚点
-        md.inlinePatterns.register(ID(
-            r'\{([^{}#]+)}', tag='span', property_='id', value=1), 'hide', 0
-        )  # 定义锚点
+        md.inlinePatterns.register(_Anchor(r'\{#([^{}#]+)}'), 'anchor', 0)  # 定义锚点
+        md.inlinePatterns.register(LinkLine(r'\{([^{}#]+)}'), 'line_link', 0)  # 添加页内链接
 
 
 def main(text: str) -> Tuple[str, Dict[str, List[str]]]:
-    md = Markdown(extensions=[Basic(), Box()] + list(Extensions.values()), safe_mode=False)
+    md = Markdown(extensions=[Basic(), Box(), Anchor()] + list(Extensions.values()))
     return md.convert(text), md.Meta
