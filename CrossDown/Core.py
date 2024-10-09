@@ -193,6 +193,19 @@ class LinkLine(InlineProcessor):
         return tag, match.start(), match.end()
 
 
+class CodeLine(Treeprocessor):
+    def run(self, root):
+        for elem in root.iter('p'):  # 在所有段落中查找单行代码
+            if elem.findall('code'):  # 找到单行代码
+                for code in elem:
+                    if re.match(r'\$[^$]*\$', code.text):  # 渲染Latex
+                        if isinstance(elem.text, str):
+                            elem.text += fr'\({code.text[1:-1]}\){code.tail}'
+                        else:
+                            elem.text = fr'\({code.text}\)'
+                        elem.remove(code)
+
+
 class Basic(Extension):
     """
     渲染基本样式
@@ -239,12 +252,18 @@ class Box(Extension):
 
 
 class Anchor(Extension):
-    def extendMarkdown(self, md):
+    def extendMarkdown(self, md: Markdown):
         md.registerExtension(self)  # 注册扩展
         md.inlinePatterns.register(_Anchor(r'\{#([^{}#]+)}'), 'anchor', 0)  # 定义锚点
         md.inlinePatterns.register(LinkLine(r'\{([^{}#]+)}'), 'line_link', 0)  # 添加页内链接
 
 
+class Code(Extension):
+    def extendMarkdown(self, md: Markdown) -> None:
+        md.registerExtension(self)  # 注册扩展
+        md.treeprocessors.register(CodeLine(), 'code_block', 0)  # 渲染多行代码块
+
+
 def main(text: str) -> Tuple[str, Dict[str, List[str]]]:
-    md = Markdown(extensions=[Basic(), Box(), Anchor()] + list(Extensions.values()))
+    md = Markdown(extensions=[Basic(), Box(), Anchor()] + list(Extensions.values()) + [Code()])
     return md.convert(text), md.Meta
