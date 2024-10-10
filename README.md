@@ -134,11 +134,11 @@ print('CrossDown')
 4.2.3 Mermaid
 
 ```mermaid
-graph LR
-    A-->B
-    A-->C
-    B-->D
-    C-->D
+graph TD  
+    A[开始]-->B[流程]  
+    B-->C{判断}  
+    C-->|结果1|D[结束1]  
+    C-->|结果2|E[结束2]
 ```
 
 5 转义

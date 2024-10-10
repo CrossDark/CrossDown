@@ -199,11 +199,20 @@ class CodeLine(Treeprocessor):
             if elem.findall('code'):  # 找到单行代码
                 for code in elem:
                     if re.match(r'\$[^$]*\$', code.text):  # 渲染Latex
-                        if isinstance(elem.text, str):
-                            elem.text += fr'\({code.text[1:-1]}\){code.tail}'
+                        if isinstance(elem.text, str):  # 这个段落还有其它内容
+                            elem.text += fr'\({code.text[1:-1]}\){code.tail}'  # 插入latex
                         else:
-                            elem.text = fr'\({code.text}\)'
+                            elem.text = fr'\({code.text}\)'  # latex是段落中唯一的内容
                         elem.remove(code)
+                    elif re.match(r'¥[^$]*¥', code.text):  # 是数学函数(单行)
+                        if EXTRA_ABLE:
+                            expression, range_ = re.findall(r'¥([^$]*)¥(€[^$]*€)?', code)[0]  # 分离表达式与范围(如果有)
+                            x_r = (-10, 10)
+                            y_r = (-20, 20)
+                    elif re.match(r'\{[^$]*}', code.text):  # 是强调
+                        code.tag = 'span'
+                        code.set('class', 'block')
+                        code.text = code.text[1:-1]
 
 
 class Basic(Extension):

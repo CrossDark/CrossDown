@@ -179,7 +179,7 @@
     <p><code>¥y=x**2¥€-50,50€</code>  // 定义了x范围</p>
     <p><code>¥y=x**3¥€-50,50|-100,100€</code>  // 定义了y范围</p>
     <h3 id="4.1.3">4.1.3 强调</h3>
-    <p><code>{强调文本}</code></p>
+    <p><span class="block">强调文本</span></p>
     <h2 id="4.2">4.2 多行</h2>
     <h3 id="4.2.1">4.2.1 YAML</h3>
     <pre><code class="language-yaml">A:
@@ -195,11 +195,11 @@
     <pre><code class="language-python">print('CrossDown')
     </code></pre>
     <h3 id="4.2.3">4.2.3 Mermaid</h3>
-    <pre><code class="language-mermaid">graph LR
-        A--&gt;B
-        A--&gt;C
-        B--&gt;D
-        C--&gt;D
+    <pre><code class="language-mermaid">graph TD  
+        A[开始]--&gt;B[流程]  
+        B--&gt;C{判断}  
+        C--&gt;|结果1|D[结束1]  
+        C--&gt;|结果2|E[结束2]
     </code></pre>
     <h1 id="5">5 转义</h1>
     <p>\ </p>
