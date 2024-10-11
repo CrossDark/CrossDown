@@ -31,9 +31,8 @@ Extensions = {
 }
 
 try:  # 检测当前平台是否支持扩展语法
-    import Extra
-
-    Extensions += Extra.EXTRA
+    from .Extra import *
+    EXTRA_ABLE = True
 except ModuleNotFoundError:
     EXTRA_ABLE = False
 
@@ -206,9 +205,20 @@ class CodeLine(Treeprocessor):
                         elem.remove(code)
                     elif re.match(r'¥[^$]*¥', code.text):  # 是数学函数(单行)
                         if EXTRA_ABLE:
-                            expression, range_ = re.findall(r'¥([^$]*)¥(€[^$]*€)?', code)[0]  # 分离表达式与范围(如果有)
+                            expression, range_ = re.findall(r'¥([^$]*)¥(€[^$]*€)?', code.text)[0]  # 分离表达式与范围(如果有)
                             x_r = (-10, 10)
                             y_r = (-20, 20)
+                            if range_ != '':  # 定义了范围
+                                ranges = range_[1:-1].split('|')
+                                if len(ranges) in (1, 2):  # 定义的范围正确
+                                    x_r = tuple(int(i) for i in ranges[0].split(','))
+                                    if len(ranges) == 2:  # 定义了y范围
+                                        y_r = tuple(int(i) for i in ranges[1].split(','))
+                            code.tag = 'img'
+                            code.set('src', f"""data:image/png;base64,{(function_drawing(
+                                function=lambda x: eval(expression.split('=')[1]), x_range=x_r, y_range=y_r
+                            ))}""")  # 绘制函数图像
+                            code.set('alt', 'Base64 函数图片')
                     elif re.match(r'\{[^$]*}', code.text):  # 是强调
                         code.tag = 'span'
                         code.set('class', 'block')
