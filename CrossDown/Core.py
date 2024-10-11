@@ -12,22 +12,16 @@ import emoji
 
 Extensions = {
     "Extra": "markdown.extensions.extra",
-    "Abbreviations": "markdown.extensions.abbr",
-    "Attribute Lists": "markdown.extensions.attr_list",
-    "Definition Lists": "markdown.extensions.def_list",
-    "Fenced Code Blocks": "markdown.extensions.fenced_code",
-    "Footnotes": "markdown.extensions.footnotes",
-    "Tables": "markdown.extensions.tables",
     # "Smart Strong": "markdown.extensions.smart_strong",
     "Admonition": "markdown.extensions.admonition",
     # "CodeHilite": "markdown.extensions.codehilite",
     # "HeaderId": "markdown.extensions.headerid",
     "Meta-Data": "markdown.extensions.meta",
-    "New Line to Break": "markdown.extensions.nl2br",
+    # "New Line to Break": "markdown.extensions.nl2br",
     "Sane Lists": "markdown.extensions.sane_lists",
-    "SmartyPants": "markdown.extensions.smarty",
+    # "SmartyPants": "markdown.extensions.smarty",
     "Table of Contents": "markdown.extensions.toc",
-    "WikiLinks": "markdown.extensions.wikilinks",
+    # "WikiLinks": "markdown.extensions.wikilinks",
 }
 
 try:  # 检测当前平台是否支持扩展语法
@@ -225,6 +219,16 @@ class CodeLine(Treeprocessor):
                         code.text = code.text[1:-1]
 
 
+class CodeBlock(Treeprocessor):
+    def run(self, root):
+        for elem in root:  # 在所有段落中查找单行代码
+            print(elem.tag)
+            print(elem.text)
+            print('----------------------------------------------------------------------------------------')
+            for code in elem.findall('code'):  # 找到代码块
+                pass
+
+
 class Basic(Extension):
     """
     渲染基本样式
@@ -280,7 +284,8 @@ class Anchor(Extension):
 class Code(Extension):
     def extendMarkdown(self, md: Markdown) -> None:
         md.registerExtension(self)  # 注册扩展
-        md.treeprocessors.register(CodeLine(), 'code_block', 0)  # 渲染多行代码块
+        md.treeprocessors.register(CodeLine(), 'code_line', 0)  # 渲染单行代码块
+        md.treeprocessors.register(CodeBlock(), 'code_block', 0)  # 渲染多行代码块
 
 
 def main(text: str) -> Tuple[str, Dict[str, List[str]]]:

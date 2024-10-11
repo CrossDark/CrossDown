@@ -2,7 +2,6 @@ Title:   CrossDown示例
 Summary: 够简洁的了
 Authors: CrossDark
 Date:    __date__
-blank-value: g
 base_url: http://crossdark.net:3000/crossdark/CrossDown
 
 [TOC]

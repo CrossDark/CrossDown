@@ -31,12 +31,7 @@ HEAD = (
 
 BODY = (
     '<script>',
-    '   mermaid.initialize({{startOnLoad:true}});',
-    '</script>',
-    '<script>',
-    '   document.addEventListener("DOMContentLoaded", function() {',
-    '   emojify.run();',
-    '});',
+    '   mermaid.initialize({startOnLoad:true});',
     '</script>',
 )
 
