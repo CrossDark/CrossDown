@@ -13,18 +13,18 @@ import emoji
 
 Extensions = {
     "Extra": extra.ExtraExtension(fenced_code={'lang_prefix': ''}),  # 基本扩展
-    "Admonition": admonition.AdmonitionExtension(),
-    "Meta-Data": meta.MetaExtension(),
-    "Sane Lists": sane_lists.SaneListExtension(),
-    "Table of Contents": toc.TocExtension(),
-    "WikiLinks": wikilinks.WikiLinkExtension(),
+    "Admonition": admonition.AdmonitionExtension(),  # 警告扩展
+    "Meta-Data": meta.MetaExtension(),  # 元数据
+    "Sane Lists": sane_lists.SaneListExtension(),  # 只能列表
+    "Table of Contents": toc.TocExtension(),  # 目录
+    "WikiLinks": wikilinks.WikiLinkExtension(),  # 内部链接
 }
 
 
 try:  # 检测当前平台是否支持扩展语法
     from .Extra import *
     EXTRA_ABLE = True
-except ModuleNotFoundError:
+except ModuleNotFoundError:  # 不支持扩展语法
     EXTRA_ABLE = False
 
 
@@ -196,10 +196,10 @@ class CodeLine(Treeprocessor):
                         if isinstance(elem.text, str):  # 这个段落还有其它内容
                             elem.text += fr'\({code.text[1:-1]}\){code.tail}'  # 插入latex
                         else:
-                            elem.text = fr'\({code.text}\)'  # latex是段落中唯一的内容
+                            elem.text = fr'\({code.text[1:-1]}\)'  # latex是段落中唯一的内容
                         elem.remove(code)
                     elif re.match(r'¥[^$]*¥', code.text):  # 是数学函数(单行)
-                        if EXTRA_ABLE:
+                        if EXTRA_ABLE:  # 支持扩展语法
                             expression, range_ = re.findall(r'¥([^$]*)¥(€[^$]*€)?', code.text)[0]  # 分离表达式与范围(如果有)
                             x_r = (-10, 10)
                             y_r = (-20, 20)
@@ -214,6 +214,10 @@ class CodeLine(Treeprocessor):
                                 function=lambda x: eval(expression.split('=')[1]), x_range=x_r, y_range=y_r
                             ))}""")  # 绘制函数图像
                             code.set('alt', 'Base64 函数图片')
+                        else:  # 不支持扩展语法
+                            code.tag = 'span'
+                            code.set('class', 'block')
+                            code.text = '该平台不支持扩展语法'
                     elif re.match(r'\{[^$]*}', code.text):  # 是强调
                         code.tag = 'span'
                         code.set('class', 'block')
