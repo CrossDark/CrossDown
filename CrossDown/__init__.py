@@ -20,7 +20,18 @@ HEAD = (
     '<link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css" rel="stylesheet" />',
     '<script src="https://cdn.jsdelivr.net/npm/prismjs/prism.js"></script>',
     '<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-yaml.min.js"></script>',
+
+    # mermaid
     '<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>',
+    '<script>',
+    '   mermaid.initialize({startOnLoad:true});',
+    '</script>',
+
+    # Highlight.js
+    '<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/default.min.css">',
+    '<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>',
+    '<script>hljs.highlightAll();</script>',
+
     '<style>',
     '   .block {',
     '   background-color: grey; /* 灰色背景 */',
@@ -30,9 +41,7 @@ HEAD = (
 )
 
 BODY = (
-    '<script>',
-    '   mermaid.initialize({startOnLoad:true});',
-    '</script>',
+    '',
 )
 
 

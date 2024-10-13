@@ -12,13 +12,14 @@ import xml
 import emoji
 
 Extensions = {
-    "Extra": extra.ExtraExtension(),  # 基本扩展
+    "Extra": extra.ExtraExtension(fenced_code={'lang_prefix': ''}),  # 基本扩展
     "Admonition": admonition.AdmonitionExtension(),
     "Meta-Data": meta.MetaExtension(),
     "Sane Lists": sane_lists.SaneListExtension(),
     "Table of Contents": toc.TocExtension(),
     "WikiLinks": wikilinks.WikiLinkExtension(),
 }
+
 
 try:  # 检测当前平台是否支持扩展语法
     from .Extra import *
@@ -183,6 +184,10 @@ class LinkLine(InlineProcessor):
 
 
 class CodeLine(Treeprocessor):
+    def __init__(self, variable: Dict):
+        super().__init__()
+        self.variable = variable
+
     def run(self, root):
         for elem in root.iter('p'):  # 在所有段落中查找单行代码
             if elem.findall('code'):  # 找到单行代码
@@ -212,7 +217,11 @@ class CodeLine(Treeprocessor):
                     elif re.match(r'\{[^$]*}', code.text):  # 是强调
                         code.tag = 'span'
                         code.set('class', 'block')
-                        code.text = code.text[1:-1]
+                        key = code.text[1:-1]  # 去掉两边的{}
+                        if key in self.variable:
+                            code.text = self.variable[key]
+                        else:
+                            code.text = key
 
 
 class CodeBlock(Treeprocessor):
@@ -291,12 +300,16 @@ class Anchor(Extension):
 
 
 class Code(Extension):
+    def __init__(self, variable: Dict):
+        super().__init__()
+        self.variable = variable
+
     def extendMarkdown(self, md: Markdown) -> None:
         md.registerExtension(self)  # 注册扩展
-        md.treeprocessors.register(CodeLine(), 'code_line', 0)  # 渲染单行代码块
-        md.treeprocessors.register(CodeBlock(), 'code_block', 1)  # 渲染多行代码块
+        md.treeprocessors.register(CodeLine(variable=self.variable), 'code_line', 0)  # 渲染单行代码块
+        # md.treeprocessors.register(CodeBlock(), 'code_block', 1)  # 渲染多行代码块
 
 
 def main(text: str) -> Tuple[str, Dict[str, List[str]]]:
-    md = Markdown(extensions=[Basic(), Box(), Anchor()] + list(Extensions.values()) + [Code()])
+    md = Markdown(extensions=[Basic(), Box(), Anchor()] + list(Extensions.values()) + [Code({'a': 'b', '强调变量': '强调值'})])
     return md.convert(text), md.Meta
