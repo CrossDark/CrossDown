@@ -257,19 +257,34 @@ class Box(Extension):
         md.registerExtension(self)  # 注册扩展
         # 红框警告
         md.inlinePatterns.register(ID(
-            r'!{3,}(.+?)!{3,}', tag='div', property_='style', value='display: inline-block; border: 1px solid red;'
-        ), 'warning_in_line', 0
-        )  # 行内
+            r'!{3}(.+?)!{3}', tag='div', property_='style', value='display: inline-block; border: 1px solid red;'
+        ), 'warning_in_line', 0)  # 行内
         md.parser.blockprocessors.register(BoxBlock(
-            md.parser, r'^ *!{3,} *\n', r'\n *!{3,}\s*$', 'display: inline-block; border: 1px solid red;'
+            md.parser, r'^ *!{3} *\n', r'\n *!{3}\s*$', 'display: inline-block; border: 1px solid red;'
         ), 'warning_box', 175)  # 块
+
         # 黄框提醒
         md.inlinePatterns.register(ID(
-            r'!{2,}(.+?)!{2,}', tag='div', property_='style', value='display: inline-block; border: 1px solid yellow;'
-        ), 'reminding_in_line', 0
-        )  # 行内
+            r'!-!(.+?)!-!', tag='div', property_='style', value='display: inline-block; border: 1px solid yellow;'
+        ), 'reminding_in_line', 0)  # 行内
         md.parser.blockprocessors.register(BoxBlock(
-            md.parser, r'^ *!{2,} *\n', r'\n *!{2,}\s*$', 'display: inline-block; border: 1px solid yellow;'
+            md.parser, r'^ *!-! *\n', r'\n *!-!\s*$', 'display: inline-block; border: 1px solid yellow;'
+        ), 'reminding_box', 175)  # 块
+
+        # 绿框安心
+        md.inlinePatterns.register(ID(
+            r',{3}(.+?),{3}', tag='div', property_='style', value='display: inline-block; border: 1px solid green;'
+        ), 'reminding_in_line', 0)  # 行内
+        md.parser.blockprocessors.register(BoxBlock(
+            md.parser, r'^ *,{3} *\n', r'\n *,{3}\s*$', 'display: inline-block; border: 1px solid green;'
+        ), 'reminding_box', 175)  # 块
+
+        # 蓝框怀疑
+        md.inlinePatterns.register(ID(
+            r',-,(.+?),{2}', tag='div', property_='style', value='display: inline-block; border: 1px solid blue;'
+        ), 'reminding_in_line', 0)  # 行内
+        md.parser.blockprocessors.register(BoxBlock(
+            md.parser, r'^ *,-, *\n', r'\n *,-,\s*$', 'display: inline-block; border: 1px solid blue;'
         ), 'reminding_box', 175)  # 块
 
 
