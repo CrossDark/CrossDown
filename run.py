@@ -8,7 +8,10 @@ if __name__ == '__main__':
     start_time = time.perf_counter_ns()
     # 主程序
     with open('README.md', encoding='utf-8') as test:
-        cd, meta = main(test.read())
+        cd, meta = main(test.read(), variable={
+            'a': 'b',
+            '强调变量': '强调值'
+        })
         print(meta)
     with open('README.html', 'w', encoding='utf-8') as html:
         html.write(f"""<!DOCTYPE html>  

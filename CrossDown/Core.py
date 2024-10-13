@@ -310,6 +310,6 @@ class Code(Extension):
         # md.treeprocessors.register(CodeBlock(), 'code_block', 1)  # 渲染多行代码块
 
 
-def main(text: str) -> Tuple[str, Dict[str, List[str]]]:
-    md = Markdown(extensions=[Basic(), Box(), Anchor()] + list(Extensions.values()) + [Code({'a': 'b', '强调变量': '强调值'})])
+def main(text: str, variable: Dict) -> Tuple[str, Dict[str, List[str]]]:
+    md = Markdown(extensions=[Basic(), Box(), Anchor()] + list(Extensions.values()) + [Code(variable=variable)])
     return md.convert(text), md.Meta
