@@ -232,23 +232,23 @@ class CodeBlock(Treeprocessor):
             print(f'{code.text} | {code.tag}')
 
 
-class Basic(Extension):
+class Basic(Extension):  # TODO InlineProcessor 不能渲染一行中两个以上的元素(内置的扩展斜体和粗体的优先级好像是一样的)
     """
     渲染基本样式
     """
 
     def extendMarkdown(self, md):
         md.registerExtension(self)  # 注册扩展
-        md.inlinePatterns.register(Simple(r'~~(.*?)~~', tag='s'), 'strikethrough', 0)  # ~~删除线~~
-        md.inlinePatterns.register(Simple(r'~(.*?)~', tag='u'), 'underline', 0)  # ~下划线~
-        md.inlinePatterns.register(Simple(r'==(.*?)==', tag='mark'), 'high_light', 0)  # ==高亮==
+        md.inlinePatterns.register(Simple(r'~~(.*?)~~', tag='s'), 'strikethrough', 1)  # ~~删除线~~
+        md.inlinePatterns.register(Simple(r'~(.*?)~', tag='u'), 'underline', 2)  # ~下划线~
+        md.inlinePatterns.register(Simple(r'==(.*?)==', tag='mark'), 'high_light', 3)  # ==高亮==
         md.inlinePatterns.register(Nest(
-            r'\[(.*?)]\^\((.*?)\)', outer_tag='ruby', inner_tag='rt'), 'up', 0
+            r'\[(.*?)]\^\((.*?)\)', outer_tag='ruby', inner_tag='rt'), 'up', 4
         )  # [在文本的正上方添加一行小文本]^(主要用于标拼音)
         md.inlinePatterns.register(ID(
-            r'\[(.*?)]-\((.*?)\)', tag='span', property_='title'), 'hide', 0
+            r'\[(.*?)]-\((.*?)\)', tag='span', property_='title'), 'hide', 5
         )  # [在指定的文本里面隐藏一段文本]-(只有鼠标放在上面才会显示隐藏文本)
-        md.inlinePatterns.register(Emoji(r':(.+?):'), 'emoji', 0)  # 将emoji短代码转换为emoji字符
+        md.inlinePatterns.register(Emoji(r':(.+?):'), 'emoji', 6)  # 将emoji短代码转换为emoji字符
         md.parser.blockprocessors.register(Syllabus(md.parser), 'syllabus', 11)  # 渲染提纲
 
 
@@ -270,26 +270,26 @@ class Box(Extension):
         # 黄框提醒
         md.inlinePatterns.register(ID(
             r'!-!(.+?)!-!', tag='div', property_='style', value='display: inline-block; border: 1px solid yellow;'
-        ), 'reminding_in_line', 0)  # 行内
+        ), 'reminding_in_line', 1)  # 行内
         md.parser.blockprocessors.register(BoxBlock(
             md.parser, r'^ *!-! *\n', r'\n *!-!\s*$', 'display: inline-block; border: 1px solid yellow;'
-        ), 'reminding_box', 175)  # 块
+        ), 'reminding_box', 176)  # 块
 
         # 绿框安心
         md.inlinePatterns.register(ID(
             r',{3}(.+?),{3}', tag='div', property_='style', value='display: inline-block; border: 1px solid green;'
-        ), 'reminding_in_line', 0)  # 行内
+        ), 'reminding_in_line', 2)  # 行内
         md.parser.blockprocessors.register(BoxBlock(
             md.parser, r'^ *,{3} *\n', r'\n *,{3}\s*$', 'display: inline-block; border: 1px solid green;'
-        ), 'reminding_box', 175)  # 块
+        ), 'reminding_box', 177)  # 块
 
         # 蓝框怀疑
         md.inlinePatterns.register(ID(
             r',-,(.+?),{2}', tag='div', property_='style', value='display: inline-block; border: 1px solid blue;'
-        ), 'reminding_in_line', 0)  # 行内
+        ), 'reminding_in_line', 3)  # 行内
         md.parser.blockprocessors.register(BoxBlock(
             md.parser, r'^ *,-, *\n', r'\n *,-,\s*$', 'display: inline-block; border: 1px solid blue;'
-        ), 'reminding_box', 175)  # 块
+        ), 'reminding_box', 178)  # 块
 
 
 class Anchor(Extension):
@@ -304,7 +304,7 @@ class Code(Extension):
         super().__init__()
         self.variable = variable
 
-    def extendMarkdown(self, md: Markdown) -> None:
+    def extendMarkdown(self, md: Markdown):
         md.registerExtension(self)  # 注册扩展
         md.treeprocessors.register(CodeLine(variable=self.variable), 'code_line', 0)  # 渲染单行代码块
         # md.treeprocessors.register(CodeBlock(), 'code_block', 1)  # 渲染多行代码块
