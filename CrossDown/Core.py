@@ -1,4 +1,5 @@
-from markdown.extensions import Extension
+from markdown.extensions import Extension, extra, admonition, meta, sane_lists, toc
+
 from markdown.treeprocessors import Treeprocessor
 from markdown.inlinepatterns import Pattern as Pattern_
 from markdown.preprocessors import Preprocessor
@@ -11,16 +12,16 @@ import xml
 import emoji
 
 Extensions = {
-    "Extra": "markdown.extensions.extra",
+    "Extra": extra.ExtraExtension(),
     # "Smart Strong": "markdown.extensions.smart_strong",
-    "Admonition": "markdown.extensions.admonition",
+    "Admonition": admonition.AdmonitionExtension(),
     # "CodeHilite": "markdown.extensions.codehilite",
     # "HeaderId": "markdown.extensions.headerid",
-    "Meta-Data": "markdown.extensions.meta",
+    "Meta-Data": meta.MetaExtension(),
     # "New Line to Break": "markdown.extensions.nl2br",
-    "Sane Lists": "markdown.extensions.sane_lists",
+    "Sane Lists": sane_lists.SaneListExtension(),
     # "SmartyPants": "markdown.extensions.smarty",
-    "Table of Contents": "markdown.extensions.toc",
+    "Table of Contents": toc.TocExtension(),
     # "WikiLinks": "markdown.extensions.wikilinks",
 }
 
@@ -221,12 +222,10 @@ class CodeLine(Treeprocessor):
 
 class CodeBlock(Treeprocessor):
     def run(self, root):
-        for elem in root:  # 在所有段落中查找单行代码
-            print(elem.tag)
-            print(elem.text)
-            print('----------------------------------------------------------------------------------------')
-            for code in elem.findall('code'):  # 找到代码块
-                pass
+        for code in root.findall('p'):
+            # 在这里处理 <pre> 标签
+            # 例如，你可以添加属性或修改内容
+            print(f'{code.text} | {code.tag}')
 
 
 class Basic(Extension):
@@ -285,7 +284,7 @@ class Code(Extension):
     def extendMarkdown(self, md: Markdown) -> None:
         md.registerExtension(self)  # 注册扩展
         md.treeprocessors.register(CodeLine(), 'code_line', 0)  # 渲染单行代码块
-        md.treeprocessors.register(CodeBlock(), 'code_block', 0)  # 渲染多行代码块
+        md.treeprocessors.register(CodeBlock(), 'code_block', 1)  # 渲染多行代码块
 
 
 def main(text: str) -> Tuple[str, Dict[str, List[str]]]:
