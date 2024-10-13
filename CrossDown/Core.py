@@ -1,4 +1,4 @@
-from markdown.extensions import Extension, extra, admonition, meta, sane_lists, toc
+from markdown.extensions import Extension, extra, admonition, meta, sane_lists, toc, wikilinks
 
 from markdown.treeprocessors import Treeprocessor
 from markdown.inlinepatterns import Pattern as Pattern_
@@ -12,17 +12,12 @@ import xml
 import emoji
 
 Extensions = {
-    "Extra": extra.ExtraExtension(),
-    # "Smart Strong": "markdown.extensions.smart_strong",
+    "Extra": extra.ExtraExtension(),  # 基本扩展
     "Admonition": admonition.AdmonitionExtension(),
-    # "CodeHilite": "markdown.extensions.codehilite",
-    # "HeaderId": "markdown.extensions.headerid",
     "Meta-Data": meta.MetaExtension(),
-    # "New Line to Break": "markdown.extensions.nl2br",
     "Sane Lists": sane_lists.SaneListExtension(),
-    # "SmartyPants": "markdown.extensions.smarty",
     "Table of Contents": toc.TocExtension(),
-    # "WikiLinks": "markdown.extensions.wikilinks",
+    "WikiLinks": wikilinks.WikiLinkExtension(),
 }
 
 try:  # 检测当前平台是否支持扩展语法
