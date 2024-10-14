@@ -131,7 +131,8 @@ B:
 4.2.2 Python
 
 ```python
-print('CrossDown')
+def main():
+    print('CrossDown')
 ```
 
 4.2.3 Mermaid
@@ -142,6 +143,12 @@ graph TD
     B-->C{判断}  
     C-->|结果1|D[结束1]  
     C-->|结果2|E[结束2]
+```
+
+4.2.4 shell
+
+```shell
+cd ../..
 ```
 
 5 转义

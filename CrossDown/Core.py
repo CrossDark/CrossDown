@@ -283,7 +283,7 @@ class Box(Extension):
         # 红框警告
         md.inlinePatterns.register(ID(
             r'!{3}(.+?)!{3}', tag='div', property_='style', value='display: inline-block; border: 1px solid red;'
-        ), 'warning_in_line', 0)  # 行内
+        ), 'warning_in_line', 20)  # 行内
         md.parser.blockprocessors.register(BoxBlock(
             md.parser, r'^ *!{3} *\n', r'\n *!{3}\s*$', 'display: inline-block; border: 1px solid red;'
         ), 'warning_box', 175)  # 块
@@ -291,7 +291,7 @@ class Box(Extension):
         # 黄框提醒
         md.inlinePatterns.register(ID(
             r'!-!(.+?)!-!', tag='div', property_='style', value='display: inline-block; border: 1px solid yellow;'
-        ), 'reminding_in_line', 1)  # 行内
+        ), 'reminding_in_line', 21)  # 行内
         md.parser.blockprocessors.register(BoxBlock(
             md.parser, r'^ *!-! *\n', r'\n *!-!\s*$', 'display: inline-block; border: 1px solid yellow;'
         ), 'reminding_box', 176)  # 块
@@ -299,7 +299,7 @@ class Box(Extension):
         # 绿框安心
         md.inlinePatterns.register(ID(
             r',{3}(.+?),{3}', tag='div', property_='style', value='display: inline-block; border: 1px solid green;'
-        ), 'reminding_in_line', 2)  # 行内
+        ), 'reminding_in_line', 22)  # 行内
         md.parser.blockprocessors.register(BoxBlock(
             md.parser, r'^ *,{3} *\n', r'\n *,{3}\s*$', 'display: inline-block; border: 1px solid green;'
         ), 'reminding_box', 177)  # 块
@@ -307,7 +307,7 @@ class Box(Extension):
         # 蓝框怀疑
         md.inlinePatterns.register(ID(
             r',-,(.+?),{2}', tag='div', property_='style', value='display: inline-block; border: 1px solid blue;'
-        ), 'reminding_in_line', 3)  # 行内
+        ), 'reminding_in_line', 23)  # 行内
         md.parser.blockprocessors.register(BoxBlock(
             md.parser, r'^ *,-, *\n', r'\n *,-,\s*$', 'display: inline-block; border: 1px solid blue;'
         ), 'reminding_box', 178)  # 块
