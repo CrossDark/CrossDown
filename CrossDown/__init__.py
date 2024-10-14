@@ -28,9 +28,11 @@ HEAD = (
     '</script>',
 
     # Highlight.js
-    '<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/default.min.css">',
-    '<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>',
-    '<script>hljs.highlightAll();</script>',
+    # '<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/default.min.css">',
+    # '<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>',
+    # '<script>hljs.highlightAll();</script>',
+
+    '<link rel="stylesheet" href="../Static/styles.css">',
 
     '<style>',
     '   .block {',

@@ -1,4 +1,6 @@
-from markdown.extensions import Extension, extra, admonition, meta, sane_lists, toc, wikilinks
+from markdown.extensions import Extension, extra, admonition, meta, sane_lists, toc, wikilinks, codehilite
+
+from pygments.formatters import HtmlFormatter
 
 from markdown.treeprocessors import Treeprocessor
 from markdown.inlinepatterns import Pattern as Pattern_
@@ -11,21 +13,36 @@ import re
 import xml
 import emoji
 
-Extensions = {
-    "Extra": extra.ExtraExtension(fenced_code={'lang_prefix': ''}),  # 基本扩展
-    "Admonition": admonition.AdmonitionExtension(),  # 警告扩展
-    "Meta-Data": meta.MetaExtension(),  # 元数据
-    "Sane Lists": sane_lists.SaneListExtension(),  # 只能列表
-    "Table of Contents": toc.TocExtension(),  # 目录
-    "WikiLinks": wikilinks.WikiLinkExtension(),  # 内部链接
-}
-
 
 try:  # 检测当前平台是否支持扩展语法
     from .Extra import *
     EXTRA_ABLE = True
 except ModuleNotFoundError:  # 不支持扩展语法
     EXTRA_ABLE = False
+
+
+class HighlightHtmlFormatter(HtmlFormatter):
+    def __init__(self, lang_str='', **options):
+        super().__init__(**options)
+        # lang_str has the value {lang_prefix}{lang}
+        # specified by the CodeHilite's options
+        self.lang_str = lang_str.split('-')[-1]
+
+    def _wrap_code(self, source):
+        yield 0, f'<code class="{self.lang_str}">'
+        yield from source
+        yield 0, '</code>'
+
+
+Extensions = {
+    '基本扩展': extra.ExtraExtension(fenced_code={'lang_prefix': ''}),
+    '警告扩展': admonition.AdmonitionExtension(),
+    '元数据': meta.MetaExtension(),
+    '能列表': sane_lists.SaneListExtension(),
+    '目录': toc.TocExtension(),
+    '内部链接': wikilinks.WikiLinkExtension(),
+    '代码高亮': codehilite.CodeHiliteExtension(guess_lang=False, pygments_formatter=HighlightHtmlFormatter),
+}
 
 
 class Simple(InlineProcessor):

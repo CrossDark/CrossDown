@@ -12,9 +12,7 @@
     <script>
        mermaid.initialize({startOnLoad:true});
     </script>
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/default.min.css">
-    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
-    <script>hljs.highlightAll();</script>
+    <link rel="stylesheet" href="../Static/styles.css">
     <style>
        .block {
        background-color: grey; /* 灰色背景 */
@@ -187,25 +185,28 @@
     <p><span class="block">强调值</span></p>
     <h2 id="4.2">4.2 多行</h2>
     <h3 id="4.2.1">4.2.1 YAML</h3>
-    <pre><code class="yaml">A:
-        1. a
-        2. b
-        3. c
-    B:
-        - a
-        - b
-        - c
-    </code></pre>
+    <div class="codehilite"><pre><span></span><code class="yaml"><span class="nt">A</span><span class="p">:</span>
+    <span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">1. a</span>
+    <span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">2. b</span>
+    <span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">3. c</span>
+    <span class="nt">B</span><span class="p">:</span>
+    <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">a</span>
+    <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">b</span>
+    <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">c</span>
+    </code></pre></div>
+    
     <h3 id="4.2.2">4.2.2 Python</h3>
-    <pre><code class="python">print('CrossDown')
-    </code></pre>
+    <div class="codehilite"><pre><span></span><code class="python"><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;CrossDown&#39;</span><span class="p">)</span>
+    </code></pre></div>
+    
     <h3 id="4.2.3">4.2.3 Mermaid</h3>
-    <pre><code class="mermaid">graph TD  
+    <div class="codehilite"><pre><span></span><code class="mermaid">graph TD  
         A[开始]--&gt;B[流程]  
         B--&gt;C{判断}  
         C--&gt;|结果1|D[结束1]  
         C--&gt;|结果2|E[结束2]
-    </code></pre>
+    </code></pre></div>
+    
     <h1 id="5">5 转义</h1>
     <p>\ </p>
     <p>\a </p>
