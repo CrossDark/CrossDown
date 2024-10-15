@@ -6,7 +6,6 @@ __all__ = [
     'main',  # 主函数
     'indent',  # 添加空格
     'HEAD',  #
-    'BODY',  #
 ]
 __version__ = '0.11.2'
 __author__ = 'CrossDark'
@@ -15,28 +14,22 @@ __source__ = 'https://crossdark.net/'
 __license__ = """MIT"""
 
 
-HEAD = (
-    '<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>',  # 渲染latex
+HEAD = {
+    ('latex', 'js'): '<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>',
 
     # mermaid
-    '<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>',
-    '<script>',
-    '   mermaid.initialize({startOnLoad:true});',
-    '</script>',
+    ('mermaid', 'js'): '<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>',
+    ('mermaid', 'init'): '<script>mermaid.initialize({startOnLoad:true})</script>',
 
-    '<link rel="stylesheet" href="../Static/styles.css">',  # 代码高亮css
+    ('code-highlight', 'css'): '<link rel="stylesheet" href="../Static/styles.css">',  # 代码高亮css
 
-    '<style>',  # 强调css
-    '   .block {',
-    '   background-color: grey; /* 灰色背景 */',
-    '   color: white; /* 白色文字 */',
-    '}',
-    '</style>'
-)
-
-BODY = (
-    '',
-)
+    ('block', 'css'): """<style>
+    .block {
+        background-color: grey; /* 灰色背景 */
+        color: white; /* 白色文字 */
+    }
+    </style>"""
+}
 
 
 def indent(input_: Union[str, List, Tuple], indent_spaces: int = 4) -> str:
