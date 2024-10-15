@@ -6,7 +6,6 @@ __all__ = [
     'main',  # 主函数
     'indent',  # 添加空格
     'HEAD',  #
-    'BODY',  #
 ]
 __version__ = '0.11.2'
 __author__ = 'CrossDark'
@@ -15,36 +14,22 @@ __source__ = 'https://crossdark.net/'
 __license__ = """MIT"""
 
 
-HEAD = (
-    '<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>',
-    '<link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css" rel="stylesheet" />',
-    '<script src="https://cdn.jsdelivr.net/npm/prismjs/prism.js"></script>',
-    '<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-yaml.min.js"></script>',
+HEAD = {
+    ('latex', 'js'): '<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>',
 
     # mermaid
-    '<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>',
-    '<script>',
-    '   mermaid.initialize({startOnLoad:true});',
-    '</script>',
+    ('mermaid', 'js'): '<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>',
+    ('mermaid', 'init'): '<script>mermaid.initialize({startOnLoad:true})</script>',
 
-    # Highlight.js
-    # '<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/default.min.css">',
-    # '<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>',
-    # '<script>hljs.highlightAll();</script>',
+    ('code-highlight', 'css'): '<link rel="stylesheet" href="../Static/styles.css">',  # 代码高亮css
 
-    '<link rel="stylesheet" href="../Static/styles.css">',
-
-    '<style>',
-    '   .block {',
-    '   background-color: grey; /* 灰色背景 */',
-    '   color: white; /* 白色文字 */',
-    '}',
-    '</style>'
-)
-
-BODY = (
-    '',
-)
+    ('block', 'css'): """<style>
+    .block {
+        background-color: grey; /* 灰色背景 */
+        color: white; /* 白色文字 */
+    }
+    </style>"""
+}
 
 
 def indent(input_: Union[str, List, Tuple], indent_spaces: int = 4) -> str:
