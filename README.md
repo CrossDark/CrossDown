@@ -151,6 +151,35 @@ graph TD
 cd ../..
 ```
 
+4.2.5 latex
+
+```latex
+\documentclass{article}  
+\title{我的第一个LaTeX文档}  
+\author{作者姓名}  
+\date{\today}  
+  
+\begin{document}  
+  
+\maketitle  
+  
+这是我的第一个LaTeX文档。它包含了一个标题、作者信息、日期和一个简单的正文部分。  
+  
+\section{引言}  
+  
+这是引言部分，可以简要介绍文档的主题和目的。  
+  
+\section{正文}  
+  
+这是正文部分，可以详细阐述你的观点或研究内容。你可以根据需要添加更多的章节和子章节。  
+  
+\subsection{子章节示例}  
+  
+这是一个子章节的示例，用于展示如何在LaTeX文档中创建层次结构。  
+  
+\end{document}
+```
+
 5 转义
 
 \\ 

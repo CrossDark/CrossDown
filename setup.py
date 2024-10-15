@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="CrossDown",
-    version="1.0.1",
+    version="2.0.0",
     author="CrossDark",
     author_email="liuhanbo333@icloud.com",
     description="CrossDark's MarkDown",
@@ -18,6 +18,9 @@ setuptools.setup(
         'matplotlib',
         'numpy',
     ],
+    package_data={
+        '': ['static/*'],  # 这将包含static文件夹下的所有子文件夹和文件
+    },
     classifiers=[
         'Programming Language :: Python :: 3.11',
         'Programming Language :: Python :: 3.12',
