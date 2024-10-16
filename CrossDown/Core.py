@@ -10,12 +10,13 @@ from markdown.blockprocessors import BlockProcessor
 from markdown import Markdown
 from typing import *
 import re
+import lxml
 import xml
 import emoji
 
-
 try:  # 检测当前平台是否支持扩展语法
     from .Extra import *
+
     EXTRA_ABLE = True
 except ModuleNotFoundError:  # 不支持扩展语法
     EXTRA_ABLE = False
@@ -206,43 +207,43 @@ class CodeLine(Treeprocessor):
         self.variable = variable
 
     def run(self, root):
-        for elem in root.iter('p'):  # 在所有段落中查找单行代码
-            if elem.findall('code'):  # 找到单行代码
-                for code in elem:
-                    if re.match(r'\$[^$]*\$', code.text):  # 渲染Latex
-                        if isinstance(elem.text, str):  # 这个段落还有其它内容
+        for code in root.findall('.//code'):  # 在所有段落中查找单行代码
+            if re.match(r'\$[^$]*\$', code.text):  # 渲染Latex
+                code.text = fr'\({code.text[1:-1]}\)'
+                code.tag = 'p'
+                """if isinstance(elem.text, str):  # 这个段落还有其它内容
                             elem.text += fr'\({code.text[1:-1]}\){code.tail}'  # 插入latex
                         else:
                             elem.text = fr'\({code.text[1:-1]}\)'  # latex是段落中唯一的内容
-                        elem.remove(code)
-                    elif re.match(r'¥[^$]*¥', code.text):  # 是数学函数(单行)
-                        if EXTRA_ABLE:  # 支持扩展语法
-                            expression, range_ = re.findall(r'¥([^$]*)¥(€[^$]*€)?', code.text)[0]  # 分离表达式与范围(如果有)
-                            x_r = (-10, 10)
-                            y_r = (-20, 20)
-                            if range_ != '':  # 定义了范围
-                                ranges = range_[1:-1].split('|')
-                                if len(ranges) in (1, 2):  # 定义的范围正确
-                                    x_r = tuple(int(i) for i in ranges[0].split(','))
-                                    if len(ranges) == 2:  # 定义了y范围
-                                        y_r = tuple(int(i) for i in ranges[1].split(','))
-                            code.tag = 'img'
-                            code.set('src', f"""data:image/png;base64,{(function_drawing(
-                                function=lambda x: eval(expression.split('=')[1]), x_range=x_r, y_range=y_r
-                            ))}""")  # 绘制函数图像
-                            code.set('alt', 'Base64 函数图片')
-                        else:  # 不支持扩展语法
-                            code.tag = 'span'
-                            code.set('class', 'block')
-                            code.text = '该平台不支持扩展语法'
-                    elif re.match(r'\{[^$]*}', code.text):  # 是强调
-                        code.tag = 'span'
-                        code.set('class', 'block')
-                        key = code.text[1:-1]  # 去掉两边的{}
-                        if key in self.variable:
-                            code.text = self.variable[key]
-                        else:
-                            code.text = key
+                        elem.remove(code)"""
+            elif re.match(r'¥[^$]*¥', code.text):  # 是数学函数(单行)
+                if EXTRA_ABLE:  # 支持扩展语法
+                    expression, range_ = re.findall(r'¥([^$]*)¥(€[^$]*€)?', code.text)[0]  # 分离表达式与范围(如果有)
+                    x_r = (-10, 10)
+                    y_r = (-20, 20)
+                    if range_ != '':  # 定义了范围
+                        ranges = range_[1:-1].split('|')
+                        if len(ranges) in (1, 2):  # 定义的范围正确
+                            x_r = tuple(int(i) for i in ranges[0].split(','))
+                            if len(ranges) == 2:  # 定义了y范围
+                                y_r = tuple(int(i) for i in ranges[1].split(','))
+                    code.tag = 'img'
+                    code.set('src', f"""data:image/png;base64,{(function_drawing(
+                        function=lambda x: eval(expression.split('=')[1]), x_range=x_r, y_range=y_r
+                    ))}""")  # 绘制函数图像
+                    code.set('alt', 'Base64 函数图片')
+                else:  # 不支持扩展语法
+                    code.tag = 'span'
+                    code.set('class', 'block')
+                    code.text = '该平台不支持扩展语法'
+            elif re.match(r'\{[^$]*}', code.text):  # 是强调
+                code.tag = 'span'
+                code.set('class', 'block')
+                key = code.text[1:-1]  # 去掉两边的{}
+                if key in self.variable:
+                    code.text = self.variable[key]
+                else:
+                    code.text = key
 
 
 class CodeBlock(Treeprocessor):

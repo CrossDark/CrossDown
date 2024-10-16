@@ -252,6 +252,30 @@ cd ../..
 - C
 - D
 
+9.3 释义列表
+
+A
+:   1. a  
+    2. b  
+    3. c  
+  
+B
+:   - a  
+    - b  
+    - c
+
+`{强调变量}`
+:   - a
+    - b
+    - c
+
+Apple
+:   Pomaceous fruit of plants of the genus Malus in
+    the family Rosaceae.
+
+Orange
+:   The fruit of an evergreen tree of the genus Citrus.
+
 10 表格
 
 | 表头1  | 表头2  | 表头3  |  
