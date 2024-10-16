@@ -24,6 +24,7 @@ class HighlightHtmlFormatter(HtmlFormatter):
     """
     用于给code highlight扩展添加语言类型
     """
+
     def __init__(self, lang_str='', **options):
         """
         初始化
@@ -209,6 +210,7 @@ class CodeLine(Treeprocessor):
     """
     渲染单行代码
     """
+
     def __init__(self, variable: Dict):
         super().__init__()
         self.variable = variable
@@ -334,6 +336,8 @@ class Code(Extension):
         # md.treeprocessors.register(CodeBlock(), 'code_block', 1)  # 渲染多行代码块
 
 
-def main(text: str, variable: Dict) -> Tuple[str, Dict[str, List[str]]]:
+def main(text: str, variable: Union[Dict[str, str], None] = None) -> Tuple[str, Dict[str, List[str]]]:
+    if variable is None:
+        variable = {}
     md = Markdown(extensions=[Basic(), Box(), Anchor()] + list(Extensions.values()) + [Code(variable=variable)])
     return md.convert(text), md.Meta
