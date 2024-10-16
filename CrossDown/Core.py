@@ -3,8 +3,6 @@ from markdown.extensions import Extension, extra, admonition, meta, sane_lists, 
 from pygments.formatters import HtmlFormatter
 
 from markdown.treeprocessors import Treeprocessor
-from markdown.inlinepatterns import Pattern as Pattern_
-from markdown.preprocessors import Preprocessor
 from markdown.inlinepatterns import InlineProcessor
 from markdown.blockprocessors import BlockProcessor
 from markdown import Markdown
@@ -23,10 +21,16 @@ except ModuleNotFoundError:  # 不支持扩展语法
 
 
 class HighlightHtmlFormatter(HtmlFormatter):
+    """
+    用于给code highlight扩展添加语言类型
+    """
     def __init__(self, lang_str='', **options):
+        """
+        初始化
+        :param lang_str: 数据格式 {lang_prefix}{lang}
+        :param options:
+        """
         super().__init__(**options)
-        # lang_str has the value {lang_prefix}{lang}
-        # specified by the CodeHilite's options
         self.lang_str = lang_str.split('-')[-1]
 
     def _wrap_code(self, source):
@@ -120,8 +124,8 @@ class ID(InlineProcessor):
 
 class Emoji(InlineProcessor):
     """
-        需要对HTML标签设置ID实现的样式
-        """
+    需要对HTML标签设置ID实现的样式
+    """
 
     def __init__(self, pattern: str):
         """
@@ -139,7 +143,7 @@ class Syllabus(BlockProcessor):
     syllabus_re = r'(\d+(\.\d+)*)\s+(.*)'
 
     def test(self, parent, block):
-        # 检查当前块是否匹配我们的正则表达式
+        # 检查当前块是否匹配正则表达式
         return re.match(self.syllabus_re, block)
 
     def run(self, parent, blocks):
@@ -202,6 +206,9 @@ class LinkLine(InlineProcessor):
 
 
 class CodeLine(Treeprocessor):
+    """
+    渲染单行代码
+    """
     def __init__(self, variable: Dict):
         super().__init__()
         self.variable = variable
@@ -211,11 +218,6 @@ class CodeLine(Treeprocessor):
             if re.match(r'\$[^$]*\$', code.text):  # 渲染Latex
                 code.text = fr'\({code.text[1:-1]}\)'
                 code.tag = 'p'
-                """if isinstance(elem.text, str):  # 这个段落还有其它内容
-                            elem.text += fr'\({code.text[1:-1]}\){code.tail}'  # 插入latex
-                        else:
-                            elem.text = fr'\({code.text[1:-1]}\)'  # latex是段落中唯一的内容
-                        elem.remove(code)"""
             elif re.match(r'¥[^$]*¥', code.text):  # 是数学函数(单行)
                 if EXTRA_ABLE:  # 支持扩展语法
                     expression, range_ = re.findall(r'¥([^$]*)¥(€[^$]*€)?', code.text)[0]  # 分离表达式与范围(如果有)
@@ -248,7 +250,7 @@ class CodeLine(Treeprocessor):
 
 class CodeBlock(Treeprocessor):
     def run(self, root):
-        for code in root.findall('p'):
+        for code in root.findall('pre'):
             # 在这里处理 <pre> 标签
             # 例如，你可以添加属性或修改内容
             print(f'{code.text} | {code.tag}')
