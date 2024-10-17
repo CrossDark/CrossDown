@@ -12,6 +12,8 @@ import lxml
 import xml
 import emoji
 
+from .Define import Variable
+
 try:  # 检测当前平台是否支持扩展语法
     from .Extra import *
 
@@ -211,7 +213,7 @@ class CodeLine(Treeprocessor):
     渲染单行代码
     """
 
-    def __init__(self, variable: Dict):
+    def __init__(self, variable: Variable):
         super().__init__()
         self.variable = variable
 
@@ -326,7 +328,7 @@ class Anchor(Extension):
 
 
 class Code(Extension):
-    def __init__(self, variable: Dict):
+    def __init__(self, variable: Variable):
         super().__init__()
         self.variable = variable
 
@@ -336,7 +338,7 @@ class Code(Extension):
         # md.treeprocessors.register(CodeBlock(), 'code_block', 1)  # 渲染多行代码块
 
 
-def main(text: str, variable: Union[Dict[str, str], None] = None) -> Tuple[str, Dict[str, List[str]]]:
+def main(text: str, variable: Variable = None) -> Tuple[str, Dict[str, List[str]]]:
     if variable is None:
         variable = {}
     md = Markdown(extensions=[Basic(), Box(), Anchor()] + list(Extensions.values()) + [Code(variable=variable)])

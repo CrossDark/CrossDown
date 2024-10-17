@@ -22,13 +22,6 @@ HEAD = {
     ('mermaid', 'init'): '<script>mermaid.initialize({startOnLoad:true})</script>',
 
     ('code-highlight', 'css'): '<link rel="stylesheet" href="../Static/styles.css">',  # 代码高亮css
-
-    ('block', 'css'): """<style>
-    .block {
-        background-color: grey; /* 灰色背景 */
-        color: white; /* 白色文字 */
-    }
-    </style>"""
 }
 
 
@@ -42,4 +35,5 @@ def indent(input_: Union[str, List, Tuple], indent_spaces: int = 4) -> str:
     # 使用字符串的splitlines()方法分割原始字符串为行列表,如果是可迭代对象则直接遍历
     # 遍历行列表，给每行前面加上相应的缩进，并重新组合成字符串
     return "\n".join(
-        f"{' ' * indent_spaces}{line}" for line in (lambda x: x.splitlines() if isinstance(x, str) else x)(input_))
+        f"{' ' * indent_spaces}{line}" for line in (lambda x: x.splitlines() if isinstance(x, str) else x)(input_)
+    )
