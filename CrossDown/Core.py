@@ -36,7 +36,7 @@ class HighlightHtmlFormatter(HtmlFormatter):
         super().__init__(**options)
         self.lang_str = lang_str.split('-')[-1]
 
-    def _wrap_code(self, source):
+    def _wrap_code(self, source: str):
         yield 0, f'<code class="{self.lang_str}">'
         yield from source
         yield 0, '</code>'
@@ -329,7 +329,13 @@ class Code(Extension):
         md.treeprocessors.register(CodeLine(variable=self.variable), 'code_line', 0)  # 渲染单行代码块
 
 
-def main(text: str, variable: Variable = None) -> Tuple[str, Dict[str, List[str]]]:
+def main(text: str, variable: Variable = None) -> Tuple[str, Dict[str, Variable]]:
+    """
+    主函数
+    :param text: 输入文本
+    :param variable: 变量字典
+    :return: 返回html与元数据字典
+    """
     if variable is None:
         variable = {}
     md = Markdown(extensions=[Basic(), Box(), Anchor()] + list(Extensions.values()) + [Code(variable=variable)])
