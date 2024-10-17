@@ -252,15 +252,7 @@ class CodeLine(Treeprocessor):
                     code.text = key
 
 
-class CodeBlock(Treeprocessor):
-    def run(self, root):
-        for code in root.findall('pre'):
-            # 在这里处理 <pre> 标签
-            # 例如，你可以添加属性或修改内容
-            print(f'{code.text} | {code.tag}')
-
-
-class Basic(Extension):  # TODO InlineProcessor 不能渲染一行中两个以上的元素(内置的扩展斜体和粗体的优先级好像是一样的)
+class Basic(Extension):
     """
     渲染基本样式
     """
@@ -290,34 +282,34 @@ class Box(Extension):
         # 红框警告
         md.inlinePatterns.register(ID(
             r'!{3}(.+?)!{3}', tag='div', property_='style', value='display: inline-block; border: 1px solid red;'
-        ), 'warning_in_line', 20)  # 行内
+        ), 'warning_in_line', 190)  # 行内
         md.parser.blockprocessors.register(BoxBlock(
             md.parser, r'^ *!{3} *\n', r'\n *!{3}\s*$', 'display: inline-block; border: 1px solid red;'
-        ), 'warning_box', 175)  # 块
+        ), 'warning_box', 191)  # 块
 
         # 黄框提醒
         md.inlinePatterns.register(ID(
             r'!-!(.+?)!-!', tag='div', property_='style', value='display: inline-block; border: 1px solid yellow;'
-        ), 'reminding_in_line', 21)  # 行内
+        ), 'reminding_in_line', 192)  # 行内
         md.parser.blockprocessors.register(BoxBlock(
             md.parser, r'^ *!-! *\n', r'\n *!-!\s*$', 'display: inline-block; border: 1px solid yellow;'
-        ), 'reminding_box', 176)  # 块
+        ), 'reminding_box', 193)  # 块
 
         # 绿框安心
         md.inlinePatterns.register(ID(
             r',{3}(.+?),{3}', tag='div', property_='style', value='display: inline-block; border: 1px solid green;'
-        ), 'reminding_in_line', 22)  # 行内
+        ), 'reminding_in_line', 194)  # 行内
         md.parser.blockprocessors.register(BoxBlock(
             md.parser, r'^ *,{3} *\n', r'\n *,{3}\s*$', 'display: inline-block; border: 1px solid green;'
-        ), 'reminding_box', 177)  # 块
+        ), 'reminding_box', 195)  # 块
 
         # 蓝框怀疑
         md.inlinePatterns.register(ID(
             r',-,(.+?),{2}', tag='div', property_='style', value='display: inline-block; border: 1px solid blue;'
-        ), 'reminding_in_line', 23)  # 行内
+        ), 'reminding_in_line', 196)  # 行内
         md.parser.blockprocessors.register(BoxBlock(
             md.parser, r'^ *,-, *\n', r'\n *,-,\s*$', 'display: inline-block; border: 1px solid blue;'
-        ), 'reminding_box', 178)  # 块
+        ), 'reminding_box', 197)  # 块
 
 
 class Anchor(Extension):
@@ -335,7 +327,6 @@ class Code(Extension):
     def extendMarkdown(self, md: Markdown):
         md.registerExtension(self)  # 注册扩展
         md.treeprocessors.register(CodeLine(variable=self.variable), 'code_line', 0)  # 渲染单行代码块
-        # md.treeprocessors.register(CodeBlock(), 'code_block', 1)  # 渲染多行代码块
 
 
 def main(text: str, variable: Variable = None) -> Tuple[str, Dict[str, List[str]]]:
