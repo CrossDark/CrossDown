@@ -8,6 +8,9 @@ from markdown.treeprocessors import Treeprocessor
 from markdown.inlinepatterns import InlineProcessor
 from markdown.blockprocessors import BlockProcessor
 from markdown.preprocessors import Preprocessor
+
+from markdown.blockparser import BlockParser
+
 from markdown import Markdown
 from typing import *
 import re
@@ -215,23 +218,35 @@ class Syllabus(BlockProcessor):
 
 
 class BoxBlock(BlockProcessor):
-    def __init__(self, parser, re_start, re_end, style):
+    def __init__(self, parser: BlockParser, re_start, re_end, style):
         """
         初始化
-        :param parser:
-        :param re_start:
-        :param re_end:
-        :param style:
+        :param parser: 块处理器
+        :param re_start: 块的起始re表达式
+        :param re_end: 块的终止re表达式
+        :param style: 块的风格
         """
         super().__init__(parser)
         self.re_start = re_start  # start line, e.g., `   !!!!
         self.re_end = re_end  # last non-blank line, e.g, '!!!\n  \n\n'
         self.style = style
 
-    def test(self, parent, block):
+    def test(self, parent: xml.etree.ElementTree.Element, block: str) -> Match[str] | None | bool:
+        """
+        检查当前块是否匹配正则表达式
+        :param parent: 当前块的Element对象
+        :param block: 当前块的内容
+        :return: 匹配成功与否
+        """
         return re.match(self.re_start, block)
 
-    def run(self, parent, blocks):
+    def run(self, parent: xml.etree.ElementTree.Element, blocks: List[str]) -> bool | None:
+        """
+        对匹配到的块进行处理
+        :param parent: 当前块的Element对象
+        :param blocks: 包含文本中剩余块的列表
+        :return: 匹配成功与否
+        """
         original_block = blocks[0]
         blocks[0] = re.sub(self.re_start, '', blocks[0])
 
