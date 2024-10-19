@@ -1,3 +1,5 @@
+from re import Match
+
 from markdown.extensions import Extension, extra, admonition, meta, sane_lists, toc, wikilinks, codehilite
 
 from pygments.formatters import HtmlFormatter
@@ -5,6 +7,7 @@ from pygments.formatters import HtmlFormatter
 from markdown.treeprocessors import Treeprocessor
 from markdown.inlinepatterns import InlineProcessor
 from markdown.blockprocessors import BlockProcessor
+from markdown.preprocessors import Preprocessor
 from markdown import Markdown
 from typing import *
 import re
@@ -53,6 +56,24 @@ Extensions = {
 }
 
 
+class PreProcess(Preprocessor):
+    """预处理"""
+    def __init__(self, variable: Variable):
+        super().__init__()
+        self.variable = variable
+
+    def run(self, lines: List[str]) -> List[str]:
+        new_lines = []
+        for line in lines:  # 逐行遍历
+            for value in re.findall(r'\{\[(.+?)]}', line):  # 找到变量
+                if value in self.variable:  # 变量已定义
+                    line = re.sub(fr'\{{\[{value}]}}', self.variable[value], line)  # 替换变量为值
+                else:
+                    line = re.sub(fr'\{{\[{value}]}}', value, line)  # 不替换变量
+            new_lines.append(line)
+        return new_lines
+
+
 class Simple(InlineProcessor):
     """
     可通过简单的正则表达式和HTML标签实现的样式
@@ -67,11 +88,17 @@ class Simple(InlineProcessor):
         super().__init__(pattern)
         self.tag = tag
 
-    def handleMatch(self, match, match_line):
+    def handleMatch(self, m: Match[str], data: str) -> Tuple[xml.etree.ElementTree.Element, int, int] | Tuple[None, None, None]:
+        """
+        处理匹配
+        :param m: re模块的匹配对象
+        :param data: 被匹配的原始文本
+        :return: 标签 匹配开始 匹配结束
+        """
         tag = xml.etree.ElementTree.Element(self.tag)  # 创建标签
-        tag.text = match.group(1)  # 获取匹配到的文本并设置为标签的内容
+        tag.text = m.group(1)  # 获取匹配到的文本并设置为标签的内容
 
-        return tag, match.start(), match.end()
+        return tag, m.start(), m.end()
 
 
 class Nest(InlineProcessor):
@@ -90,13 +117,19 @@ class Nest(InlineProcessor):
         self.outer_tag = outer_tag
         self.inner_tag = inner_tag
 
-    def handleMatch(self, match, match_line):
+    def handleMatch(self, m: Match[str], data: str) -> Tuple[xml.etree.ElementTree.Element, int, int] | Tuple[None, None, None]:
+        """
+        处理匹配
+        :param m: re模块的匹配对象
+        :param data: 被匹配的原始文本
+        :return: 标签 匹配开始 匹配结束
+        """
         outer_tag = xml.etree.ElementTree.Element(self.outer_tag)  # 创建外层标签
         inner_tag = xml.etree.ElementTree.SubElement(outer_tag, self.inner_tag)  # 创建内层标签
-        outer_tag.text = match.group(1)  # 设置外层标签文本
-        inner_tag.text = match.group(2)  # 设置内层标签文本
+        outer_tag.text = m.group(1)  # 设置外层标签文本
+        inner_tag.text = m.group(2)  # 设置内层标签文本
 
-        return outer_tag, match.start(), match.end()
+        return outer_tag, m.start(), m.end()
 
 
 class ID(InlineProcessor):
@@ -117,12 +150,18 @@ class ID(InlineProcessor):
         self.property = property_
         self.value = value
 
-    def handleMatch(self, match, match_line):
+    def handleMatch(self, m: Match[str], data: str) -> Tuple[xml.etree.ElementTree.Element, int, int] | Tuple[None, None, None]:
+        """
+        处理匹配
+        :param m: re模块的匹配对象
+        :param data: 被匹配的原始文本
+        :return: 标签 匹配开始 匹配结束
+        """
         tag = xml.etree.ElementTree.Element(self.tag)  # 创建标签
-        tag.text = match.group(1)  # 设置标签内容
-        tag.set(self.property, match.group(2) if self.value is None else self.value)  # 设置标签属性,属性的值默认为第二个匹配组
+        tag.text = m.group(1)  # 设置标签内容
+        tag.set(self.property, m.group(2) if self.value is None else self.value)  # 设置标签属性,属性的值默认为第二个匹配组
 
-        return tag, match.start(), match.end()
+        return tag, m.start(), m.end()
 
 
 class Emoji(InlineProcessor):
@@ -137,19 +176,36 @@ class Emoji(InlineProcessor):
         """
         super().__init__(pattern)
 
-    def handleMatch(self, match, match_line):
-        return emoji.emojize(match.group(0)), match.start(), match.end()
+    def handleMatch(self, m: Match[str], data: str) -> Tuple[xml.etree.ElementTree.Element, int, int] | Tuple[None, None, None]:
+        """
+        处理匹配
+        :param m: re模块的匹配对象
+        :param data: 被匹配的原始文本
+        :return: 标签 匹配开始 匹配结束
+        """
+        return emoji.emojize(m.group(0)), m.start(), m.end()
 
 
 class Syllabus(BlockProcessor):
     # 定义提纲的正则表达式
     syllabus_re = r'(\d+(\.\d+)*)\s+(.*)'
 
-    def test(self, parent, block):
-        # 检查当前块是否匹配正则表达式
+    def test(self, parent: xml.etree.ElementTree.Element, block: str) -> Match[str] | None | bool:
+        """
+        检查当前块是否匹配正则表达式
+        :param parent: 当前块的Element对象
+        :param block: 当前块的内容
+        :return: 匹配成功与否
+        """
         return re.match(self.syllabus_re, block)
 
-    def run(self, parent, blocks):
+    def run(self, parent: xml.etree.ElementTree.Element, blocks: List[str]) -> bool | None:
+        """
+        对匹配到的块进行处理
+        :param parent: 当前块的Element对象
+        :param blocks: 包含文本中剩余块的列表
+        :return: 匹配成功与否
+        """
         syllabus = re.match(self.syllabus_re, blocks[0])  # 匹配提纲的号和内容
         header = xml.etree.ElementTree.SubElement(parent, f'h{len(syllabus.group(1).split("."))}')  # 按照提纲号等级创建标题
         header.set('id', syllabus.group(1))  # 设置提纲ID
@@ -160,6 +216,13 @@ class Syllabus(BlockProcessor):
 
 class BoxBlock(BlockProcessor):
     def __init__(self, parser, re_start, re_end, style):
+        """
+        初始化
+        :param parser:
+        :param re_start:
+        :param re_end:
+        :param style:
+        """
         super().__init__(parser)
         self.re_start = re_start  # start line, e.g., `   !!!!
         self.re_end = re_end  # last non-blank line, e.g, '!!!\n  \n\n'
@@ -252,12 +315,23 @@ class CodeLine(Treeprocessor):
                     code.text = key
 
 
+class Pre(Extension):
+    """预处理"""
+    def __init__(self, variable: Variable):
+        super().__init__()
+        self.variable = variable
+
+    def extendMarkdown(self, md: Markdown):
+        md.registerExtension(self)  # 注册扩展
+        md.preprocessors.register(PreProcess(self.variable), 'pre_process', 0)
+
+
 class Basic(Extension):
     """
     渲染基本样式
     """
 
-    def extendMarkdown(self, md):
+    def extendMarkdown(self, md: Markdown):
         md.registerExtension(self)  # 注册扩展
         md.inlinePatterns.register(Simple(r'~~(.*?)~~', tag='s'), 'strikethrough', 176)  # ~~删除线~~
         md.inlinePatterns.register(Simple(r'~(.*?)~', tag='u'), 'underline', 177)  # ~下划线~
@@ -289,7 +363,7 @@ class Box(Extension):
 
         # 黄框提醒
         md.inlinePatterns.register(ID(
-            r'!-!(.+?)!-!', tag='div', property_='style', value='display: inline-block; border: 1px solid yellow;'
+            r'!{2}(.+?)!{2}', tag='div', property_='style', value='display: inline-block; border: 1px solid yellow;'
         ), 'reminding_in_line', 192)  # 行内
         md.parser.blockprocessors.register(BoxBlock(
             md.parser, r'^ *!-! *\n', r'\n *!-!\s*$', 'display: inline-block; border: 1px solid yellow;'
@@ -338,5 +412,5 @@ def main(text: str, variable: Variable = None) -> Tuple[str, Dict[str, Variable]
     """
     if variable is None:
         variable = {}
-    md = Markdown(extensions=[Basic(), Box(), Anchor()] + list(Extensions.values()) + [Code(variable=variable)])
+    md = Markdown(extensions=[Pre(variable=variable), Basic(), Box(), Anchor()] + list(Extensions.values()) + [Code(variable=variable)])
     return md.convert(text), md.Meta
