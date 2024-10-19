@@ -269,21 +269,33 @@ class BoxBlock(BlockProcessor):
 
 
 class _Anchor(InlineProcessor):
-    def handleMatch(self, match, match_line):
+    def handleMatch(self, m: Match[str], data: str) -> Tuple[xml.etree.ElementTree.Element, int, int] | Tuple[None, None, None]:
+        """
+        处理匹配
+        :param m: re模块的匹配对象
+        :param data: 被匹配的原始文本
+        :return: 标签 匹配开始 匹配结束
+        """
         tag = xml.etree.ElementTree.Element('span')  # 创建标签
-        tag.text = match.group(1)
-        tag.set('id', match.group(1))  # 设置id
+        tag.text = m.group(1)
+        tag.set('id', m.group(1))  # 设置id
 
-        return tag, match.start(), match.end()
+        return tag, m.start(), m.end()
 
 
 class LinkLine(InlineProcessor):
-    def handleMatch(self, match, match_line):
+    def handleMatch(self, m: Match[str], data: str) -> Tuple[xml.etree.ElementTree.Element, int, int] | Tuple[None, None, None]:
+        """
+        处理匹配
+        :param m: re模块的匹配对象
+        :param data: 被匹配的原始文本
+        :return: 标签 匹配开始 匹配结束
+        """
         tag = xml.etree.ElementTree.Element('a')  # 创建标签
-        tag.set('href', '#' + match.group(1))  # 设置id
-        tag.text = match.group(1)
+        tag.set('href', '#' + m.group(1))  # 设置id
+        tag.text = m.group(1)
 
-        return tag, match.start(), match.end()
+        return tag, m.start(), m.end()
 
 
 class CodeLine(Treeprocessor):
