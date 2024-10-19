@@ -304,10 +304,18 @@ class CodeLine(Treeprocessor):
     """
 
     def __init__(self, variable: Variable):
+        """
+        初始化
+        :param variable: 变量字典
+        """
         super().__init__()
         self.variable = variable
 
-    def run(self, root):
+    def run(self, root: xml.etree.ElementTree.Element):
+        """
+        渲染
+        :param root: Element树
+        """
         for code in root.findall('.//code'):  # 在所有段落中查找单行代码
             if re.match(r'\$[^$]*\$', code.text):  # 渲染Latex
                 code.text = fr'\({code.text[1:-1]}\)'
@@ -345,10 +353,18 @@ class CodeLine(Treeprocessor):
 class Pre(Extension):
     """预处理"""
     def __init__(self, variable: Variable):
+        """
+        初始化
+        :param variable: 变量字典
+        """
         super().__init__()
         self.variable = variable
 
     def extendMarkdown(self, md: Markdown):
+        """
+        添加扩展
+        :param md: 转换器
+        """
         md.registerExtension(self)  # 注册扩展
         md.preprocessors.register(PreProcess(self.variable), 'pre_process', 0)
 
@@ -359,6 +375,10 @@ class Basic(Extension):
     """
 
     def extendMarkdown(self, md: Markdown):
+        """
+        添加扩展
+        :param md: 转换器
+        """
         md.registerExtension(self)  # 注册扩展
         md.inlinePatterns.register(Simple(r'~~(.*?)~~', tag='s'), 'strikethrough', 176)  # ~~删除线~~
         md.inlinePatterns.register(Simple(r'~(.*?)~', tag='u'), 'underline', 177)  # ~下划线~
@@ -379,6 +399,10 @@ class Box(Extension):
     """
 
     def extendMarkdown(self, md):
+        """
+        添加扩展
+        :param md: 转换器
+        """
         md.registerExtension(self)  # 注册扩展
         # 红框警告
         md.inlinePatterns.register(ID(
@@ -415,6 +439,10 @@ class Box(Extension):
 
 class Anchor(Extension):
     def extendMarkdown(self, md: Markdown):
+        """
+        添加扩展
+        :param md: 转换器
+        """
         md.registerExtension(self)  # 注册扩展
         md.inlinePatterns.register(_Anchor(r'\{#([^{}#]+)}'), 'anchor', 0)  # 定义锚点
         md.inlinePatterns.register(LinkLine(r'\{([^{}#]+)}'), 'line_link', 0)  # 添加页内链接
@@ -422,10 +450,18 @@ class Anchor(Extension):
 
 class Code(Extension):
     def __init__(self, variable: Variable):
+        """
+        初始化
+        :param variable: 变量字典
+        """
         super().__init__()
         self.variable = variable
 
     def extendMarkdown(self, md: Markdown):
+        """
+        添加扩展
+        :param md: 转换器
+        """
         md.registerExtension(self)  # 注册扩展
         md.treeprocessors.register(CodeLine(variable=self.variable), 'code_line', 0)  # 渲染单行代码块
 
