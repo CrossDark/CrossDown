@@ -81,11 +81,11 @@ ___
 
 3.1 定义
 
-{#锚点名}
+{{#锚点名}}
 
 3.2 页内链接
 
-{锚点名}
+{{锚点名}}
 
 4 代码块
 
@@ -131,6 +131,7 @@ B:
 4.2.2 Python
 
 ```python
+#! usr/bin/python3.11
 def main():
     print('CrossDown')
 ```
@@ -149,6 +150,7 @@ graph TD
 
 ```shell
 cd ../..
+ls
 ```
 
 4.2.5 latex
@@ -223,7 +225,7 @@ cd ../..
 
 7..1...4 错误示范
 
-提纲号会被自动配置为锚点,可直接使用{7}{7.1}
+提纲号会被自动配置为锚点,可直接使用{{7}}{{7.1}}
 
 8 注释
 
@@ -361,3 +363,13 @@ Orange
 16 变量
 
 {[强调变量]}
+
+17 属性设置
+
+可以设置文段的字体{@style=font-family: sans-serif;}为sans-serif
+
+可以设置文段的字体{@style=font-family: Helvetica;}为Helvetica
+
+可以设置文段的自定义字体{@style=font-family: SetoFont;}为小赖字体
+
+可以设置文本的黄色外框{@style=display: inline-block; border: 1px solid yellow;}

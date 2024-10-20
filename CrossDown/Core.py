@@ -1,6 +1,6 @@
 from re import Match
 
-from markdown.extensions import Extension, extra, admonition, meta, sane_lists, toc, wikilinks, codehilite
+from markdown.extensions import Extension, extra, admonition, meta, sane_lists, toc, wikilinks, codehilite, legacy_attrs
 
 from pygments.formatters import HtmlFormatter
 
@@ -14,7 +14,6 @@ from markdown.blockparser import BlockParser
 from markdown import Markdown
 from typing import *
 import re
-import lxml
 import xml
 import emoji
 
@@ -56,6 +55,7 @@ Extensions = {
     '目录': toc.TocExtension(),
     '内部链接': wikilinks.WikiLinkExtension(),
     '代码高亮': codehilite.CodeHiliteExtension(guess_lang=False, pygments_formatter=HighlightHtmlFormatter),
+    '属性设置': legacy_attrs.LegacyAttrExtension()
 }
 
 
@@ -319,7 +319,7 @@ class CodeLine(Treeprocessor):
         for code in root.findall('.//code'):  # 在所有段落中查找单行代码
             if re.match(r'\$[^$]*\$', code.text):  # 渲染Latex
                 code.text = fr'\({code.text[1:-1]}\)'
-                code.tag = 'p'
+                code.tag = 'span'
             elif re.match(r'¥[^$]*¥', code.text):  # 是数学函数(单行)
                 if EXTRA_ABLE:  # 支持扩展语法
                     expression, range_ = re.findall(r'¥([^$]*)¥(€[^$]*€)?', code.text)[0]  # 分离表达式与范围(如果有)
@@ -444,8 +444,8 @@ class Anchor(Extension):
         :param md: 转换器
         """
         md.registerExtension(self)  # 注册扩展
-        md.inlinePatterns.register(_Anchor(r'\{#([^{}#]+)}'), 'anchor', 0)  # 定义锚点
-        md.inlinePatterns.register(LinkLine(r'\{([^{}#]+)}'), 'line_link', 0)  # 添加页内链接
+        md.inlinePatterns.register(_Anchor(r'\{{#([^{}#]+)}}'), 'anchor', 0)  # 定义锚点
+        md.inlinePatterns.register(LinkLine(r'\{{([^{}#]+)}}'), 'line_link', 0)  # 添加页内链接
 
 
 class Code(Extension):
