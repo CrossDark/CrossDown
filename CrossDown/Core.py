@@ -68,6 +68,7 @@ class PreProcess(Preprocessor):
     def run(self, lines: List[str]) -> List[str]:
         new_lines = []
         for line in lines:  # 逐行遍历
+            print(line)
             for value in re.findall(r'\{\[(.+?)]}', line):  # 找到变量
                 if value in self.variable:  # 变量已定义
                     line = re.sub(fr'\{{\[{value}]}}', self.variable[value], line)  # 替换变量为值
@@ -366,7 +367,7 @@ class Pre(Extension):
         :param md: 转换器
         """
         md.registerExtension(self)  # 注册扩展
-        md.preprocessors.register(PreProcess(self.variable), 'pre_process', 0)
+        md.preprocessors.register(PreProcess(self.variable), 'pre_process', 1000)
 
 
 class Basic(Extension):
