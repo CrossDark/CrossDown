@@ -467,7 +467,7 @@ class Code(Extension):
         md.treeprocessors.register(CodeLine(variable=self.variable), 'code_line', 0)  # 渲染单行代码块
 
 
-def main(text: str, variable: Variable = None) -> Tuple[str, Dict[str, Variable]]:
+def main(text: str, variable: Variable = None) -> Tuple[str, Variable]:
     """
     主函数
     :param text: 输入文本
