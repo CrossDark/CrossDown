@@ -158,32 +158,18 @@ ls
 
 4.2.5 latex
 
-```latex-rd
-\documentclass{article}  
-\title{我的第一个LaTeX文档}  
-\author{作者姓名}  
-\date{\today}  
-  
-\begin{document}  
-  
-\maketitle  
-  
-这是我的第一个LaTeX文档。它包含了一个标题、作者信息、日期和一个简单的正文部分。  
-  
-\section{引言}  
-  
-这是引言部分，可以简要介绍文档的主题和目的。  
-  
-\section{正文}  
-  
-这是正文部分，可以详细阐述你的观点或研究内容。你可以根据需要添加更多的章节和子章节。  
-  
-\subsection{子章节示例}  
-  
-这是一个子章节的示例，用于展示如何在LaTeX文档中创建层次结构。  
-  
-\end{document}
-```
+$$
+E(\mathbf{v}, \mathbf{h}) = -\sum_{i,j}w_{ij}v_i h_j - \sum_i b_i v_i - \sum_j c_j h_j
+$$
+
+\[3 < 4\]
+
+\begin{align}
+    p(v_i=1|\mathbf{h}) & = \sigma\left(\sum_j w_{ij}h_j + b_i\right) \\
+    p(h_j=1|\mathbf{v}) & = \sigma\left(\sum_i w_{ij}v_i + c_j\right)
+\end{align}
+
+行内公式: $p(x|y) = \frac{p(y|x)p(x)}{p(y)}$ 
 
 4.2.6 HTML
 
@@ -311,9 +297,9 @@ Orange
 
 12 Emoji
 
-:person_biking:
+:smile: :heart: :thumbsup:
 
-这是一个笑脸:grinning_face_with_big_eyes:图案
+这是一个笑脸 :smile: 图案
 
 13 脚注
 
@@ -384,3 +370,90 @@ Orange
 可以设置文段的自定义字体{@style=font-family: SetoFont;}为小赖字体
 
 可以设置文本的黄色外框{@style=display: inline-block; border: 1px solid yellow;}
+
+18 超级块
+
+18.1 警告
+
+/// note | Did you know?
+You can create a note with Blocks!
+///
+
+18.2 定义列表
+
+/// define
+Apple
+
+- Pomaceous fruit of plants of the genus Malus in
+  the family Rosaceae.
+
+Orange
+
+- The fruit of an evergreen tree of the genus Citrus.
+
+///
+
+18.3 详情
+
+/// details | Some summary
+    type: warning
+
+Some content
+///
+
+18.4 HTML
+
+/// html | div[style='border: 1px solid red;']
+some *markdown* content
+///
+
+18.5 标签
+
+/// tab | Tab A title
+Tab A content
+///
+
+/// tab | Tab B title
+Tab B content
+///
+
+/// tab | Tab C Title
+    new: true
+
+Will be part of a separate, new tab group.
+///
+
+19 批评
+
+Here is some {--*incorrect*--} Markdown.  I am adding this{++ here++}.  Here is some more {--text
+ that I am removing--}text.  And here is even more {++text that I 
+ am ++}adding.{~~
+
+~>  ~~}Paragraph was deleted and replaced with some spaces.{~~  ~>
+
+~~}Spaces were removed and a paragraph was added.
+
+And here is a comment on {==some
+ text==}{>>This works quite well. I just wanted to comment on it.<<}. Substitutions {~~is~>are~~} great!
+
+General block handling.
+
+{--
+
+* test remove
+* test remove
+* test remove
+    * test remove
+* test remove
+
+--}
+
+{++
+
+* test add
+* test add
+* test add
+    * test add
+* test add
+
+++}

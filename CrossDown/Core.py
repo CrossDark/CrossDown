@@ -1,5 +1,15 @@
 from markdown.extensions import Extension, extra, admonition, meta, sane_lists, toc, wikilinks, codehilite, legacy_attrs
+
 from pymdownx.arithmatex import ArithmatexExtension
+from pymdownx.emoji import EmojiExtension
+from pymdownx.blocks import BlocksExtension
+from pymdownx.blocks.admonition import AdmonitionExtension
+from pymdownx.blocks.definition import DefinitionExtension
+from pymdownx.blocks.details import DetailsExtension
+from pymdownx.blocks.html import HTMLExtension
+from pymdownx.blocks.tab import TabExtension
+from pymdownx.caret import CaretProcessor
+from pymdownx.critic import CriticExtension
 
 from pygments.formatters import HtmlFormatter
 
@@ -49,9 +59,9 @@ class HighlightHtmlFormatter(HtmlFormatter):
 Extensions = {
     # 自带
     '基本扩展': extra.ExtraExtension(fenced_code={'lang_prefix': ''}),
-    '警告扩展': admonition.AdmonitionExtension(),
+    # '警告扩展': admonition.AdmonitionExtension(),
     '元数据': meta.MetaExtension(),
-    '能列表': sane_lists.SaneListExtension(),
+    # '能列表': sane_lists.SaneListExtension(),
     '目录': toc.TocExtension(),
     '内部链接': wikilinks.WikiLinkExtension(),
     # '代码高亮': codehilite.CodeHiliteExtension(guess_lang=False, pygments_formatter=HighlightHtmlFormatter),
@@ -59,11 +69,20 @@ Extensions = {
 
     # pymdownx
     '超级数学': ArithmatexExtension(),
+    'EMOJI': EmojiExtension(),
+    '块扩展': BlocksExtension(),
+    '警告': AdmonitionExtension(),
+    '定义列表': DefinitionExtension(),
+    '详情': DetailsExtension(),
+    'HTML': HTMLExtension(),
+    '标签': TabExtension(),
+    '批评': CriticExtension(),
 }
 
 
 class PreProcess(Preprocessor):
     """预处理"""
+
     def __init__(self, variable: Variable):
         super().__init__()
         self.variable = variable
@@ -94,7 +113,8 @@ class Simple(InlineProcessor):
         super().__init__(pattern)
         self.tag = tag
 
-    def handleMatch(self, m: Match[str], data: str) -> Tuple[xml.etree.ElementTree.Element, int, int] | Tuple[None, None, None]:
+    def handleMatch(self, m: Match[str], data: str) -> Tuple[xml.etree.ElementTree.Element, int, int] | Tuple[
+        None, None, None]:
         """
         处理匹配
         :param m: re模块的匹配对象
@@ -123,7 +143,8 @@ class Nest(InlineProcessor):
         self.outer_tag = outer_tag
         self.inner_tag = inner_tag
 
-    def handleMatch(self, m: Match[str], data: str) -> Tuple[xml.etree.ElementTree.Element, int, int] | Tuple[None, None, None]:
+    def handleMatch(self, m: Match[str], data: str) -> Tuple[xml.etree.ElementTree.Element, int, int] | Tuple[
+        None, None, None]:
         """
         处理匹配
         :param m: re模块的匹配对象
@@ -156,7 +177,8 @@ class ID(InlineProcessor):
         self.property = property_
         self.value = value
 
-    def handleMatch(self, m: Match[str], data: str) -> Tuple[xml.etree.ElementTree.Element, int, int] | Tuple[None, None, None]:
+    def handleMatch(self, m: Match[str], data: str) -> Tuple[xml.etree.ElementTree.Element, int, int] | Tuple[
+        None, None, None]:
         """
         处理匹配
         :param m: re模块的匹配对象
@@ -182,7 +204,8 @@ class Emoji(InlineProcessor):
         """
         super().__init__(pattern)
 
-    def handleMatch(self, m: Match[str], data: str) -> Tuple[xml.etree.ElementTree.Element, int, int] | Tuple[None, None, None]:
+    def handleMatch(self, m: Match[str], data: str) -> Tuple[xml.etree.ElementTree.Element, int, int] | Tuple[
+        None, None, None]:
         """
         处理匹配
         :param m: re模块的匹配对象
@@ -272,7 +295,8 @@ class BoxBlock(BlockProcessor):
 
 
 class _Anchor(InlineProcessor):
-    def handleMatch(self, m: Match[str], data: str) -> Tuple[xml.etree.ElementTree.Element, int, int] | Tuple[None, None, None]:
+    def handleMatch(self, m: Match[str], data: str) -> Tuple[xml.etree.ElementTree.Element, int, int] | Tuple[
+        None, None, None]:
         """
         处理匹配
         :param m: re模块的匹配对象
@@ -357,6 +381,7 @@ class CodeBlock(Treeprocessor):
     """
     渲染单行代码
     """
+
     def run(self, root: xml.etree.ElementTree.Element):
         for code in root:
             print(code.text)
@@ -364,6 +389,7 @@ class CodeBlock(Treeprocessor):
 
 class Pre(Extension):
     """预处理"""
+
     def __init__(self, variable: Variable):
         """
         初始化
@@ -401,7 +427,7 @@ class Basic(Extension):
         md.inlinePatterns.register(ID(
             r'\[(.*?)]-\((.*?)\)', tag='span', property_='title'), 'hide', 180
         )  # [在指定的文本里面隐藏一段文本]-(只有鼠标放在上面才会显示隐藏文本)
-        md.inlinePatterns.register(Emoji(r':(.+?):'), 'emoji', 181)  # 将emoji短代码转换为emoji字符
+        # md.inlinePatterns.register(Emoji(r':(.+?):'), 'emoji', 181)  # 将emoji短代码转换为emoji字符
         md.parser.blockprocessors.register(Syllabus(md.parser), 'syllabus', 182)  # 渲染提纲
 
 
@@ -475,8 +501,8 @@ class Code(Extension):
         :param md: 转换器
         """
         md.registerExtension(self)  # 注册扩展
-        md.treeprocessors.register(CodeLine(variable=self.variable), 'code_line', 0)  # 渲染单行代码块
-        md.treeprocessors.register(CodeBlock(), 'code_block', 1000)  # 渲染多行代码块
+        # md.treeprocessors.register(CodeLine(variable=self.variable), 'code_line', 0)  # 渲染单行代码块
+        # md.treeprocessors.register(CodeBlock(), 'code_block', 1000)  # 渲染多行代码块
 
 
 def main(text: str, variable: Variable = None) -> Tuple[str, Variable]:
