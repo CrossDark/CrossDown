@@ -158,7 +158,7 @@ ls
 
 4.2.5 latex
 
-```latex
+```latex-rd
 \documentclass{article}  
 \title{我的第一个LaTeX文档}  
 \author{作者姓名}  
@@ -189,6 +189,14 @@ ls
 
 ```html
 *斜体***粗体**~下划线~~~删除线~~==高亮==
+```
+
+4.2.7 未知语言
+
+```
+#! usr/bin/python3.11
+def main():
+    print('CrossDown')
 ```
 
 5 转义

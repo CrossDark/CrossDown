@@ -1,6 +1,5 @@
-from re import Match
-
 from markdown.extensions import Extension, extra, admonition, meta, sane_lists, toc, wikilinks, codehilite, legacy_attrs
+from pymdownx.arithmatex import ArithmatexExtension
 
 from pygments.formatters import HtmlFormatter
 
@@ -48,14 +47,18 @@ class HighlightHtmlFormatter(HtmlFormatter):
 
 
 Extensions = {
+    # 自带
     '基本扩展': extra.ExtraExtension(fenced_code={'lang_prefix': ''}),
     '警告扩展': admonition.AdmonitionExtension(),
     '元数据': meta.MetaExtension(),
     '能列表': sane_lists.SaneListExtension(),
     '目录': toc.TocExtension(),
     '内部链接': wikilinks.WikiLinkExtension(),
-    '代码高亮': codehilite.CodeHiliteExtension(guess_lang=False, pygments_formatter=HighlightHtmlFormatter),
-    '属性设置': legacy_attrs.LegacyAttrExtension()
+    # '代码高亮': codehilite.CodeHiliteExtension(guess_lang=False, pygments_formatter=HighlightHtmlFormatter),
+    '属性设置': legacy_attrs.LegacyAttrExtension(),
+
+    # pymdownx
+    '超级数学': ArithmatexExtension(),
 }
 
 
@@ -68,7 +71,6 @@ class PreProcess(Preprocessor):
     def run(self, lines: List[str]) -> List[str]:
         new_lines = []
         for line in lines:  # 逐行遍历
-            print(line)
             for value in re.findall(r'\{\[(.+?)]}', line):  # 找到变量
                 if value in self.variable:  # 变量已定义
                     line = re.sub(fr'\{{\[{value}]}}', self.variable[value], line)  # 替换变量为值
@@ -351,6 +353,15 @@ class CodeLine(Treeprocessor):
                     code.text = key
 
 
+class CodeBlock(Treeprocessor):
+    """
+    渲染单行代码
+    """
+    def run(self, root: xml.etree.ElementTree.Element):
+        for code in root:
+            print(code.text)
+
+
 class Pre(Extension):
     """预处理"""
     def __init__(self, variable: Variable):
@@ -465,6 +476,7 @@ class Code(Extension):
         """
         md.registerExtension(self)  # 注册扩展
         md.treeprocessors.register(CodeLine(variable=self.variable), 'code_line', 0)  # 渲染单行代码块
+        md.treeprocessors.register(CodeBlock(), 'code_block', 1000)  # 渲染多行代码块
 
 
 def main(text: str, variable: Variable = None) -> Tuple[str, Variable]:
@@ -476,5 +488,5 @@ def main(text: str, variable: Variable = None) -> Tuple[str, Variable]:
     """
     if variable is None:
         variable = {}
-    md = Markdown(extensions=[Pre(variable=variable), Basic(), Box(), Anchor()] + list(Extensions.values()) + [Code(variable=variable)])
+    md = Markdown(extensions=[Pre(variable=variable), Basic(), Anchor()] + list(Extensions.values()) + [Code(variable=variable)])
     return md.convert(text), md.Meta

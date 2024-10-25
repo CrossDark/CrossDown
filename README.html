@@ -76,6 +76,7 @@
     <li><a href="#4.2.4">4.2.4 shell</a></li>
     <li><a href="#4.2.5">4.2.5 latex</a></li>
     <li><a href="#4.2.6">4.2.6 HTML</a></li>
+    <li><a href="#4.2.7">4.2.7 未知语言</a></li>
     </ul>
     </li>
     </ul>
@@ -123,7 +124,7 @@
     </div>
     <h1 id="crossdown">CrossDown</h1>
     <p>自制的markdown,添加了一些自定义的语法
-    效果请见<a href="https://github.com/CrossDark/CrossDown/blob/main/README.html">README.html</a></p>
+    效果请见<README.html></p>
     <h1 id="1">1 基本语法</h1>
     <h2 id="1.1">1.1 标题</h2>
     <h1 id="_1">一级标题</h1>
@@ -212,34 +213,40 @@
     </code></pre></div>
     
     <h3 id="4.2.5">4.2.5 latex</h3>
-    <div class="codehilite"><pre><span></span><code class="latex"><span class="k">\documentclass</span><span class="nb">{</span>article<span class="nb">}</span>  
-    <span class="k">\title</span><span class="nb">{</span>我的第一个LaTeX文档<span class="nb">}</span>  
-    <span class="k">\author</span><span class="nb">{</span>作者姓名<span class="nb">}</span>  
-    <span class="k">\date</span><span class="nb">{</span><span class="k">\today</span><span class="nb">}</span>  
+    <div class="codehilite"><pre><span></span><code class="rd">\documentclass{article}  
+    \title{我的第一个LaTeX文档}  
+    \author{作者姓名}  
+    \date{\today}  
     
-    <span class="k">\begin</span><span class="nb">{</span>document<span class="nb">}</span>  
+    \begin{document}  
     
-    <span class="k">\maketitle</span>  
+    \maketitle  
     
     这是我的第一个LaTeX文档。它包含了一个标题、作者信息、日期和一个简单的正文部分。  
     
-    <span class="k">\section</span><span class="nb">{</span>引言<span class="nb">}</span>  
+    \section{引言}  
     
     这是引言部分，可以简要介绍文档的主题和目的。  
     
-    <span class="k">\section</span><span class="nb">{</span>正文<span class="nb">}</span>  
+    \section{正文}  
     
     这是正文部分，可以详细阐述你的观点或研究内容。你可以根据需要添加更多的章节和子章节。  
     
-    <span class="k">\subsection</span><span class="nb">{</span>子章节示例<span class="nb">}</span>  
+    \subsection{子章节示例}  
     
     这是一个子章节的示例，用于展示如何在LaTeX文档中创建层次结构。  
     
-    <span class="k">\end</span><span class="nb">{</span>document<span class="nb">}</span>
+    \end{document}
     </code></pre></div>
     
     <h3 id="4.2.6">4.2.6 HTML</h3>
     <div class="codehilite"><pre><span></span><code class="html">*斜体***粗体**~下划线~~~删除线~~==高亮==
+    </code></pre></div>
+    
+    <h3 id="4.2.7">4.2.7 未知语言</h3>
+    <div class="codehilite"><pre><span></span><code class="text">#! usr/bin/python3.11
+    def main():
+        print(&#39;CrossDown&#39;)
     </code></pre></div>
     
     <h1 id="5">5 转义</h1>
@@ -382,10 +389,10 @@
     <p>否则所有定义将被集中在文章末尾</p>
     <h1 id="14">14 外框</h1>
     <h2 id="14.1">14.1 警告</h2>
-    <p>这是一个<div style="display: inline-block; border: 1px solid red;">警告</div>……</p>
-    <div style="display: inline-block; border: 1px solid red;">
-    <p>这是一条警告</p>
-    </div>
+    <p>这是一个!!!警告!!!……</p>
+    <p>!!!
+    这是一条警告
+    !!!</p>
     <h2 id="14.2">14.2 提醒</h2>
     <p>这是一个!!提醒!!……</p>
     <p>!!
