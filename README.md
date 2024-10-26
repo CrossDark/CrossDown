@@ -29,7 +29,7 @@ base_url: http://crossdark.net:3000/crossdark/CrossDown
 
 1.2.3 ***粗斜体***
 
-1.2.4 ~下划线~
+1.2.4 ~下标~
 
 1.2.5 ~~删除线~~
 
@@ -44,6 +44,14 @@ base_url: http://crossdark.net:3000/crossdark/CrossDown
 ---
 ___
 ***
+
+1.2.10 ^上标^
+
+H^2^0
+
+text^a\ superscript^
+
+1.2.11 ^^下划线^^
 
 1.3 链接
 
@@ -91,13 +99,18 @@ ___
 
 4.1 `单行`
 
+Here is some code: `#!py3 import pymdownx; pymdownx.__version__`.
+
+The mock shebang will be treated like text here: ` #!js var test = 0; `.
+
 4.1.1 LaTex
 
-这是`$CO_2$`二氧化碳
+这是$CO_2$二氧化碳,或者可以写成这样CO~2~
 
-这是`$H_2O$`水
+这是$H_2O$水,或者写成H~2~O
+H^3^~2~O
 
-`$\lg\left(\frac{目标生物的理智值}{稳定折磨型工具人的理智值}\right)$`
+$\lg\left(\frac{目标生物的理智值}{稳定折磨型工具人的理智值}\right)$
 
 4.1.2 函数
 
@@ -107,17 +120,15 @@ ___
 
 `¥y=x**3¥€-50,50|-100,100€`  // 定义了y范围
 
-4.1.3 强调
+4.1.3 按键风格
 
-`{强调文本}`
-
-`{强调变量}`
+++ctrl+alt+delete++
 
 4.2 多行
 
 4.2.1 YAML
 
-```yaml
+```yaml {hl_lines="1 3" linenums="2"}
 A:
     1. a
     2. b
@@ -133,7 +144,7 @@ B:
 
 4.2.2 Python
 
-```python
+```python {linenums="1"}
 #! usr/bin/python3.11
 def main():
     print('CrossDown')
@@ -202,7 +213,7 @@ def main():
 >>>>> 五级引用
 >>>>>> 六级引用
 > 
-> 引文内添加*斜体***粗体**~下划线~~~删除线~~==高亮==
+> 引文内添加*斜体***粗体**~下标~~~删除线~~==高亮==
 
 7 提纲
 
@@ -283,6 +294,32 @@ Apple
 Orange
 :   The fruit of an evergreen tree of the genus Citrus.
 
+9.4 任务列表
+
+Task List
+
+-   [X] item 1
+    *   [X] item A
+    *   [ ] item B
+        more text
+        +   [x] item a
+        +   [ ] item b
+        +   [x] item c
+    *   [X] item C
+-   [ ] item 2
+-   [ ] item 3
+
+9.5 高级列表
+
+1)  Item 1
+2)  Item 2
+    i.  Item 1
+    ii. Item 2
+        a.  Item a
+        b.  Item b
+            #.  Item 1
+            #.  Item 2
+
 10 表格
 
 | 表头1  | 表头2  | 表头3  |  
@@ -295,11 +332,26 @@ Orange
 !!! warning "警告标题"
     警告内容
 
-12 Emoji
+12 符号
+
+12.1 Emoji
 
 :smile: :heart: :thumbsup:
 
 这是一个笑脸 :smile: 图案
+
+12.2 高级符号
+
+(tm)
+(c)
+(r)
+c/o
++/-
+-->
+<--
+<-->
+=/=
+1/4 等
 
 13 脚注
 
@@ -319,39 +371,30 @@ Orange
 
 否则所有定义将被集中在文章末尾
 
-14 外框
+14 进度条
 
-14.1 警告
+14.1 普通
 
-这是一个!!!警告!!!……
+[=0% "0%"]
+[=5% "5%"]
+[=25% "25%"]
+[=45% "45%"]
+[=65% "65%"]
+[=85% "85%"]
+[=100% "100%"]
 
-!!!
-这是一条警告
-!!!
+14.2 带属性
 
-14.2 提醒
+[=85% "85%"]{: .candystripe}
+[=100% "100%"]{: .candystripe .candystripe-animate}
 
-这是一个!!提醒!!……
-
-!!
-这是一条提醒
-!!
-
-14.3 安心
-
-这是一个,,,安心,,,……
-
-,,,
-这是一条安心
-,,,
-
-14.4 怀疑
-
-这是一个,,怀疑,,……
-
-,,
-这是一条怀疑
-,,
+[=0%]{: .thin}
+[=5%]{: .thin}
+[=25%]{: .thin}
+[=45%]{: .thin}
+[=65%]{: .thin}
+[=85%]{: .thin}
+[=100%]{: .thin}
 
 15 内部链接
 

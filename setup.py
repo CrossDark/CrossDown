@@ -19,7 +19,7 @@ setuptools.setup(
         'numpy',
     ],
     package_data={
-        '': ['static/*'],  # 这将包含static文件夹下的所有子文件夹和文件
+        '': ['Static/*'],  # 这将包含static文件夹下的所有子文件夹和文件
     },
     classifiers=[
         'Programming Language :: Python :: 3.11',

@@ -1,15 +1,26 @@
 from markdown.extensions import Extension, extra, admonition, meta, sane_lists, toc, wikilinks, codehilite, legacy_attrs
 
+from pymdownx.extra import ExtraExtension
 from pymdownx.arithmatex import ArithmatexExtension
 from pymdownx.emoji import EmojiExtension
 from pymdownx.blocks import BlocksExtension
 from pymdownx.blocks.admonition import AdmonitionExtension
-from pymdownx.blocks.definition import DefinitionExtension
 from pymdownx.blocks.details import DetailsExtension
 from pymdownx.blocks.html import HTMLExtension
 from pymdownx.blocks.tab import TabExtension
-from pymdownx.caret import CaretProcessor
+from pymdownx.caret import InsertSupExtension
 from pymdownx.critic import CriticExtension
+from pymdownx.highlight import HighlightExtension
+from pymdownx.inlinehilite import InlineHiliteExtension
+from pymdownx.keys import KeysExtension
+from pymdownx.mark import MarkExtension
+from pymdownx.progressbar import ProgressBarExtension
+from pymdownx.smartsymbols import SmartSymbolsExtension
+from pymdownx.superfences import SuperFencesCodeExtension, fence_div_format
+from pymdownx.tasklist import TasklistExtension
+from pymdownx.tilde import DeleteSubExtension
+from pymdownx.fancylists import FancyListExtension
+from pymdownx.saneheaders import SaneHeadersExtension
 
 from pygments.formatters import HtmlFormatter
 
@@ -54,30 +65,6 @@ class HighlightHtmlFormatter(HtmlFormatter):
         yield 0, f'<code class="{self.lang_str}">'
         yield from source
         yield 0, '</code>'
-
-
-Extensions = {
-    # 自带
-    '基本扩展': extra.ExtraExtension(fenced_code={'lang_prefix': ''}),
-    # '警告扩展': admonition.AdmonitionExtension(),
-    '元数据': meta.MetaExtension(),
-    # '能列表': sane_lists.SaneListExtension(),
-    '目录': toc.TocExtension(),
-    '内部链接': wikilinks.WikiLinkExtension(),
-    # '代码高亮': codehilite.CodeHiliteExtension(guess_lang=False, pygments_formatter=HighlightHtmlFormatter),
-    '属性设置': legacy_attrs.LegacyAttrExtension(),
-
-    # pymdownx
-    '超级数学': ArithmatexExtension(),
-    'EMOJI': EmojiExtension(),
-    '块扩展': BlocksExtension(),
-    '警告': AdmonitionExtension(),
-    '定义列表': DefinitionExtension(),
-    '详情': DetailsExtension(),
-    'HTML': HTMLExtension(),
-    '标签': TabExtension(),
-    '批评': CriticExtension(),
-}
 
 
 class PreProcess(Preprocessor):
@@ -418,15 +405,15 @@ class Basic(Extension):
         :param md: 转换器
         """
         md.registerExtension(self)  # 注册扩展
-        md.inlinePatterns.register(Simple(r'~~(.*?)~~', tag='s'), 'strikethrough', 176)  # ~~删除线~~
-        md.inlinePatterns.register(Simple(r'~(.*?)~', tag='u'), 'underline', 177)  # ~下划线~
-        md.inlinePatterns.register(Simple(r'==(.*?)==', tag='mark'), 'high_light', 178)  # ==高亮==
-        md.inlinePatterns.register(Nest(
-            r'\[(.*?)]\^\((.*?)\)', outer_tag='ruby', inner_tag='rt'), 'up', 179
-        )  # [在文本的正上方添加一行小文本]^(主要用于标拼音)
-        md.inlinePatterns.register(ID(
-            r'\[(.*?)]-\((.*?)\)', tag='span', property_='title'), 'hide', 180
-        )  # [在指定的文本里面隐藏一段文本]-(只有鼠标放在上面才会显示隐藏文本)
+        # md.inlinePatterns.register(Simple(r'~~(.*?)~~', tag='s'), 'strikethrough', 176)  # ~~删除线~~
+        # md.inlinePatterns.register(Simple(r'~(.*?)~', tag='u'), 'underline', 177)  # ~下划线~
+        # md.inlinePatterns.register(Simple(r'==(.*?)==', tag='mark'), 'high_light', 178)  # ==高亮==
+        # md.inlinePatterns.register(Nest(
+            # r'\[(.*?)]\^\((.*?)\)', outer_tag='ruby', inner_tag='rt'), 'up', 179
+        # )  # [在文本的正上方添加一行小文本]^(主要用于标拼音)
+        # md.inlinePatterns.register(ID(
+            # r'\[(.*?)]-\((.*?)\)', tag='span', property_='title'), 'hide', 180
+        # )  # [在指定的文本里面隐藏一段文本]-(只有鼠标放在上面才会显示隐藏文本)
         # md.inlinePatterns.register(Emoji(r':(.+?):'), 'emoji', 181)  # 将emoji短代码转换为emoji字符
         md.parser.blockprocessors.register(Syllabus(md.parser), 'syllabus', 182)  # 渲染提纲
 
@@ -505,6 +492,49 @@ class Code(Extension):
         # md.treeprocessors.register(CodeBlock(), 'code_block', 1000)  # 渲染多行代码块
 
 
+Extensions = {
+    # 自带
+    '元数据': meta.MetaExtension(),
+    '目录': toc.TocExtension(),
+    '内部链接': wikilinks.WikiLinkExtension(),
+    '属性设置': legacy_attrs.LegacyAttrExtension(),
+
+    # pymdownx
+    '基本扩展': ExtraExtension(),
+    '超级数学': ArithmatexExtension(),
+    'EMOJI': EmojiExtension(),
+    '块扩展': BlocksExtension(),
+    '警告': AdmonitionExtension(),
+    '详情': DetailsExtension(),
+    'HTML': HTMLExtension(),
+    '标签': TabExtension(),
+    '批评': CriticExtension(),
+    '代码高亮': HighlightExtension(),
+    '行内高亮': InlineHiliteExtension(),
+    '按键风格': KeysExtension(),
+    '高亮': MarkExtension(),
+    '进度条': ProgressBarExtension(),
+    '高级符号': SmartSymbolsExtension(),
+    '超级代码块': SuperFencesCodeExtension(
+        custom_fences=[  # 渲染mermaid
+            {
+                'name': 'mermaid',
+                'class': 'mermaid',
+                'format': fence_div_format
+            }
+        ]
+    ),
+    '任务列表': TasklistExtension(clickable_checkbox=True),
+    '下标': DeleteSubExtension(),
+    '上标': InsertSupExtension(),
+    '高级列表': FancyListExtension(),
+    '高级标题': SaneHeadersExtension(),
+
+    # 自定义
+    '基本风格': Basic(),
+}
+
+
 def main(text: str, variable: Variable = None) -> Tuple[str, Variable]:
     """
     主函数
@@ -514,5 +544,5 @@ def main(text: str, variable: Variable = None) -> Tuple[str, Variable]:
     """
     if variable is None:
         variable = {}
-    md = Markdown(extensions=[Pre(variable=variable), Basic(), Anchor()] + list(Extensions.values()) + [Code(variable=variable)])
+    md = Markdown(extensions=list(Extensions.values()))
     return md.convert(text), md.Meta
