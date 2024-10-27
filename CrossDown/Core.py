@@ -405,16 +405,12 @@ class Basic(Extension):
         :param md: 转换器
         """
         md.registerExtension(self)  # 注册扩展
-        # md.inlinePatterns.register(Simple(r'~~(.*?)~~', tag='s'), 'strikethrough', 176)  # ~~删除线~~
-        # md.inlinePatterns.register(Simple(r'~(.*?)~', tag='u'), 'underline', 177)  # ~下划线~
-        # md.inlinePatterns.register(Simple(r'==(.*?)==', tag='mark'), 'high_light', 178)  # ==高亮==
-        # md.inlinePatterns.register(Nest(
-            # r'\[(.*?)]\^\((.*?)\)', outer_tag='ruby', inner_tag='rt'), 'up', 179
-        # )  # [在文本的正上方添加一行小文本]^(主要用于标拼音)
-        # md.inlinePatterns.register(ID(
-            # r'\[(.*?)]-\((.*?)\)', tag='span', property_='title'), 'hide', 180
-        # )  # [在指定的文本里面隐藏一段文本]-(只有鼠标放在上面才会显示隐藏文本)
-        # md.inlinePatterns.register(Emoji(r':(.+?):'), 'emoji', 181)  # 将emoji短代码转换为emoji字符
+        md.inlinePatterns.register(Nest(
+            r'\[(.*?)]\^\((.*?)\)', outer_tag='ruby', inner_tag='rt'), 'up', 179
+        )  # [在文本的正上方添加一行小文本]^(主要用于标拼音)
+        md.inlinePatterns.register(ID(
+            r'\[(.*?)]-\((.*?)\)', tag='span', property_='title'), 'hide', 180
+        )  # [在指定的文本里面隐藏一段文本]-(只有鼠标放在上面才会显示隐藏文本)
         md.parser.blockprocessors.register(Syllabus(md.parser), 'syllabus', 182)  # 渲染提纲
 
 

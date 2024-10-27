@@ -39,8 +39,8 @@
     <li><a href="#1.2.4">1.2.4 下标</a></li>
     <li><a href="#1.2.5">1.2.5 删除线</a></li>
     <li><a href="#1.2.6">1.2.6 高亮</a></li>
-    <li><a href="#1.2.7">1.2.7 [在文本的正上方添加一行小文本]^(主要用于标拼音)</a></li>
-    <li><a href="#1.2.8">1.2.8 [在指定的文本里面隐藏一段文本]-(只有鼠标放在上面才会显示隐藏文本)</a></li>
+    <li><a href="#1.2.7">1.2.7 在文本的正上方添加一行小文本主要用于标拼音</a></li>
+    <li><a href="#1.2.8">1.2.8 在指定的文本里面隐藏一段文本</a></li>
     <li><a href="#1.2.9">1.2.9 分割线</a></li>
     <li><a href="#1.2.10">1.2.10 上标</a></li>
     <li><a href="#1.2.11">1.2.11 下划线</a></li>
@@ -92,11 +92,7 @@
     </li>
     </ul>
     </li>
-    <li><a href="#8">8 注释</a><ul>
-    <li><a href="#8.1">8.1 强注释</a></li>
-    <li><a href="#8.2">8.2 弱注释</a></li>
-    </ul>
-    </li>
+    <li><a href="#8">8 注释</a></li>
     <li><a href="#9">9 列表</a><ul>
     <li><a href="#9.1">9.1 有序列表</a></li>
     <li><a href="#9.2">9.2 无序列表</a></li>
@@ -155,15 +151,13 @@
     <h3 id="1.2.4">1.2.4 <sub>下标</sub></h3>
     <h3 id="1.2.5">1.2.5 <del>删除线</del></h3>
     <h3 id="1.2.6">1.2.6 <mark>高亮</mark></h3>
-    <h3 id="1.2.7">1.2.7 [在文本的正上方添加一行小文本]^(主要用于标拼音)</h3>
-    <h3 id="1.2.8">1.2.8 [在指定的文本里面隐藏一段文本]-(只有鼠标放在上面才会显示隐藏文本)</h3>
+    <h3 id="1.2.7">1.2.7 <ruby>在文本的正上方添加一行小文本<rt>主要用于标拼音</rt></ruby></h3>
+    <h3 id="1.2.8">1.2.8 <span title="只有鼠标放在上面才会显示隐藏文本">在指定的文本里面隐藏一段文本</span></h3>
     <h3 id="1.2.9">1.2.9 分割线</h3>
     <hr />
     <hr />
     <hr />
     <h3 id="1.2.10">1.2.10 <sup>上标</sup></h3>
-    <p>H<sup>2</sup>0</p>
-    <p>text<sup>a superscript</sup></p>
     <h3 id="1.2.11">1.2.11 <ins>下划线</ins></h3>
     <h2 id="1.3">1.3 链接</h2>
     <h3 id="1.3.1">1.3.1 普通链接</h3>
@@ -265,7 +259,12 @@
     </div>
     <p>行内公式: <span class="arithmatex"><span class="MathJax_Preview">p(x|y) = \frac{p(y|x)p(x)}{p(y)}</span><script type="math/tex">p(x|y) = \frac{p(y|x)p(x)}{p(y)}</script></span> </p>
     <h3 id="4.2.6">4.2.6 HTML</h3>
-    <div class="highlight"><pre><span></span><code>*斜体***粗体**~下划线~~~删除线~~==高亮==
+    <div class="highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+        <span class="cm">&lt;!--头部--&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>标题<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
     </code></pre></div>
     <h3 id="4.2.7">4.2.7 未知语言</h3>
     <div class="highlight"><pre><span></span><code>#! usr/bin/python3.11
@@ -294,7 +293,7 @@
     </blockquote>
     </blockquote>
     </blockquote>
-    <p>引文内添加<em>斜体</em><strong>粗体</strong><sub>下标</sub><del>删除线</del><mark>高亮</mark></p>
+    <p>引文内添加<em>斜体</em><strong>粗体</strong><del>删除线</del><mark>高亮</mark> <sup>上标</sup> <sub>下标</sub> <ins>下划线</ins> <span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-alt">Alt</kbd><span>+</span><kbd class="key-delete">Del</kbd></span> &copy; <img alt="😄" class="emojione" src="https://cdnjs.cloudflare.com/ajax/libs/emojione/2.2.7/assets/png/1f604.png" title=":smile:" /></p>
     </blockquote>
     <h1 id="7">7 提纲</h1>
     <h2 id="7.1">7.1 提纲号</h2>
@@ -307,17 +306,12 @@
     <p>7..1...4 错误示范</p>
     <p>提纲号会被自动配置为锚点,可直接使用{{7}}{{7.1}}</p>
     <h1 id="8">8 注释</h1>
-    <p>|==| 注释</p>
-    <h2 id="8.1">8.1 强注释</h2>
-    <p>|=
-    无论如何都会被移除
-    <code>放在代码块里也没用</code>
-    =|</p>
-    <h2 id="8.2">8.2 弱注释</h2>
     <!-- 这是注释 -->
     
-    <p>只有在 // 后面才会被移除</p>
-    <p><code>// 代码中的注释弱不会被移除</code></p>
+    <!--
+    可以多行
+    -->
+    
     <h1 id="9">9 列表</h1>
     <h2 id="9.1">9.1 有序列表</h2>
     <ol type="1">
@@ -565,10 +559,6 @@
     <ul>
     <li>Pomaceous fruit of plants of the genus Malus in
       the family Rosaceae.</li>
-    </ul>
-    <p>Orange</p>
-    <ul>
-    <li>The fruit of an evergreen tree of the genus Citrus.</li>
     </ul>
     <p>///</p>
     <h2 id="18.3">18.3 详情</h2>
