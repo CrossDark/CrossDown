@@ -16,7 +16,7 @@ from pymdownx.keys import KeysExtension
 from pymdownx.mark import MarkExtension
 from pymdownx.progressbar import ProgressBarExtension
 from pymdownx.smartsymbols import SmartSymbolsExtension
-from pymdownx.superfences import SuperFencesCodeExtension, fence_div_format
+from pymdownx.superfences import fence_div_format
 from pymdownx.tasklist import TasklistExtension
 from pymdownx.tilde import DeleteSubExtension
 from pymdownx.fancylists import FancyListExtension
