@@ -1,8 +1,14 @@
-from markdown.extensions import Extension, extra, admonition, meta, sane_lists, toc, wikilinks, codehilite, legacy_attrs
+import re
+import xml
+from typing import *
 
-from pymdownx.extra import ExtraExtension
+from markdown import Markdown
+from markdown.blockprocessors import BlockProcessor
+from markdown.extensions import Extension, meta, toc, wikilinks, legacy_attrs
+from markdown.inlinepatterns import InlineProcessor
+from markdown.preprocessors import Preprocessor
+
 from pymdownx.arithmatex import ArithmatexExtension
-from pymdownx.emoji import EmojiExtension
 from pymdownx.blocks import BlocksExtension
 from pymdownx.blocks.admonition import AdmonitionExtension
 from pymdownx.blocks.details import DetailsExtension
@@ -10,28 +16,19 @@ from pymdownx.blocks.html import HTMLExtension
 from pymdownx.blocks.tab import TabExtension
 from pymdownx.caret import InsertSupExtension
 from pymdownx.critic import CriticExtension
+from pymdownx.emoji import EmojiExtension
+from pymdownx.extra import ExtraExtension
+from pymdownx.fancylists import FancyListExtension
 from pymdownx.highlight import HighlightExtension
 from pymdownx.inlinehilite import InlineHiliteExtension
 from pymdownx.keys import KeysExtension
 from pymdownx.mark import MarkExtension
 from pymdownx.progressbar import ProgressBarExtension
+from pymdownx.saneheaders import SaneHeadersExtension
 from pymdownx.smartsymbols import SmartSymbolsExtension
 from pymdownx.superfences import fence_div_format
 from pymdownx.tasklist import TasklistExtension
 from pymdownx.tilde import DeleteSubExtension
-from pymdownx.fancylists import FancyListExtension
-from pymdownx.saneheaders import SaneHeadersExtension
-
-from markdown.treeprocessors import Treeprocessor
-from markdown.inlinepatterns import InlineProcessor
-from markdown.blockprocessors import BlockProcessor
-from markdown.preprocessors import Preprocessor
-from markdown.blockparser import BlockParser
-from markdown import Markdown
-
-from typing import *
-import re
-import xml
 
 from .Define import Variable
 
@@ -69,8 +66,8 @@ class Simple(InlineProcessor):
         super().__init__(pattern)
         self.tag = tag
 
-    def handleMatch(self, m: Match[str], data: str) -> Tuple[xml.etree.ElementTree.Element, int, int] | Tuple[
-        None, None, None]:
+    def handleMatch(self, m: Match[str], data: str) -> (Tuple[xml.etree.ElementTree.Element, int, int] |
+                                                        Tuple[None, None, None]):
         """
         处理匹配
         :param m: re模块的匹配对象
@@ -99,8 +96,8 @@ class Nest(InlineProcessor):
         self.outer_tag = outer_tag
         self.inner_tag = inner_tag
 
-    def handleMatch(self, m: Match[str], data: str) -> Tuple[xml.etree.ElementTree.Element, int, int] | Tuple[
-        None, None, None]:
+    def handleMatch(self, m: Match[str], data: str) -> (Tuple[xml.etree.ElementTree.Element, int, int] |
+                                                        Tuple[None, None, None]):
         """
         处理匹配
         :param m: re模块的匹配对象
@@ -133,8 +130,8 @@ class ID(InlineProcessor):
         self.property = property_
         self.value = value
 
-    def handleMatch(self, m: Match[str], data: str) -> Tuple[xml.etree.ElementTree.Element, int, int] | Tuple[
-        None, None, None]:
+    def handleMatch(self, m: Match[str], data: str) -> (Tuple[xml.etree.ElementTree.Element, int, int] |
+                                                        Tuple[None, None, None]):
         """
         处理匹配
         :param m: re模块的匹配对象
@@ -177,8 +174,8 @@ class Syllabus(BlockProcessor):
 
 
 class _Anchor(InlineProcessor):
-    def handleMatch(self, m: Match[str], data: str) -> Tuple[xml.etree.ElementTree.Element, int, int] | Tuple[
-        None, None, None]:
+    def handleMatch(self, m: Match[str], data: str) -> (Tuple[xml.etree.ElementTree.Element, int, int] |
+                                                        Tuple[None, None, None]):
         """
         处理匹配
         :param m: re模块的匹配对象
@@ -193,7 +190,8 @@ class _Anchor(InlineProcessor):
 
 
 class LinkLine(InlineProcessor):
-    def handleMatch(self, m: Match[str], data: str) -> Tuple[xml.etree.ElementTree.Element, int, int] | Tuple[None, None, None]:
+    def handleMatch(self, m: Match[str], data: str) -> (Tuple[xml.etree.ElementTree.Element, int, int] |
+                                                        Tuple[None, None, None]):
         """
         处理匹配
         :param m: re模块的匹配对象
