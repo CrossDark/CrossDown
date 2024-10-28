@@ -22,49 +22,19 @@ from pymdownx.tilde import DeleteSubExtension
 from pymdownx.fancylists import FancyListExtension
 from pymdownx.saneheaders import SaneHeadersExtension
 
-from pygments.formatters import HtmlFormatter
-
 from markdown.treeprocessors import Treeprocessor
 from markdown.inlinepatterns import InlineProcessor
 from markdown.blockprocessors import BlockProcessor
 from markdown.preprocessors import Preprocessor
-
 from markdown.blockparser import BlockParser
-
 from markdown import Markdown
+
 from typing import *
 import re
 import xml
 import emoji
 
 from .Define import Variable
-
-try:  # 检测当前平台是否支持扩展语法
-    from .Extra import *
-
-    EXTRA_ABLE = True
-except ModuleNotFoundError:  # 不支持扩展语法
-    EXTRA_ABLE = False
-
-
-class HighlightHtmlFormatter(HtmlFormatter):
-    """
-    用于给code highlight扩展添加语言类型
-    """
-
-    def __init__(self, lang_str='', **options):
-        """
-        初始化
-        :param lang_str: 数据格式 {lang_prefix}{lang}
-        :param options:
-        """
-        super().__init__(**options)
-        self.lang_str = lang_str.split('-')[-1]
-
-    def _wrap_code(self, source: str):
-        yield 0, f'<code class="{self.lang_str}">'
-        yield from source
-        yield 0, '</code>'
 
 
 class PreProcess(Preprocessor):
@@ -179,29 +149,6 @@ class ID(InlineProcessor):
         return tag, m.start(), m.end()
 
 
-class Emoji(InlineProcessor):
-    """
-    需要对HTML标签设置ID实现的样式
-    """
-
-    def __init__(self, pattern: str):
-        """
-        初始化
-        :param pattern: 正则表达式
-        """
-        super().__init__(pattern)
-
-    def handleMatch(self, m: Match[str], data: str) -> Tuple[xml.etree.ElementTree.Element, int, int] | Tuple[
-        None, None, None]:
-        """
-        处理匹配
-        :param m: re模块的匹配对象
-        :param data: 被匹配的原始文本
-        :return: 标签 匹配开始 匹配结束
-        """
-        return emoji.emojize(m.group(0)), m.start(), m.end()
-
-
 class Syllabus(BlockProcessor):
     # 定义提纲的正则表达式
     syllabus_re = r'(\d+(\.\d+)*)\s+(.*)'
@@ -228,57 +175,6 @@ class Syllabus(BlockProcessor):
         header.text = syllabus.group(1) + ' ' + syllabus.group(3)  # 设置提纲内容
         blocks[0] = ''
         return False
-
-
-class BoxBlock(BlockProcessor):
-    def __init__(self, parser: BlockParser, re_start, re_end, style):
-        """
-        初始化
-        :param parser: 块处理器
-        :param re_start: 块的起始re表达式
-        :param re_end: 块的终止re表达式
-        :param style: 块的风格
-        """
-        super().__init__(parser)
-        self.re_start = re_start  # start line, e.g., `   !!!!
-        self.re_end = re_end  # last non-blank line, e.g, '!!!\n  \n\n'
-        self.style = style
-
-    def test(self, parent: xml.etree.ElementTree.Element, block: str) -> Match[str] | None | bool:
-        """
-        检查当前块是否匹配正则表达式
-        :param parent: 当前块的Element对象
-        :param block: 当前块的内容
-        :return: 匹配成功与否
-        """
-        return re.match(self.re_start, block)
-
-    def run(self, parent: xml.etree.ElementTree.Element, blocks: List[str]) -> bool | None:
-        """
-        对匹配到的块进行处理
-        :param parent: 当前块的Element对象
-        :param blocks: 包含文本中剩余块的列表
-        :return: 匹配成功与否
-        """
-        original_block = blocks[0]
-        blocks[0] = re.sub(self.re_start, '', blocks[0])
-
-        # Find block with ending fence
-        for block_num, block in enumerate(blocks):
-            if re.search(self.re_end, block):
-                # remove fence
-                blocks[block_num] = re.sub(self.re_end, '', block)
-                # render fenced area inside a new div
-                e = xml.etree.ElementTree.SubElement(parent, 'div')
-                e.set('style', self.style)
-                self.parser.parseBlocks(e, blocks[0:block_num + 1])
-                # remove used blocks
-                for i in range(0, block_num + 1):
-                    blocks.pop(0)
-                return True  # or could have had no return statement
-        # No closing marker!  Restore and do nothing
-        blocks[0] = original_block
-        return False  # equivalent to our test() routine returning False
 
 
 class _Anchor(InlineProcessor):
@@ -364,16 +260,6 @@ class CodeLine(Treeprocessor):
                     code.text = key
 
 
-class CodeBlock(Treeprocessor):
-    """
-    渲染单行代码
-    """
-
-    def run(self, root: xml.etree.ElementTree.Element):
-        for code in root:
-            print(code.text)
-
-
 class Pre(Extension):
     """预处理"""
 
@@ -414,50 +300,6 @@ class Basic(Extension):
         md.parser.blockprocessors.register(Syllabus(md.parser), 'syllabus', 182)  # 渲染提纲
 
 
-class Box(Extension):
-    """
-    渲染外框
-    """
-
-    def extendMarkdown(self, md):
-        """
-        添加扩展
-        :param md: 转换器
-        """
-        md.registerExtension(self)  # 注册扩展
-        # 红框警告
-        md.inlinePatterns.register(ID(
-            r'!{3}(.+?)!{3}', tag='div', property_='style', value='display: inline-block; border: 1px solid red;'
-        ), 'warning_in_line', 190)  # 行内
-        md.parser.blockprocessors.register(BoxBlock(
-            md.parser, r'^ *!{3} *\n', r'\n *!{3}\s*$', 'display: inline-block; border: 1px solid red;'
-        ), 'warning_box', 191)  # 块
-
-        # 黄框提醒
-        md.inlinePatterns.register(ID(
-            r'!{2}(.+?)!{2}', tag='div', property_='style', value='display: inline-block; border: 1px solid yellow;'
-        ), 'reminding_in_line', 192)  # 行内
-        md.parser.blockprocessors.register(BoxBlock(
-            md.parser, r'^ *!-! *\n', r'\n *!-!\s*$', 'display: inline-block; border: 1px solid yellow;'
-        ), 'reminding_box', 193)  # 块
-
-        # 绿框安心
-        md.inlinePatterns.register(ID(
-            r',{3}(.+?),{3}', tag='div', property_='style', value='display: inline-block; border: 1px solid green;'
-        ), 'reminding_in_line', 194)  # 行内
-        md.parser.blockprocessors.register(BoxBlock(
-            md.parser, r'^ *,{3} *\n', r'\n *,{3}\s*$', 'display: inline-block; border: 1px solid green;'
-        ), 'reminding_box', 195)  # 块
-
-        # 蓝框怀疑
-        md.inlinePatterns.register(ID(
-            r',-,(.+?),{2}', tag='div', property_='style', value='display: inline-block; border: 1px solid blue;'
-        ), 'reminding_in_line', 196)  # 行内
-        md.parser.blockprocessors.register(BoxBlock(
-            md.parser, r'^ *,-, *\n', r'\n *,-,\s*$', 'display: inline-block; border: 1px solid blue;'
-        ), 'reminding_box', 197)  # 块
-
-
 class Anchor(Extension):
     def extendMarkdown(self, md: Markdown):
         """
@@ -496,7 +338,17 @@ Extensions = {
     '属性设置': legacy_attrs.LegacyAttrExtension(),
 
     # pymdownx
-    '基本扩展': ExtraExtension(),
+    '基本扩展': ExtraExtension(configs={
+        superfences: {
+            custom_fences: [  # 渲染mermaid
+                {
+                    'name': 'mermaid',
+                    'class': 'mermaid',
+                    'format': fence_div_format
+                }
+            ]
+        }
+    }),
     '超级数学': ArithmatexExtension(),
     'EMOJI': EmojiExtension(),
     '块扩展': BlocksExtension(),
@@ -511,15 +363,7 @@ Extensions = {
     '高亮': MarkExtension(),
     '进度条': ProgressBarExtension(),
     '高级符号': SmartSymbolsExtension(),
-    '超级代码块': SuperFencesCodeExtension(
-        custom_fences=[  # 渲染mermaid
-            {
-                'name': 'mermaid',
-                'class': 'mermaid',
-                'format': fence_div_format
-            }
-        ]
-    ),
+    '超级代码块': SuperFencesCodeExtension(),
     '任务列表': TasklistExtension(clickable_checkbox=True),
     '下标': DeleteSubExtension(),
     '上标': InsertSupExtension(),
