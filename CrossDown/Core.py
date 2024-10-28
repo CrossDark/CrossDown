@@ -29,6 +29,7 @@ from pymdownx.smartsymbols import SmartSymbolsExtension
 from pymdownx.superfences import fence_div_format
 from pymdownx.tasklist import TasklistExtension
 from pymdownx.tilde import DeleteSubExtension
+from pymdownx.magiclink import MagiclinkExtension
 
 from .Define import Variable
 
@@ -173,7 +174,10 @@ class Syllabus(BlockProcessor):
         return False
 
 
-class _Anchor(InlineProcessor):
+class Anchor(InlineProcessor):
+    """
+    {#定义锚点}
+    """
     def handleMatch(self, m: Match[str], data: str) -> (Tuple[xml.etree.ElementTree.Element, int, int] |
                                                         Tuple[None, None, None]):
         """
@@ -190,6 +194,9 @@ class _Anchor(InlineProcessor):
 
 
 class LinkLine(InlineProcessor):
+    """
+    {行内链接}
+    """
     def handleMatch(self, m: Match[str], data: str) -> (Tuple[xml.etree.ElementTree.Element, int, int] |
                                                         Tuple[None, None, None]):
         """
@@ -225,7 +232,7 @@ class Pre(Extension):
         md.preprocessors.register(PreProcess(self.variable), 'pre_process', 1000)
 
 
-class Basic(Extension):
+class BasicExtension(Extension):
     """
     渲染基本样式
     """
@@ -245,34 +252,15 @@ class Basic(Extension):
         md.parser.blockprocessors.register(Syllabus(md.parser), 'syllabus', 182)  # 渲染提纲
 
 
-class Anchor(Extension):
+class AnchorExtension(Extension):
     def extendMarkdown(self, md: Markdown):
         """
         添加扩展
         :param md: 转换器
         """
         md.registerExtension(self)  # 注册扩展
-        md.inlinePatterns.register(_Anchor(r'\{{#([^{}#]+)}}'), 'anchor', 0)  # 定义锚点
+        md.inlinePatterns.register(Anchor(r'\{{#([^{}#]+)}}'), 'anchor', 0)  # 定义锚点
         md.inlinePatterns.register(LinkLine(r'\{{([^{}#]+)}}'), 'line_link', 0)  # 添加页内链接
-
-
-class Code(Extension):
-    def __init__(self, variable: Variable):
-        """
-        初始化
-        :param variable: 变量字典
-        """
-        super().__init__()
-        self.variable = variable
-
-    def extendMarkdown(self, md: Markdown):
-        """
-        添加扩展
-        :param md: 转换器
-        """
-        md.registerExtension(self)  # 注册扩展
-        # md.treeprocessors.register(CodeLine(variable=self.variable), 'code_line', 0)  # 渲染单行代码块
-        # md.treeprocessors.register(CodeBlock(), 'code_block', 1000)  # 渲染多行代码块
 
 
 Extensions = {
@@ -313,9 +301,11 @@ Extensions = {
     '上标': InsertSupExtension(),
     '高级列表': FancyListExtension(),
     '高级标题': SaneHeadersExtension(),
+    '超级链接': MagiclinkExtension(),
 
     # 自定义
-    '基本风格': Basic(),
+    '基本风格': BasicExtension(),
+    '锚点': AnchorExtension(),
 }
 
 
