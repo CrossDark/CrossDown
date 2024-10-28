@@ -207,58 +207,6 @@ class LinkLine(InlineProcessor):
         return tag, m.start(), m.end()
 
 
-class CodeLine(Treeprocessor):
-    """
-    渲染单行代码
-    """
-
-    def __init__(self, variable: Variable):
-        """
-        初始化
-        :param variable: 变量字典
-        """
-        super().__init__()
-        self.variable = variable
-
-    def run(self, root: xml.etree.ElementTree.Element):
-        """
-        渲染
-        :param root: Element树
-        """
-        for code in root.findall('.//code'):  # 在所有段落中查找单行代码
-            if re.match(r'\$[^$]*\$', code.text):  # 渲染Latex
-                code.text = fr'\({code.text[1:-1]}\)'
-                code.tag = 'span'
-            elif re.match(r'¥[^$]*¥', code.text):  # 是数学函数(单行)
-                if EXTRA_ABLE:  # 支持扩展语法
-                    expression, range_ = re.findall(r'¥([^$]*)¥(€[^$]*€)?', code.text)[0]  # 分离表达式与范围(如果有)
-                    x_r = (-10, 10)
-                    y_r = (-20, 20)
-                    if range_ != '':  # 定义了范围
-                        ranges = range_[1:-1].split('|')
-                        if len(ranges) in (1, 2):  # 定义的范围正确
-                            x_r = tuple(int(i) for i in ranges[0].split(','))
-                            if len(ranges) == 2:  # 定义了y范围
-                                y_r = tuple(int(i) for i in ranges[1].split(','))
-                    code.tag = 'img'
-                    code.set('src', f"""data:image/png;base64,{(function_drawing(
-                        function=lambda x: eval(expression.split('=')[1]), x_range=x_r, y_range=y_r
-                    ))}""")  # 绘制函数图像
-                    code.set('alt', 'Base64 函数图片')
-                else:  # 不支持扩展语法
-                    code.tag = 'span'
-                    code.set('class', 'block')
-                    code.text = '该平台不支持扩展语法'
-            elif re.match(r'\{[^$]*}', code.text):  # 是强调
-                code.tag = 'span'
-                code.set('class', 'block')
-                key = code.text[1:-1]  # 去掉两边的{}
-                if key in self.variable:
-                    code.text = self.variable[key]
-                else:
-                    code.text = key
-
-
 class Pre(Extension):
     """预处理"""
 
@@ -338,15 +286,15 @@ Extensions = {
 
     # pymdownx
     '基本扩展': ExtraExtension(configs={
-        superfences: {
-            custom_fences: [  # 渲染mermaid
+        'pymdownx.superfences': {
+            'custom_fences': [  # 渲染mermaid
                 {
                     'name': 'mermaid',
                     'class': 'mermaid',
                     'format': fence_div_format
                 }
             ]
-        }
+        },
     }),
     '超级数学': ArithmatexExtension(),
     'EMOJI': EmojiExtension(),
