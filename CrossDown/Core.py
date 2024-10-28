@@ -32,7 +32,6 @@ from markdown import Markdown
 from typing import *
 import re
 import xml
-import emoji
 
 from .Define import Variable
 
@@ -363,7 +362,6 @@ Extensions = {
     '高亮': MarkExtension(),
     '进度条': ProgressBarExtension(),
     '高级符号': SmartSymbolsExtension(),
-    '超级代码块': SuperFencesCodeExtension(),
     '任务列表': TasklistExtension(clickable_checkbox=True),
     '下标': DeleteSubExtension(),
     '上标': InsertSupExtension(),
