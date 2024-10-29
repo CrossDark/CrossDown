@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="CrossDown",
-    version="2.2.0",
+    version="3.2.4",
     author="CrossDark",
     author_email="liuhanbo333@icloud.com",
     description="CrossDark's MarkDown",

@@ -34,25 +34,6 @@ from pymdownx.magiclink import MagiclinkExtension
 from .Define import Variable
 
 
-class PreProcess(Preprocessor):
-    """预处理"""
-
-    def __init__(self, variable: Variable):
-        super().__init__()
-        self.variable = variable
-
-    def run(self, lines: List[str]) -> List[str]:
-        new_lines = []
-        for line in lines:  # 逐行遍历
-            for value in re.findall(r'\{\[(.+?)]}', line):  # 找到变量
-                if value in self.variable:  # 变量已定义
-                    line = re.sub(fr'\{{\[{value}]}}', self.variable[value], line)  # 替换变量为值
-                else:
-                    line = re.sub(fr'\{{\[{value}]}}', value, line)  # 不替换变量
-            new_lines.append(line)
-        return new_lines
-
-
 class Simple(InlineProcessor):
     """
     可通过简单的正则表达式和HTML标签实现的样式
@@ -210,26 +191,6 @@ class LinkLine(InlineProcessor):
         tag.text = m.group(1)
 
         return tag, m.start(), m.end()
-
-
-class Pre(Extension):
-    """预处理"""
-
-    def __init__(self, variable: Variable):
-        """
-        初始化
-        :param variable: 变量字典
-        """
-        super().__init__()
-        self.variable = variable
-
-    def extendMarkdown(self, md: Markdown):
-        """
-        添加扩展
-        :param md: 转换器
-        """
-        md.registerExtension(self)  # 注册扩展
-        md.preprocessors.register(PreProcess(self.variable), 'pre_process', 1000)
 
 
 class BasicExtension(Extension):

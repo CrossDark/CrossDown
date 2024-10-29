@@ -199,6 +199,7 @@ $$
 #! usr/bin/python3.11
 def main():
     print('CrossDown')
+`#!py3 print('cd')`
 ```
 
 5 转义
