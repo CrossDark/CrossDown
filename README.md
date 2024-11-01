@@ -8,7 +8,10 @@ base_url: http://crossdark.net:3000/crossdark/CrossDown
 
 # CrossDown
 自制的markdown,添加了一些自定义的语法
+
 效果请见<README.html>
+
+安装:pip3 install --index-url https://crossdark.net/api/packages/CrossDark/pypi/simple/ CrossDown
 
 1 基本语法
 
@@ -108,7 +111,7 @@ The mock shebang will be treated like text here: ` #!js var test = 0; `.
 这是$CO_2$二氧化碳,或者可以写成这样CO~2~
 
 这是$H_2O$水,或者写成H~2~O
-H^3^~2~O
+^3^H~2~O
 
 $\lg\left(\frac{目标生物的理智值}{稳定折磨型工具人的理智值}\right)$
 
@@ -123,6 +126,10 @@ $\lg\left(\frac{目标生物的理智值}{稳定折磨型工具人的理智值}\
 4.1.3 按键风格
 
 ++ctrl+alt+delete++
+
+4.1.4 突出
+
+`{突出内容}`
 
 4.2 多行
 

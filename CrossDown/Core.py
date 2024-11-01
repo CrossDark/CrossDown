@@ -1,3 +1,8 @@
+"""
+核心代码
+"""
+
+
 import re
 import xml
 from typing import *
@@ -30,6 +35,7 @@ from pymdownx.superfences import fence_div_format
 from pymdownx.tasklist import TasklistExtension
 from pymdownx.tilde import DeleteSubExtension
 from pymdownx.magiclink import MagiclinkExtension
+from pymdownx.pathconverter import PathConverterExtension
 
 from .Define import Variable
 
@@ -263,6 +269,7 @@ Extensions = {
     '高级列表': FancyListExtension(),
     '高级标题': SaneHeadersExtension(),
     '超级链接': MagiclinkExtension(),
+    '路径转换器': PathConverterExtension(),
 
     # 自定义
     '基本风格': BasicExtension(),

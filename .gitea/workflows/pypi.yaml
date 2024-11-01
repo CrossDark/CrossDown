@@ -1,0 +1,44 @@
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.11'
+
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip  
+          pip install setuptools wheel
+
+      - name: Build the package
+        run: |  
+          python3.11 setup.py sdist bdist_wheel
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: python-dist
+          path: |  
+            dist/*.tar.gz  
+            dist/*.whl
+
+      - name: Set up twine
+        run: pip install twine
+
+      - name: Publish to PyPI
+        env:
+          TWINE_USERNAME: '__token__'
+          TWINE_PASSWORD: 'pypi-AgEIcHlwaS5vcmcCJDYxNjk2MzExLTg2NjMtNDUwNi1hMTQ0LTM2NDkxY2U1NjExYwACKlszLCIwNmJkMmFkZS1hYjkxLTQ0MWMtOWM1ZC02MmE0OTc3NTc5Y2EiXQAABiD_N8XZktPwthdp9dRpkpm7dIEh3eVbSr-X6H_OS8OzDw'
+        run: |  
+          twine upload dist/*
