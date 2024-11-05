@@ -187,7 +187,7 @@ $$
     p(h_j=1|\mathbf{v}) & = \sigma\left(\sum_i w_{ij}v_i + c_j\right)
 \end{align}
 
-行内公式: $p(x|y) = \frac{p(y|x)p(x)}{p(y)}$ 
+行内公式: $p(x|y) = \frac{p(y|x)p(x)}{p(y)}$
 
 4.2.6 HTML
 
