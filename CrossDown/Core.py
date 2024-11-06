@@ -37,6 +37,8 @@ from pymdownx.tilde import DeleteSubExtension
 from pymdownx.magiclink import MagiclinkExtension
 from pymdownx.pathconverter import PathConverterExtension
 
+import kbdextension
+
 from .Define import Variable
 
 
@@ -226,7 +228,7 @@ class AnchorExtension(Extension):
         :param md: 转换器
         """
         md.registerExtension(self)  # 注册扩展
-        md.inlinePatterns.register(Anchor(r'\{{#([^{}#]+)}}'), 'anchor', 0)  # 定义锚点
+        # md.inlinePatterns.register(Anchor(r'\{{#([^{}#]+)}}'), 'anchor', 0)  # 定义锚点
         md.inlinePatterns.register(LinkLine(r'\{{([^{}#]+)}}'), 'line_link', 0)  # 添加页内链接
 
 
@@ -270,6 +272,9 @@ Extensions = {
     '高级标题': SaneHeadersExtension(),
     '超级链接': MagiclinkExtension(),
     '路径转换器': PathConverterExtension(),
+
+    # 其它
+    'KBD': kbdextension.KbdExtension(),
 
     # 自定义
     '基本风格': BasicExtension(),

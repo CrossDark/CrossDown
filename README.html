@@ -59,11 +59,7 @@
     <li><a href="#2.2">2.2 赋值</a></li>
     </ul>
     </li>
-    <li><a href="#3">3 锚点</a><ul>
-    <li><a href="#3.1">3.1 定义</a></li>
-    <li><a href="#3.2">3.2 页内链接</a></li>
-    </ul>
-    </li>
+    <li><a href="#3">3 锚点</a></li>
     <li><a href="#4">4 代码块</a><ul>
     <li><a href="#4.1">4.1 单行</a><ul>
     <li><a href="#4.1.1">4.1.1 LaTex</a></li>
@@ -178,10 +174,6 @@
     <h2 id="2.2">2.2 赋值</h2>
     <p>直接在文本中使用 <abbr title="长的文本">缩写</abbr> 即可</p>
     <h1 id="3">3 锚点</h1>
-    <h2 id="3.1">3.1 定义</h2>
-    <p><span id="锚点名">锚点名</span></p>
-    <h2 id="3.2">3.2 页内链接</h2>
-    <p><a href="#锚点名">锚点名</a></p>
     <h1 id="4">4 代码块</h1>
     <h2 id="4.1">4.1 <code>单行</code></h2>
     <p>Here is some code: <code class="highlight"><span class="kn">import</span> <span class="nn">pymdownx</span><span class="p">;</span> <span class="n">pymdownx</span><span class="o">.</span><span class="n">__version__</span></code>.</p>
@@ -197,6 +189,7 @@
     <p><code>¥y=x**3¥€-50,50|-100,100€</code>  // 定义了y范围</p>
     <h3 id="4.1.3">4.1.3 按键风格</h3>
     <p><span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-alt">Alt</kbd><span>+</span><kbd class="key-delete">Del</kbd></span></p>
+    <p><kbd>Enter</kbd></p>
     <h3 id="4.1.4">4.1.4 突出</h3>
     <p><code>{突出内容}</code></p>
     <h2 id="4.2">4.2 多行</h2>
@@ -263,8 +256,7 @@
         p(h_j=1|\mathbf{v}) & = \sigma\left(\sum_i w_{ij}v_i + c_j\right)
     \end{align}</script>
     </div>
-    <p>行内公式: <span class="arithmatex"><span class="MathJax_Preview">p(x|y) = \frac{p(y|x)p(x)}{p(y)}</span><script type="math/tex">p(x|y) = \frac{p(y|x)p(x)}{p(y)}</script></span> </p>
-    <p><code>$Cu_{2}(OH)_{2}CO_{3}$</code></p>
+    <p>行内公式: <span class="arithmatex"><span class="MathJax_Preview">p(x|y) = \frac{p(y|x)p(x)}{p(y)}</span><script type="math/tex">p(x|y) = \frac{p(y|x)p(x)}{p(y)}</script></span></p>
     <h3 id="4.2.6">4.2.6 HTML</h3>
     <div class="highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
         <span class="cm">&lt;!--头部--&gt;</span>
@@ -547,7 +539,7 @@
     </div>
     </p>
     <h1 id="15">15 内部链接</h1>
-    <p><a class="wikilink" href="/Bracketed/">Bracketed</a></p>
+    <p><kbd>Bracketed</kbd></p>
     <h1 id="16">16 变量</h1>
     <p>{[强调变量]}</p>
     <h1 id="17">17 属性设置</h1>
