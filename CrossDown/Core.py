@@ -38,6 +38,7 @@ from pymdownx.magiclink import MagiclinkExtension
 from pymdownx.pathconverter import PathConverterExtension
 
 import kbdextension
+import markdown_gfm_admonition
 
 from .Define import Variable
 
@@ -275,6 +276,7 @@ Extensions = {
 
     # 其它
     'KBD': kbdextension.KbdExtension(),
+    'GFM 警告': markdown_gfm_admonition.GfmAdmonitionExtension(),
 
     # 自定义
     '基本风格': BasicExtension(),

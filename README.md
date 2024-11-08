@@ -492,3 +492,30 @@ General block handling.
 * test add
 
 ++}
+
+20 警告
+
+20.1 告示
+
+> [!NOTE]  
+> 突出用户应考虑的信息
+
+20.2 提示
+
+> [!TIP]
+> 帮助用户的可选信息
+
+20.3 着重
+
+> [!IMPORTANT]  
+> Crucial information necessary for users to succeed.
+
+20.4 提醒
+
+> [!WARNING]  
+> Critical content demanding immediate user attention due to potential risks.
+
+20.5 警告
+
+> [!CAUTION]
+> Negative potential consequences of an action.
