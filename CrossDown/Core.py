@@ -12,6 +12,7 @@ from markdown.blockprocessors import BlockProcessor
 from markdown.extensions import Extension, meta, toc, wikilinks, legacy_attrs
 from markdown.inlinepatterns import InlineProcessor
 from markdown.preprocessors import Preprocessor
+from markdown.treeprocessors import Treeprocessor
 
 from pymdownx.arithmatex import ArithmatexExtension
 from pymdownx.blocks import BlocksExtension
@@ -25,7 +26,7 @@ from pymdownx.emoji import EmojiExtension
 from pymdownx.extra import ExtraExtension
 from pymdownx.fancylists import FancyListExtension
 from pymdownx.highlight import HighlightExtension
-from pymdownx.inlinehilite import InlineHiliteExtension
+from pymdownx.inlinehilite import InlineHiliteExtension, InlineHilitePattern
 from pymdownx.keys import KeysExtension
 from pymdownx.mark import MarkExtension
 from pymdownx.progressbar import ProgressBarExtension
@@ -39,6 +40,8 @@ from pymdownx.pathconverter import PathConverterExtension
 
 import kbdextension
 import markdown_gfm_admonition
+
+from xml.etree.ElementTree import ElementTree, Element, fromstring
 
 from .Define import Variable
 
@@ -183,6 +186,28 @@ class Anchor(InlineProcessor):
         return tag, m.start(), m.end()
 
 
+class CodeLine(Treeprocessor):
+    """
+    渲染单行代码
+    """
+
+    def __init__(self, variable: Variable):
+        """
+        初始化
+        :param variable: 变量字典
+        """
+        super().__init__()
+        self.variable = variable
+
+    def run(self, root: xml.etree.ElementTree.Element):
+        """
+        渲染
+        :param root: Element树
+        """
+        for code in root.findall('.//code'):  # 在所有段落中查找单行代码
+            print(code.text)
+
+
 class LinkLine(InlineProcessor):
     """
     {行内链接}
@@ -229,8 +254,36 @@ class AnchorExtension(Extension):
         :param md: 转换器
         """
         md.registerExtension(self)  # 注册扩展
-        # md.inlinePatterns.register(Anchor(r'\{{#([^{}#]+)}}'), 'anchor', 0)  # 定义锚点
-        md.inlinePatterns.register(LinkLine(r'\{{([^{}#]+)}}'), 'line_link', 0)  # 添加页内链接
+        md.inlinePatterns.register(Anchor(r'\{#([^{}#]+)}'), 'anchor', 0)  # 定义锚点
+        md.inlinePatterns.register(LinkLine(r'\{-([^{}#]+)}'), 'line_link', 0)  # 添加页内链接
+
+
+class CodeExtension(Extension):
+    def __init__(self, variable: Variable):
+        """
+        初始化
+        :param variable: 变量字典
+        """
+        super().__init__()
+        self.variable = variable
+
+    def extendMarkdown(self, md: Markdown):
+        """
+        添加扩展
+        :param md: 转换器
+        """
+        md.treeprocessors.register(CodeLine(variable=self.variable), 'code_line', 100)
+
+
+def variable_formatter(source, language, css_class, md):
+    if language != '':
+        return InlineHilitePattern.highlight_code(src=source, language=language, classname=css_class, md=md)
+    match tuple(source):
+        case '{', '#', *archers, '}':  # 匹配到{#锚点}
+            archer = str(archers.items())
+            return f'<span id="{archer}">{archer}</span>'
+        case _:
+            return f'<code>{source}</code>'  # Or string
 
 
 Extensions = {
@@ -247,8 +300,8 @@ Extensions = {
                 {
                     'name': 'mermaid',
                     'class': 'mermaid',
-                    'format': fence_div_format
-                }
+                    'format': fence_div_format,
+                },
             ]
         },
     }),
@@ -261,7 +314,15 @@ Extensions = {
     '标签': TabExtension(),
     '批评': CriticExtension(),
     '代码高亮': HighlightExtension(),
-    '行内高亮': InlineHiliteExtension(),
+    '行内高亮': InlineHiliteExtension(
+        custom_inline=[
+            {
+                'name': '*',
+                'class': 'block',
+                'format': variable_formatter,
+            },
+        ]
+    ),
     '按键风格': KeysExtension(),
     '高亮': MarkExtension(),
     '进度条': ProgressBarExtension(),
