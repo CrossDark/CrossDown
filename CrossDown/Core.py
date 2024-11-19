@@ -275,15 +275,20 @@ class CodeExtension(Extension):
         md.treeprocessors.register(CodeLine(variable=self.variable), 'code_line', 100)
 
 
-def variable_formatter(source, language, css_class, md):
-    if language != '':
-        return InlineHilitePattern.highlight_code(src=source, language=language, classname=css_class, md=md)
+def inline_formatter(source, language, css_class, md):  # 自定义的单行代码格式化器
+    if language != '':  # 调用默认格式化函数
+        return md.inlinePatterns['backtick'].highlight_code(src=source, language=language, classname=css_class, md=md)
     match tuple(source):
         case '{', '#', *archers, '}':  # 匹配到{#锚点}
-            archer = str(archers.items())
+            archer = ''.join(archers)
             return f'<span id="{archer}">{archer}</span>'
+        case '{', '-', *inline_links, '}':  # 匹配到{-行内链接}
+            inline_link = ''.join(inline_links)
+            return f'<a href=#{inline_link}>{inline_link}</a>'
+        case '{', *variable, '}':  # 匹配到{变量}
+            return ''.join(variable)
         case _:
-            return f'<code>{source}</code>'  # Or string
+            return f'<code>{source}</code>'
 
 
 Extensions = {
@@ -319,7 +324,7 @@ Extensions = {
             {
                 'name': '*',
                 'class': 'block',
-                'format': variable_formatter,
+                'format': inline_formatter,
             },
         ]
     ),
@@ -341,7 +346,7 @@ Extensions = {
 
     # 自定义
     '基本风格': BasicExtension(),
-    '锚点': AnchorExtension(),
+    # '锚点': AnchorExtension(),
 }
 
 
