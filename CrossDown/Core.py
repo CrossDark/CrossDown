@@ -2,7 +2,6 @@
 核心代码
 """
 
-
 import re
 import xml
 from typing import *
@@ -111,7 +110,7 @@ class ID(InlineProcessor):
     需要对HTML标签设置ID实现的样式
     """
 
-    def __init__(self, pattern: str, tag: str, property_: str, value: Union[str, bool] = None):
+    def __init__(self, pattern: str, tag: str, property_: str, value: str | bool = None):
         """
         初始化
         :param pattern: 正则表达式
@@ -171,8 +170,9 @@ class Anchor(InlineProcessor):
     """
     {#定义锚点}
     """
-    def handleMatch(self, m: Match[str], data: str) -> (Tuple[xml.etree.ElementTree.Element, int, int] |
-                                                        Tuple[None, None, None]):
+
+    def handleMatch(self, m: Match[str], data: str) -> (tuple[xml.etree.ElementTree.Element, int, int] |
+                                                        tuple[None, None, None]):
         """
         处理匹配
         :param m: re模块的匹配对象
@@ -212,8 +212,9 @@ class LinkLine(InlineProcessor):
     """
     {行内链接}
     """
-    def handleMatch(self, m: Match[str], data: str) -> (Tuple[xml.etree.ElementTree.Element, int, int] |
-                                                        Tuple[None, None, None]):
+
+    def handleMatch(self, m: Match[str], data: str) -> (tuple[xml.etree.ElementTree.Element, int, int] |
+                                                        tuple[None, None, None]):
         """
         处理匹配
         :param m: re模块的匹配对象
@@ -275,20 +276,27 @@ class CodeExtension(Extension):
         md.treeprocessors.register(CodeLine(variable=self.variable), 'code_line', 100)
 
 
-def inline_formatter(source, language, css_class, md):  # 自定义的单行代码格式化器
-    if language != '':  # 调用默认格式化函数
-        return md.inlinePatterns['backtick'].highlight_code(src=source, language=language, classname=css_class, md=md)
-    match tuple(source):
-        case '{', '#', *archers, '}':  # 匹配到{#锚点}
-            archer = ''.join(archers)
-            return f'<span id="{archer}">{archer}</span>'
-        case '{', '-', *inline_links, '}':  # 匹配到{-行内链接}
-            inline_link = ''.join(inline_links)
-            return f'<a href=#{inline_link}>{inline_link}</a>'
-        case '{', *variable, '}':  # 匹配到{变量}
-            return ''.join(variable)
-        case _:
-            return f'<code>{source}</code>'
+class InlineCode:
+    def __init__(self, variable: Variable):
+        self.variable = variable
+
+    def __call__(self, source, language, css_class, md):  # 自定义的单行代码格式化器
+        if language != '':  # 调用默认格式化函数
+            return md.inlinePatterns['backtick'].highlight_code(src=source, language=language, classname=css_class,
+                                                                md=md)
+        match tuple(source):
+            case '{', '#', *archers, '}':  # 匹配到{#锚点}
+                archer = ''.join(archers)
+                return f'<span id="{archer}">{archer}</span>'
+            case '{', '-', *inline_links, '}':  # 匹配到{-行内链接}
+                inline_link = ''.join(inline_links)
+                return f'<a href=#{inline_link}>{inline_link}</a>'
+            case '{', *variables, '}':  # 匹配到{变量}
+                variable = ''.join(variables)
+                if variable in self.variable:
+                    return self.variable[variable]
+            case _:
+                return f'<code>{source}</code>'
 
 
 Extensions = {
@@ -319,15 +327,6 @@ Extensions = {
     '标签': TabExtension(),
     '批评': CriticExtension(),
     '代码高亮': HighlightExtension(),
-    '行内高亮': InlineHiliteExtension(
-        custom_inline=[
-            {
-                'name': '*',
-                'class': 'block',
-                'format': inline_formatter,
-            },
-        ]
-    ),
     '按键风格': KeysExtension(),
     '高亮': MarkExtension(),
     '进度条': ProgressBarExtension(),
@@ -350,7 +349,7 @@ Extensions = {
 }
 
 
-def main(text: str, variable: Variable = None) -> Tuple[str, Variable]:
+def main(text: str, variable: Variable = None) -> tuple[str, Variable]:
     """
     主函数
     :param text: 输入文本
@@ -359,5 +358,15 @@ def main(text: str, variable: Variable = None) -> Tuple[str, Variable]:
     """
     if variable is None:
         variable = {}
-    md = Markdown(extensions=list(Extensions.values()))
+    md = Markdown(extensions=list(Extensions.values()) + [
+        InlineHiliteExtension(
+            custom_inline=[
+                {
+                    'name': '*',
+                    'class': 'block',
+                    'format': InlineCode(variable=variable),
+                },
+            ]
+        ),
+    ])
     return md.convert(text), md.Meta

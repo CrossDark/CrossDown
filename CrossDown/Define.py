@@ -1,4 +1,4 @@
 from typing import *
 
 
-Variable = Dict[str, Union[str, Tuple[str], List[str]]] | None
+Variable = dict[str, str | tuple[str], list[str]] | None
