@@ -1,12 +1,14 @@
 from typing import *
 import pickle
-from .Core import main
+from .Core import main, Variable, Syllabus
 
 __all__ = [
     'main',  # 主函数
     'indent',  # 添加空格
     'HEAD',  # HTML头部引用
     'Meta',  # 元数据处理器
+    'Syllabus',  # 提纲扩展
+    'Variable',  # 变量类型提示
 ]
 __version__ = '0.11.2'
 __author__ = 'CrossDark'

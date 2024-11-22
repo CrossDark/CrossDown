@@ -6,12 +6,11 @@ import re
 import xml
 from typing import *
 
+import markdown.core
 from markdown import Markdown
 from markdown.blockprocessors import BlockProcessor
 from markdown.extensions import Extension, meta, toc, wikilinks, legacy_attrs
 from markdown.inlinepatterns import InlineProcessor
-from markdown.preprocessors import Preprocessor
-from markdown.treeprocessors import Treeprocessor
 
 from pymdownx.arithmatex import ArithmatexExtension
 from pymdownx.blocks import BlocksExtension
@@ -25,7 +24,7 @@ from pymdownx.emoji import EmojiExtension
 from pymdownx.extra import ExtraExtension
 from pymdownx.fancylists import FancyListExtension
 from pymdownx.highlight import HighlightExtension
-from pymdownx.inlinehilite import InlineHiliteExtension, InlineHilitePattern
+from pymdownx.inlinehilite import InlineHiliteExtension
 from pymdownx.keys import KeysExtension
 from pymdownx.mark import MarkExtension
 from pymdownx.progressbar import ProgressBarExtension
@@ -40,9 +39,10 @@ from pymdownx.pathconverter import PathConverterExtension
 import kbdextension
 import markdown_gfm_admonition
 
-from xml.etree.ElementTree import ElementTree, Element, fromstring
+from xml.etree.ElementTree import ElementTree
 
-from .Define import Variable
+
+Variable = dict[str, str | tuple[str], list[str]] | None
 
 
 class Simple(InlineProcessor):
@@ -166,68 +166,6 @@ class Syllabus(BlockProcessor):
         return False
 
 
-class Anchor(InlineProcessor):
-    """
-    {#定义锚点}
-    """
-
-    def handleMatch(self, m: Match[str], data: str) -> (tuple[xml.etree.ElementTree.Element, int, int] |
-                                                        tuple[None, None, None]):
-        """
-        处理匹配
-        :param m: re模块的匹配对象
-        :param data: 被匹配的原始文本
-        :return: 标签 匹配开始 匹配结束
-        """
-        tag = xml.etree.ElementTree.Element('span')  # 创建标签
-        tag.text = m.group(1)
-        tag.set('id', m.group(1))  # 设置id
-
-        return tag, m.start(), m.end()
-
-
-class CodeLine(Treeprocessor):
-    """
-    渲染单行代码
-    """
-
-    def __init__(self, variable: Variable):
-        """
-        初始化
-        :param variable: 变量字典
-        """
-        super().__init__()
-        self.variable = variable
-
-    def run(self, root: xml.etree.ElementTree.Element):
-        """
-        渲染
-        :param root: Element树
-        """
-        for code in root.findall('.//code'):  # 在所有段落中查找单行代码
-            print(code.text)
-
-
-class LinkLine(InlineProcessor):
-    """
-    {行内链接}
-    """
-
-    def handleMatch(self, m: Match[str], data: str) -> (tuple[xml.etree.ElementTree.Element, int, int] |
-                                                        tuple[None, None, None]):
-        """
-        处理匹配
-        :param m: re模块的匹配对象
-        :param data: 被匹配的原始文本
-        :return: 标签 匹配开始 匹配结束
-        """
-        tag = xml.etree.ElementTree.Element('a')  # 创建标签
-        tag.set('href', '#' + m.group(1))  # 设置id
-        tag.text = m.group(1)
-
-        return tag, m.start(), m.end()
-
-
 class BasicExtension(Extension):
     """
     渲染基本样式
@@ -248,42 +186,16 @@ class BasicExtension(Extension):
         md.parser.blockprocessors.register(Syllabus(md.parser), 'syllabus', 182)  # 渲染提纲
 
 
-class AnchorExtension(Extension):
-    def extendMarkdown(self, md: Markdown):
-        """
-        添加扩展
-        :param md: 转换器
-        """
-        md.registerExtension(self)  # 注册扩展
-        md.inlinePatterns.register(Anchor(r'\{#([^{}#]+)}'), 'anchor', 0)  # 定义锚点
-        md.inlinePatterns.register(LinkLine(r'\{-([^{}#]+)}'), 'line_link', 0)  # 添加页内链接
-
-
-class CodeExtension(Extension):
-    def __init__(self, variable: Variable):
-        """
-        初始化
-        :param variable: 变量字典
-        """
-        super().__init__()
-        self.variable = variable
-
-    def extendMarkdown(self, md: Markdown):
-        """
-        添加扩展
-        :param md: 转换器
-        """
-        md.treeprocessors.register(CodeLine(variable=self.variable), 'code_line', 100)
-
-
 class InlineCode:
     def __init__(self, variable: Variable):
         self.variable = variable
 
-    def __call__(self, source, language, css_class, md):  # 自定义的单行代码格式化器
+    def __call__(self, source: str, language: str, css_class: str, md: markdown.core.Markdown):  # 自定义的单行代码格式化器
         if language != '':  # 调用默认格式化函数
-            return md.inlinePatterns['backtick'].highlight_code(src=source, language=language, classname=css_class,
-                                                                md=md)
+            return md.inlinePatterns['backtick'].highlight_code(
+                src=source, language=language, classname=css_class,
+                md=md
+            )
         match tuple(source):
             case '{', '#', *archers, '}':  # 匹配到{#锚点}
                 archer = ''.join(archers)
@@ -347,7 +259,6 @@ Extensions = {
 
     # 自定义
     '基本风格': BasicExtension(),
-    # '锚点': AnchorExtension(),
 }
 
 
