@@ -295,6 +295,8 @@ class InlineCode:
                 variable = ''.join(variables)
                 if variable in self.variable:
                     return self.variable[variable]
+                else:
+                    return variable
             case _:
                 return f'<code>{source}</code>'
 
