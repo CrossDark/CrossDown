@@ -9,9 +9,9 @@ base_url: http://crossdark.net:3000/crossdark/CrossDown
 # CrossDown
 自制的markdown,添加了一些自定义的语法
 
-效果请见<README.html>
+效果请见[[README.html]]
 
-安装:pip3 install --index-url https://crossdark.net/api/packages/CrossDark/pypi/simple/ CrossDown
+安装:`#!bash pip3 install --index-url https://crossdark.net/api/packages/CrossDark/pypi/simple/ CrossDown`
 
 1 基本语法
 
