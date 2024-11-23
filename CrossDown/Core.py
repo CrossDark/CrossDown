@@ -4,6 +4,7 @@
 
 import re
 import xml
+
 from typing import *
 
 import markdown.core
@@ -59,8 +60,8 @@ class Simple(InlineProcessor):
         super().__init__(pattern)
         self.tag = tag
 
-    def handleMatch(self, m: Match[str], data: str) -> (Tuple[xml.etree.ElementTree.Element, int, int] |
-                                                        Tuple[None, None, None]):
+    def handleMatch(self, m: Match[str], data: str) -> (tuple[xml.etree.ElementTree.Element, int, int] |
+                                                        tuple[None, None, None]):
         """
         处理匹配
         :param m: re模块的匹配对象
@@ -89,8 +90,8 @@ class Nest(InlineProcessor):
         self.outer_tag = outer_tag
         self.inner_tag = inner_tag
 
-    def handleMatch(self, m: Match[str], data: str) -> (Tuple[xml.etree.ElementTree.Element, int, int] |
-                                                        Tuple[None, None, None]):
+    def handleMatch(self, m: Match[str], data: str) -> (tuple[xml.etree.ElementTree.Element, int, int] |
+                                                        tuple[None, None, None]):
         """
         处理匹配
         :param m: re模块的匹配对象
@@ -123,8 +124,8 @@ class ID(InlineProcessor):
         self.property = property_
         self.value = value
 
-    def handleMatch(self, m: Match[str], data: str) -> (Tuple[xml.etree.ElementTree.Element, int, int] |
-                                                        Tuple[None, None, None]):
+    def handleMatch(self, m: Match[str], data: str) -> (tuple[xml.etree.ElementTree.Element, int, int] |
+                                                        tuple[None, None, None]):
         """
         处理匹配
         :param m: re模块的匹配对象
@@ -151,7 +152,7 @@ class Syllabus(BlockProcessor):
         """
         return re.match(self.syllabus_re, block)
 
-    def run(self, parent: xml.etree.ElementTree.Element, blocks: List[str]) -> bool | None:
+    def run(self, parent: xml.etree.ElementTree.Element, blocks: list[str]) -> bool | None:
         """
         对匹配到的块进行处理
         :param parent: 当前块的Element对象
@@ -196,19 +197,20 @@ class InlineCode:
                 src=source, language=language, classname=css_class,
                 md=md
             )
-        match tuple(source):
-            case '{', '#', *archers, '}':  # 匹配到{#锚点}
-                archer = ''.join(archers)
+        try:  # 尝试拆分字符串
+            sources: tuple[str, str, str, str] = re.compile(r'(\{)([#-]?)(.*?)(})').match(source).groups()
+        except AttributeError:  # 不符合格式
+            return ''
+        match sources:
+            case '{', '#', archer, '}':  # 匹配到{#锚点}
                 return f'<span id="{archer}">{archer}</span>'
-            case '{', '-', *inline_links, '}':  # 匹配到{-行内链接}
-                inline_link = ''.join(inline_links)
+            case '{', '-', inline_link, '}':  # 匹配到{-行内链接}
                 return f'<a href=#{inline_link}>{inline_link}</a>'
-            case '{', *variables, '}':  # 匹配到{变量}
-                variable = ''.join(variables)
+            case '{', '', variable, '}':  # 匹配到{变量}
                 if variable in self.variable:
-                    return self.variable[variable]
+                    return f'<span class="block">{self.variable[variable]}</span>'
                 else:
-                    return variable
+                    return f'<span class="block">{variable}</span>'
             case _:
                 return f'<code>{source}</code>'
 

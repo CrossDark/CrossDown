@@ -60,8 +60,6 @@ ___
 
 [CrossDark](https://crossdark.com)
 
-<https://crossdark.net/>
-
 https://crossdark.net/
 
 liuhanbo333@icloud.com
@@ -245,7 +243,7 @@ def main():
 
 7..1...4 错误示范
 
-提纲号会被自动配置为锚点,可直接使用{-7}{-7.1}
+提纲号会被自动配置为锚点,可直接使用`{-7}` `{-7.1}` *这种情况中间必须有间隔*
 
 8 注释
 
