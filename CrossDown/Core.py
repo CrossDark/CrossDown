@@ -192,24 +192,21 @@ class InlineCode:
         self.variable = variable
 
     def __call__(self, source: str, language: str, css_class: str, md: markdown.core.Markdown):  # 自定义的单行代码格式化器
-        if language != '':  # 调用默认格式化函数
+        if language != '':  # 字符串已经定义了语言类型
             return md.inlinePatterns['backtick'].highlight_code(
                 src=source, language=language, classname=css_class,
                 md=md
-            )
-        try:  # 尝试拆分字符串
-            sources: tuple[str, str, str, str] = re.compile(r'(\{)([#-]?)(.*?)(})').match(source).groups()
-        except AttributeError:  # 不符合格式
-            return ''
-        match sources:
-            case '{', '#', archer, '}':  # 匹配到{#锚点}
+            )  # 调用默认格式化函数
+
+        match re.compile(r'([#-])?(.*)').match(source).groups():  # 将字符串拆分为(标志, 值)的形式
+            case '#', archer:  # 匹配到`#锚点`
                 return f'<span id="{archer}">{archer}</span>'
-            case '{', '-', inline_link, '}':  # 匹配到{-行内链接}
+            case '-', inline_link:  # 匹配到`-行内链接`
                 return f'<a href=#{inline_link}>{inline_link}</a>'
-            case '{', '', variable, '}':  # 匹配到{变量}
-                if variable in self.variable:
+            case None, variable:  # 可能匹配到`变量`
+                if variable in self.variable:  # 是`变量`
                     return f'<span class="block">{self.variable[variable]}</span>'
-                else:
+                else:  # 不是`变量`
                     return f'<span class="block">{variable}</span>'
             case _:
                 return f'<code>{source}</code>'
