@@ -9,9 +9,9 @@ base_url: http://crossdark.net:3000/crossdark/CrossDown
 # CrossDown
 自制的markdown,添加了一些自定义的语法
 
-效果请见<README.html>
+效果请见[[README.html]]
 
-安装:pip3 install --index-url https://crossdark.net/api/packages/CrossDark/pypi/simple/ CrossDown
+安装:`#!bash pip3 install --index-url https://crossdark.net/api/packages/CrossDark/pypi/simple/ CrossDown`
 
 1 基本语法
 
@@ -60,8 +60,6 @@ ___
 
 [CrossDark](https://crossdark.com)
 
-<https://crossdark.net/>
-
 https://crossdark.net/
 
 liuhanbo333@icloud.com
@@ -92,11 +90,11 @@ liuhanbo333@icloud.com
 
 3.1 定义
 
-{{#锚点名}}
+`#锚点`
 
-3.2 页内链接
+3.2 链接
 
-{{锚点名}}
+`-锚点`
 
 4 代码块
 
@@ -127,9 +125,11 @@ $\lg\left(\frac{目标生物的理智值}{稳定折磨型工具人的理智值}\
 
 ++ctrl+alt+delete++
 
+[[Enter]]
+
 4.1.4 突出
 
-`{突出内容}`
+`突出内容`
 
 4.2 多行
 
@@ -144,9 +144,6 @@ B:
     - a
     - b
     - c
-{[强调变量]}:
-    - a
-    - b
 ```
 
 4.2.2 Python
@@ -187,7 +184,7 @@ $$
     p(h_j=1|\mathbf{v}) & = \sigma\left(\sum_i w_{ij}v_i + c_j\right)
 \end{align}
 
-行内公式: $p(x|y) = \frac{p(y|x)p(x)}{p(y)}$ 
+行内公式: $p(x|y) = \frac{p(y|x)p(x)}{p(y)}$
 
 4.2.6 HTML
 
@@ -246,7 +243,7 @@ def main():
 
 7..1...4 错误示范
 
-提纲号会被自动配置为锚点,可直接使用{{7}}{{7.1}}
+提纲号会被自动配置为锚点,可直接使用`-7` `-7.1` *这种情况中间必须有间隔*
 
 8 注释
 
@@ -284,7 +281,7 @@ B
     - b  
     - c
 
-`{强调变量}`
+`强调变量`
 :   - a
     - b
     - c
@@ -498,3 +495,30 @@ General block handling.
 * test add
 
 ++}
+
+20 警告
+
+20.1 告示
+
+> [!NOTE]  
+> 突出用户应考虑的信息
+
+20.2 提示
+
+> [!TIP]
+> 帮助用户的可选信息
+
+20.3 着重
+
+> [!IMPORTANT]  
+> Crucial information necessary for users to succeed.
+
+20.4 提醒
+
+> [!WARNING]  
+> Critical content demanding immediate user attention due to potential risks.
+
+20.5 警告
+
+> [!CAUTION]
+> Negative potential consequences of an action.

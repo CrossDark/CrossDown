@@ -2,16 +2,16 @@
 核心代码
 """
 
-
 import re
 import xml
+
 from typing import *
 
+import markdown.core
 from markdown import Markdown
 from markdown.blockprocessors import BlockProcessor
 from markdown.extensions import Extension, meta, toc, wikilinks, legacy_attrs
 from markdown.inlinepatterns import InlineProcessor
-from markdown.preprocessors import Preprocessor
 
 from pymdownx.arithmatex import ArithmatexExtension
 from pymdownx.blocks import BlocksExtension
@@ -37,7 +37,13 @@ from pymdownx.tilde import DeleteSubExtension
 from pymdownx.magiclink import MagiclinkExtension
 from pymdownx.pathconverter import PathConverterExtension
 
-from .Define import Variable
+import kbdextension
+import markdown_gfm_admonition
+
+from xml.etree.ElementTree import ElementTree
+
+
+Variable = dict[str, str | tuple[str], list[str]] | None
 
 
 class Simple(InlineProcessor):
@@ -54,8 +60,8 @@ class Simple(InlineProcessor):
         super().__init__(pattern)
         self.tag = tag
 
-    def handleMatch(self, m: Match[str], data: str) -> (Tuple[xml.etree.ElementTree.Element, int, int] |
-                                                        Tuple[None, None, None]):
+    def handleMatch(self, m: Match[str], data: str) -> (tuple[xml.etree.ElementTree.Element, int, int] |
+                                                        tuple[None, None, None]):
         """
         处理匹配
         :param m: re模块的匹配对象
@@ -84,8 +90,8 @@ class Nest(InlineProcessor):
         self.outer_tag = outer_tag
         self.inner_tag = inner_tag
 
-    def handleMatch(self, m: Match[str], data: str) -> (Tuple[xml.etree.ElementTree.Element, int, int] |
-                                                        Tuple[None, None, None]):
+    def handleMatch(self, m: Match[str], data: str) -> (tuple[xml.etree.ElementTree.Element, int, int] |
+                                                        tuple[None, None, None]):
         """
         处理匹配
         :param m: re模块的匹配对象
@@ -105,7 +111,7 @@ class ID(InlineProcessor):
     需要对HTML标签设置ID实现的样式
     """
 
-    def __init__(self, pattern: str, tag: str, property_: str, value: Union[str, bool] = None):
+    def __init__(self, pattern: str, tag: str, property_: str, value: str | bool = None):
         """
         初始化
         :param pattern: 正则表达式
@@ -118,8 +124,8 @@ class ID(InlineProcessor):
         self.property = property_
         self.value = value
 
-    def handleMatch(self, m: Match[str], data: str) -> (Tuple[xml.etree.ElementTree.Element, int, int] |
-                                                        Tuple[None, None, None]):
+    def handleMatch(self, m: Match[str], data: str) -> (tuple[xml.etree.ElementTree.Element, int, int] |
+                                                        tuple[None, None, None]):
         """
         处理匹配
         :param m: re模块的匹配对象
@@ -146,7 +152,7 @@ class Syllabus(BlockProcessor):
         """
         return re.match(self.syllabus_re, block)
 
-    def run(self, parent: xml.etree.ElementTree.Element, blocks: List[str]) -> bool | None:
+    def run(self, parent: xml.etree.ElementTree.Element, blocks: list[str]) -> bool | None:
         """
         对匹配到的块进行处理
         :param parent: 当前块的Element对象
@@ -159,44 +165,6 @@ class Syllabus(BlockProcessor):
         header.text = syllabus.group(1) + ' ' + syllabus.group(3)  # 设置提纲内容
         blocks[0] = ''
         return False
-
-
-class Anchor(InlineProcessor):
-    """
-    {#定义锚点}
-    """
-    def handleMatch(self, m: Match[str], data: str) -> (Tuple[xml.etree.ElementTree.Element, int, int] |
-                                                        Tuple[None, None, None]):
-        """
-        处理匹配
-        :param m: re模块的匹配对象
-        :param data: 被匹配的原始文本
-        :return: 标签 匹配开始 匹配结束
-        """
-        tag = xml.etree.ElementTree.Element('span')  # 创建标签
-        tag.text = m.group(1)
-        tag.set('id', m.group(1))  # 设置id
-
-        return tag, m.start(), m.end()
-
-
-class LinkLine(InlineProcessor):
-    """
-    {行内链接}
-    """
-    def handleMatch(self, m: Match[str], data: str) -> (Tuple[xml.etree.ElementTree.Element, int, int] |
-                                                        Tuple[None, None, None]):
-        """
-        处理匹配
-        :param m: re模块的匹配对象
-        :param data: 被匹配的原始文本
-        :return: 标签 匹配开始 匹配结束
-        """
-        tag = xml.etree.ElementTree.Element('a')  # 创建标签
-        tag.set('href', '#' + m.group(1))  # 设置id
-        tag.text = m.group(1)
-
-        return tag, m.start(), m.end()
 
 
 class BasicExtension(Extension):
@@ -219,15 +187,44 @@ class BasicExtension(Extension):
         md.parser.blockprocessors.register(Syllabus(md.parser), 'syllabus', 182)  # 渲染提纲
 
 
-class AnchorExtension(Extension):
-    def extendMarkdown(self, md: Markdown):
+class InlineCode:
+    """
+    生成InlineHiliteExtension的自定义格式化器
+    """
+    def __init__(self, variable: Variable):
         """
-        添加扩展
-        :param md: 转换器
+        初始化
+        :param variable: 变量字典
         """
-        md.registerExtension(self)  # 注册扩展
-        md.inlinePatterns.register(Anchor(r'\{{#([^{}#]+)}}'), 'anchor', 0)  # 定义锚点
-        md.inlinePatterns.register(LinkLine(r'\{{([^{}#]+)}}'), 'line_link', 0)  # 添加页内链接
+        self.variable = variable
+
+    def __call__(self, source: str, language: str, css_class: str, md: markdown.core.Markdown) -> str | ElementTree:  # 自定义的单行代码格式化器
+        """
+        InlineHiliteExtension的自定义格式化器
+        :param source: 原始单行代码
+        :param language: 输入的语言,未输入则为''
+        :param css_class: 最初通过 custom_inline 项中的 class 选项定义的类名
+        :param md: Markdown 类对象
+        :return: HTML字符串或ElementTree对象
+        """
+        if language != '':  # 字符串已经定义了语言类型
+            return md.inlinePatterns['backtick'].highlight_code(
+                src=source, language=language, classname=css_class,
+                md=md
+            )  # 调用默认格式化函数
+
+        match re.compile(r'([#-])?(.*)').match(source).groups():  # 将字符串拆分为(标志, 值)的形式
+            case '#', archer:  # 匹配到`#锚点`
+                return f'<span id="{archer}">{archer}</span>'
+            case '-', inline_link:  # 匹配到`-行内链接`
+                return f'<a href=#{inline_link}>{inline_link}</a>'
+            case None, variable:  # 可能匹配到`变量`
+                if variable in self.variable:  # 是`变量`
+                    return f'<span class="block">{self.variable[variable]}</span>'
+                else:  # 不是`变量`
+                    return f'<span class="block">{variable}</span>'
+            case _:
+                return f'<code>{source}</code>'
 
 
 Extensions = {
@@ -244,8 +241,8 @@ Extensions = {
                 {
                     'name': 'mermaid',
                     'class': 'mermaid',
-                    'format': fence_div_format
-                }
+                    'format': fence_div_format,
+                },
             ]
         },
     }),
@@ -258,7 +255,6 @@ Extensions = {
     '标签': TabExtension(),
     '批评': CriticExtension(),
     '代码高亮': HighlightExtension(),
-    '行内高亮': InlineHiliteExtension(),
     '按键风格': KeysExtension(),
     '高亮': MarkExtension(),
     '进度条': ProgressBarExtension(),
@@ -271,13 +267,16 @@ Extensions = {
     '超级链接': MagiclinkExtension(),
     '路径转换器': PathConverterExtension(),
 
+    # 其它
+    'KBD': kbdextension.KbdExtension(),
+    'GFM 警告': markdown_gfm_admonition.GfmAdmonitionExtension(),
+
     # 自定义
     '基本风格': BasicExtension(),
-    '锚点': AnchorExtension(),
 }
 
 
-def main(text: str, variable: Variable = None) -> Tuple[str, Variable]:
+def main(text: str, variable: Variable = None) -> tuple[str, Variable]:
     """
     主函数
     :param text: 输入文本
@@ -286,5 +285,15 @@ def main(text: str, variable: Variable = None) -> Tuple[str, Variable]:
     """
     if variable is None:
         variable = {}
-    md = Markdown(extensions=list(Extensions.values()))
+    md = Markdown(extensions=list(Extensions.values()) + [
+        InlineHiliteExtension(
+            custom_inline=[
+                {
+                    'name': '*',
+                    'class': 'block',
+                    'format': InlineCode(variable=variable),  # 传入变量
+                },
+            ]
+        ),
+    ])
     return md.convert(text), md.Meta

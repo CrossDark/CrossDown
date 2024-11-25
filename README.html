@@ -61,7 +61,7 @@
     </li>
     <li><a href="#3">3 锚点</a><ul>
     <li><a href="#3.1">3.1 定义</a></li>
-    <li><a href="#3.2">3.2 页内链接</a></li>
+    <li><a href="#3.2">3.2 链接</a></li>
     </ul>
     </li>
     <li><a href="#4">4 代码块</a><ul>
@@ -132,12 +132,20 @@
     </ul>
     </li>
     <li><a href="#19">19 批评</a></li>
+    <li><a href="#20">20 警告</a><ul>
+    <li><a href="#20.1">20.1 告示</a></li>
+    <li><a href="#20.2">20.2 提示</a></li>
+    <li><a href="#20.3">20.3 着重</a></li>
+    <li><a href="#20.4">20.4 提醒</a></li>
+    <li><a href="#20.5">20.5 警告</a></li>
+    </ul>
+    </li>
     </ul>
     </div>
     <h1 id="crossdown">CrossDown</h1>
     <p>自制的markdown,添加了一些自定义的语法</p>
-    <p>效果请见<README.html></p>
-    <p>安装:pip3 install --index-url <a href="https://crossdark.net/api/packages/CrossDark/pypi/simple/">https://crossdark.net/api/packages/CrossDark/pypi/simple/</a> CrossDown</p>
+    <p>效果请见<kbd>README.html</kbd></p>
+    <p>安装:<code class="highlight">pip3<span class="w"> </span>install<span class="w"> </span>--index-url<span class="w"> </span>https://crossdark.net/api/packages/CrossDark/pypi/simple/<span class="w"> </span>CrossDown</code></p>
     <h1 id="1">1 基本语法</h1>
     <h2 id="1.1">1.1 标题</h2>
     <h1 id="_1">一级标题</h1>
@@ -166,7 +174,6 @@
     <p><a href="链接地址">链接文本</a></p>
     <p><a href="https://crossdark.com">CrossDark</a></p>
     <p><a href="https://crossdark.net/">https://crossdark.net/</a></p>
-    <p><a href="https://crossdark.net/">https://crossdark.net/</a></p>
     <p><a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#108;&#105;&#117;&#104;&#97;&#110;&#98;&#111;&#51;&#51;&#51;&#64;&#105;&#99;&#108;&#111;&#117;&#100;&#46;&#99;&#111;&#109;">&#108;&#105;&#117;&#104;&#97;&#110;&#98;&#111;&#51;&#51;&#51;&#64;&#105;&#99;&#108;&#111;&#117;&#100;&#46;&#99;&#111;&#109;</a></p>
     <h3 id="1.3.2">1.3.2 图片</h3>
     <p><img alt="链接图片" src="链接地址" /></p>
@@ -179,39 +186,37 @@
     <p>直接在文本中使用 <abbr title="长的文本">缩写</abbr> 即可</p>
     <h1 id="3">3 锚点</h1>
     <h2 id="3.1">3.1 定义</h2>
-    <p><span id="锚点名">锚点名</span></p>
-    <h2 id="3.2">3.2 页内链接</h2>
-    <p><a href="#锚点名">锚点名</a></p>
+    <p><span id="锚点">锚点</span></p>
+    <h2 id="3.2">3.2 链接</h2>
+    <p><a href=#锚点>锚点</a></p>
     <h1 id="4">4 代码块</h1>
-    <h2 id="4.1">4.1 <code>单行</code></h2>
+    <h2 id="4.1">4.1 <span class="block">单行</span></h2>
     <p>Here is some code: <code class="highlight"><span class="kn">import</span> <span class="nn">pymdownx</span><span class="p">;</span> <span class="n">pymdownx</span><span class="o">.</span><span class="n">__version__</span></code>.</p>
-    <p>The mock shebang will be treated like text here: <code>#!js var test = 0;</code>.</p>
+    <p>The mock shebang will be treated like text here: <span id="!js var test = 0;">!js var test = 0;</span>.</p>
     <h3 id="4.1.1">4.1.1 LaTex</h3>
     <p>这是<span class="arithmatex"><span class="MathJax_Preview">CO_2</span><script type="math/tex">CO_2</script></span>二氧化碳,或者可以写成这样CO<sub>2</sub></p>
     <p>这是<span class="arithmatex"><span class="MathJax_Preview">H_2O</span><script type="math/tex">H_2O</script></span>水,或者写成H<sub>2</sub>O
     <sup>3</sup>H<sub>2</sub>O</p>
     <p><span class="arithmatex"><span class="MathJax_Preview">\lg\left(\frac{目标生物的理智值}{稳定折磨型工具人的理智值}\right)</span><script type="math/tex">\lg\left(\frac{目标生物的理智值}{稳定折磨型工具人的理智值}\right)</script></span></p>
     <h3 id="4.1.2">4.1.2 函数</h3>
-    <p><code>¥y=x*2+1¥</code>  // 不定义范围</p>
-    <p><code>¥y=x**2¥€-50,50€</code>  // 定义了x范围</p>
-    <p><code>¥y=x**3¥€-50,50|-100,100€</code>  // 定义了y范围</p>
+    <p><span class="block">¥y=x*2+1¥</span>  // 不定义范围</p>
+    <p><span class="block">¥y=x**2¥€-50,50€</span>  // 定义了x范围</p>
+    <p><span class="block">¥y=x**3¥€-50,50|-100,100€</span>  // 定义了y范围</p>
     <h3 id="4.1.3">4.1.3 按键风格</h3>
     <p><span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-alt">Alt</kbd><span>+</span><kbd class="key-delete">Del</kbd></span></p>
+    <p><kbd>Enter</kbd></p>
     <h3 id="4.1.4">4.1.4 突出</h3>
-    <p><code>{突出内容}</code></p>
+    <p><span class="block">突出内容</span></p>
     <h2 id="4.2">4.2 多行</h2>
     <h3 id="4.2.1">4.2.1 YAML</h3>
-    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 2</span>
-    <span class="normal"> 3</span>
-    <span class="normal"> 4</span>
-    <span class="normal"> 5</span>
-    <span class="normal"> 6</span>
-    <span class="normal"> 7</span>
-    <span class="normal"> 8</span>
-    <span class="normal"> 9</span>
-    <span class="normal">10</span>
-    <span class="normal">11</span>
-    <span class="normal">12</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="hll"><span class="nt">A</span><span class="p">:</span>
+    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2</span>
+    <span class="normal">3</span>
+    <span class="normal">4</span>
+    <span class="normal">5</span>
+    <span class="normal">6</span>
+    <span class="normal">7</span>
+    <span class="normal">8</span>
+    <span class="normal">9</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="hll"><span class="nt">A</span><span class="p">:</span>
     </span><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">1. a</span>
     <span class="hll"><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">2. b</span>
     </span><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">3. c</span>
@@ -219,9 +224,6 @@
     <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">a</span>
     <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">b</span>
     <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">c</span>
-    <span class="p p-Indicator">{[</span><span class="nv">强调变量</span><span class="p p-Indicator">]}:</span>
-    <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">a</span>
-    <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">b</span>
     </code></pre></div></td></tr></table></div>
     <h3 id="4.2.2">4.2.2 Python</h3>
     <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
@@ -263,7 +265,7 @@
         p(h_j=1|\mathbf{v}) & = \sigma\left(\sum_i w_{ij}v_i + c_j\right)
     \end{align}</script>
     </div>
-    <p>行内公式: <span class="arithmatex"><span class="MathJax_Preview">p(x|y) = \frac{p(y|x)p(x)}{p(y)}</span><script type="math/tex">p(x|y) = \frac{p(y|x)p(x)}{p(y)}</script></span> </p>
+    <p>行内公式: <span class="arithmatex"><span class="MathJax_Preview">p(x|y) = \frac{p(y|x)p(x)}{p(y)}</span><script type="math/tex">p(x|y) = \frac{p(y|x)p(x)}{p(y)}</script></span></p>
     <h3 id="4.2.6">4.2.6 HTML</h3>
     <div class="highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
         <span class="cm">&lt;!--头部--&gt;</span>
@@ -311,7 +313,7 @@
     <p>7.1.3. 错误示范</p>
     <p>不能出现两个及以上连续的点,例如:</p>
     <p>7..1...4 错误示范</p>
-    <p>提纲号会被自动配置为锚点,可直接使用<a href="#7">7</a><a href="#7.1">7.1</a></p>
+    <p>提纲号会被自动配置为锚点,可直接使用<a href=#7>7</a> <a href=#7.1>7.1</a> <em>这种情况中间必须有间隔</em></p>
     <h1 id="8">8 注释</h1>
     <!-- 这是注释 -->
     
@@ -352,7 +354,7 @@
     <li>c</li>
     </ul>
     </dd>
-    <dt><code>{强调变量}</code></dt>
+    <dt><span class="block">强调值</span></dt>
     <dd>
     <ul>
     <li>a</li>
@@ -546,7 +548,7 @@
     </div>
     </p>
     <h1 id="15">15 内部链接</h1>
-    <p><a class="wikilink" href="/Bracketed/">Bracketed</a></p>
+    <p><kbd>Bracketed</kbd></p>
     <h1 id="16">16 变量</h1>
     <p>{[强调变量]}</p>
     <h1 id="17">17 属性设置</h1>
@@ -620,5 +622,31 @@
     <li>test add</li>
     </ul>
     </ins>
+    <h1 id="20">20 警告</h1>
+    <h2 id="20.1">20.1 告示</h2>
+    <div class="admonition note">
+    <p class="admonition-title">Note</p>
+    <p>突出用户应考虑的信息</p>
+    </div>
+    <h2 id="20.2">20.2 提示</h2>
+    <div class="admonition tip">
+    <p class="admonition-title">Tip</p>
+    <p>帮助用户的可选信息</p>
+    </div>
+    <h2 id="20.3">20.3 着重</h2>
+    <div class="admonition important">
+    <p class="admonition-title">Important</p>
+    <p>Crucial information necessary for users to succeed.</p>
+    </div>
+    <h2 id="20.4">20.4 提醒</h2>
+    <div class="admonition warning">
+    <p class="admonition-title">Warning</p>
+    <p>Critical content demanding immediate user attention due to potential risks.</p>
+    </div>
+    <h2 id="20.5">20.5 警告</h2>
+    <div class="admonition caution">
+    <p class="admonition-title">Caution</p>
+    <p>Negative potential consequences of an action.</p>
+    </div>
 </body>  
 </html>
