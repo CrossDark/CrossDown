@@ -188,6 +188,9 @@ class BasicExtension(Extension):
 
 
 class InlineCode:
+    """
+    生成InlineHiliteExtension的自定义格式化器
+    """
     def __init__(self, variable: Variable):
         """
         初始化
@@ -195,14 +198,14 @@ class InlineCode:
         """
         self.variable = variable
 
-    def __call__(self, source: str, language: str, css_class: str, md: markdown.core.Markdown) -> str:  # 自定义的单行代码格式化器
+    def __call__(self, source: str, language: str, css_class: str, md: markdown.core.Markdown) -> str | ElementTree:  # 自定义的单行代码格式化器
         """
         InlineHiliteExtension的自定义格式化器
         :param source: 原始单行代码
         :param language: 输入的语言,未输入则为''
-        :param css_class:
-        :param md:
-        :return:
+        :param css_class: 最初通过 custom_inline 项中的 class 选项定义的类名
+        :param md: Markdown 类对象
+        :return: HTML字符串或ElementTree对象
         """
         if language != '':  # 字符串已经定义了语言类型
             return md.inlinePatterns['backtick'].highlight_code(
