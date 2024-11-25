@@ -195,7 +195,7 @@ class InlineCode:
         """
         self.variable = variable
 
-    def __call__(self, source: str, language: str, css_class: str, md: markdown.core.Markdown):  # 自定义的单行代码格式化器
+    def __call__(self, source: str, language: str, css_class: str, md: markdown.core.Markdown) -> str:  # 自定义的单行代码格式化器
         """
         InlineHiliteExtension的自定义格式化器
         :param source: 原始单行代码
@@ -288,7 +288,7 @@ def main(text: str, variable: Variable = None) -> tuple[str, Variable]:
                 {
                     'name': '*',
                     'class': 'block',
-                    'format': InlineCode(variable=variable),
+                    'format': InlineCode(variable=variable),  # 传入变量
                 },
             ]
         ),
