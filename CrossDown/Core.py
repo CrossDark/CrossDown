@@ -189,9 +189,21 @@ class BasicExtension(Extension):
 
 class InlineCode:
     def __init__(self, variable: Variable):
+        """
+        初始化
+        :param variable: 变量字典
+        """
         self.variable = variable
 
-    def __call__(self, source: str, language: str, css_class: str, md: markdown.core.Markdown):  # 自定义的单行代码格式化器
+    def __call__(self, source: str, language: str, css_class: str, md: markdown.core.Markdown) -> str:  # 自定义的单行代码格式化器
+        """
+        InlineHiliteExtension的自定义格式化器
+        :param source: 原始单行代码
+        :param language: 输入的语言,未输入则为''
+        :param css_class:
+        :param md:
+        :return:
+        """
         if language != '':  # 字符串已经定义了语言类型
             return md.inlinePatterns['backtick'].highlight_code(
                 src=source, language=language, classname=css_class,
@@ -276,7 +288,7 @@ def main(text: str, variable: Variable = None) -> tuple[str, Variable]:
                 {
                     'name': '*',
                     'class': 'block',
-                    'format': InlineCode(variable=variable),
+                    'format': InlineCode(variable=variable),  # 传入变量
                 },
             ]
         ),
