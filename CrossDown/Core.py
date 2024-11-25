@@ -198,8 +198,8 @@ class InlineCode:
     def __call__(self, source: str, language: str, css_class: str, md: markdown.core.Markdown):  # 自定义的单行代码格式化器
         """
         InlineHiliteExtension的自定义格式化器
-        :param source:
-        :param language:
+        :param source: 原始单行代码
+        :param language: 输入的语言,未输入则为''
         :param css_class:
         :param md:
         :return:
