@@ -42,7 +42,6 @@ import markdown_gfm_admonition
 
 from xml.etree.ElementTree import ElementTree
 
-
 Variable = dict[str, str | tuple[str], list[str]] | None
 
 
@@ -191,6 +190,7 @@ class InlineCode:
     """
     生成InlineHiliteExtension的自定义格式化器
     """
+
     def __init__(self, variable: Variable):
         """
         初始化
@@ -198,7 +198,8 @@ class InlineCode:
         """
         self.variable = variable
 
-    def __call__(self, source: str, language: str, css_class: str, md: markdown.core.Markdown) -> str | ElementTree:  # 自定义的单行代码格式化器
+    def __call__(self, source: str, language: str, css_class: str,
+                 md: markdown.core.Markdown) -> str | ElementTree:  # 自定义的单行代码格式化器
         """
         InlineHiliteExtension的自定义格式化器
         :param source: 原始单行代码
@@ -220,11 +221,27 @@ class InlineCode:
                 return f'<a href=#{inline_link}>{inline_link}</a>'
             case None, variable:  # 可能匹配到`变量`
                 if variable in self.variable:  # 是`变量`
-                    return f'<span class="block">{self.variable[variable]}</span>'
+                    return f'<code id="block">{self.variable[variable]}</code>'
                 else:  # 不是`变量`
-                    return f'<span class="block">{variable}</span>'
-            case _:
-                return f'<code>{source}</code>'
+                    return f'<code id="block">{variable}</code>'
+
+
+def chart_formatter(source, language, css_class, options, md, classes=None, id_value='', attrs=None, **kwargs) -> str:
+    """
+    chart.js自定义格式化器
+    :param source: 源代码
+    :param language: 语言
+    :param css_class: css类
+    :param options:
+    :param md:
+    :param classes:
+    :param id_value:
+    :param attrs:
+    :param kwargs:
+    :return:
+    """
+    print(source)
+    return f'<canvas></canvas><script>{source}</script>'
 
 
 Extensions = {
@@ -243,6 +260,11 @@ Extensions = {
                     'class': 'mermaid',
                     'format': fence_div_format,
                 },
+                {
+                    'name': 'chart',
+                    'class': 'chart',
+                    'format': chart_formatter,
+                }
             ]
         },
     }),

@@ -29,6 +29,9 @@ HEAD = {
 
     # 代码高亮css
     ('code-highlight', 'css'): '<link rel="stylesheet" href="../Static/styles.css">',
+
+    # Chart.js
+    ('chart', 'js'): '<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>'
 }
 
 
