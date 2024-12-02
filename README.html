@@ -81,7 +81,7 @@
     <li><a href="#4.2.5">4.2.5 latex</a></li>
     <li><a href="#4.2.6">4.2.6 HTML</a></li>
     <li><a href="#4.2.7">4.2.7 未知语言</a></li>
-    <li><a href="#4.2.8">4.2.8 Chart.js</a></li>
+    <li><a href="#4.2.8">4.2.8 对话</a></li>
     </ul>
     </li>
     </ul>
@@ -282,44 +282,11 @@
         print(&#39;CrossDown&#39;)
     `#!py3 print(&#39;cd&#39;)`
     </code></pre></div>
-    <h3 id="4.2.8">4.2.8 Chart.js</h3>
-    <canvas></canvas><script>var ctx = document.getElementById("myChart").getContext('2d');
-    var myChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-            datasets: [{
-                label: '# of Votes',
-                data: [12, 19, 3, 5, 2, 3],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255,99,132,1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero:true
-                    }
-                }]
-            }
-        }
-    });</script>
+    <h3 id="4.2.8">4.2.8 对话</h3>
+    <canvas></canvas><script>角色A:描述1
+    角色B:描述2
+    角色A>话1
+    角色B<话2</script>
     <h1 id="5">5 转义</h1>
     <p>\ </p>
     <p>\a </p>
@@ -688,27 +655,5 @@
     <p class="admonition-title">Caution</p>
     <p>Negative potential consequences of an action.</p>
     </div>
-    <script>document.addEventListener("DOMContentLoaded", function () {
-  var clipboard = new ClipboardJS('.copy - btn');
-  clipboard.on('success', function (e) {
-    console.log('代码复制成功');
-    e.clearSelection();
-  });
-  clipboard.on('error', function (e) {
-    console.log('代码复制失败');
-  });
-});</script>
-    <pre><code id="html - code - block">
-&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-  &lt;head&gt;
-    &lt;title&gt;示例页面&lt;/title&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-    &lt;h1&gt;这是一个标题&lt;/h1&gt;
-  &lt;/body&gt;
-&lt;/html&gt;
-</code></pre>
-<button class="copy - btn" data - clipboard - target="#html - code - block">复制代码</button>
 </body>  
 </html>

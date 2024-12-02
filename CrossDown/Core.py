@@ -226,21 +226,30 @@ class InlineCode:
                     return f'<code id="block">{variable}</code>'
 
 
-def chart_formatter(source, language, css_class, options, md, classes=None, id_value='', attrs=None, **kwargs) -> str:
+def dialogue_formatter(
+        source: str,
+        language: str,
+        css_class: str,
+        options: dict,
+        md: markdown.core.Markdown,
+        classes: list | None = None,
+        id_value: str = '',
+        attrs: dict | None = None,
+        **kwargs,
+) -> str:
     """
-    chart.js自定义格式化器
+    自定义对话格式化器
     :param source: 源代码
     :param language: 语言
     :param css_class: css类
-    :param options:
-    :param md:
-    :param classes:
-    :param id_value:
-    :param attrs:
+    :param options: 自定义选项
+    :param md: markdown实例
+    :param classes: 在大括号样式标头中定义的附加类
+    :param id_value: 可选ID
+    :param attrs: 大括号样式标头中定义的任何属性
     :param kwargs:
-    :return:
+    :return: 返回的html字符串
     """
-    print(source)
     return f'<canvas></canvas><script>{source}</script>'
 
 
@@ -261,9 +270,9 @@ Extensions = {
                     'format': fence_div_format,
                 },
                 {
-                    'name': 'chart',
-                    'class': 'chart',
-                    'format': chart_formatter,
+                    'name': 'dialogue',
+                    'class': 'dialogue',
+                    'format': dialogue_formatter,
                 }
             ]
         },
