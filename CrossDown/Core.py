@@ -166,6 +166,35 @@ class Syllabus(BlockProcessor):
         return False
 
 
+class Dialogue(BlockProcessor):
+    # 定义对话的正则表达式
+    syllabus_re = r'(.+)([<>])(.+)'
+
+    def test(self, parent: xml.etree.ElementTree.Element, block: str) -> Match[str] | None | bool:
+        """
+        检查当前块是否匹配正则表达式
+        :param parent: 当前块的Element对象
+        :param block: 当前块的内容
+        :return: 匹配成功与否
+        """
+        return re.match(self.syllabus_re, block)
+
+    def run(self, parent: xml.etree.ElementTree.Element, blocks: list[str]) -> bool | None:
+        """
+        对匹配到的块进行处理
+        :param parent: 当前块的Element对象
+        :param blocks: 包含文本中剩余块的列表
+        :return: 匹配成功与否
+        """
+        charactor, direction, dialogue = re.compile(self.syllabus_re).match(blocks[0]).groups()
+        print(f'<div class="message {"left" if direction == ">" else "<"} {charactor}">{dialogue}</div>')
+        div = xml.etree.ElementTree.SubElement(parent, 'div')
+        div.set('class', f'message {"left" if direction == ">" else "right"} {charactor}')
+        div.text = dialogue
+        blocks[0] = ''
+        return False
+
+
 class BasicExtension(Extension):
     """
     渲染基本样式
@@ -184,6 +213,7 @@ class BasicExtension(Extension):
             r'\[(.*?)]-\((.*?)\)', tag='span', property_='title'), 'hide', 180
         )  # [在指定的文本里面隐藏一段文本]-(只有鼠标放在上面才会显示隐藏文本)
         md.parser.blockprocessors.register(Syllabus(md.parser), 'syllabus', 182)  # 渲染提纲
+        md.parser.blockprocessors.register(Dialogue(md.parser), 'dialogue', 183)  # 渲染对话
 
 
 class InlineCode:
