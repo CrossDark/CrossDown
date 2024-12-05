@@ -177,6 +177,8 @@ class Dialogue(BlockProcessor):
         :param block: 当前块的内容
         :return: 匹配成功与否
         """
+        if block.startswith(r'\['):
+            return False
         return re.match(self.syllabus_re, block)
 
     def run(self, parent: xml.etree.ElementTree.Element, blocks: list[str]) -> bool | None:
@@ -187,7 +189,6 @@ class Dialogue(BlockProcessor):
         :return: 匹配成功与否
         """
         charactor, direction, dialogue = re.compile(self.syllabus_re).match(blocks[0]).groups()
-        print(f'<div class="message {"left" if direction == ">" else "<"} {charactor}">{dialogue}</div>')
         div = xml.etree.ElementTree.SubElement(parent, 'div')
         div.set('class', f'message {"left" if direction == ">" else "right"} {charactor}')
         div.text = dialogue
