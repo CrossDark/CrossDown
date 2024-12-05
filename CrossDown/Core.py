@@ -188,10 +188,16 @@ class Dialogue(BlockProcessor):
         :param blocks: 包含文本中剩余块的列表
         :return: 匹配成功与否
         """
-        charactor, direction, dialogue = re.compile(self.syllabus_re).match(blocks[0]).groups()
-        div = xml.etree.ElementTree.SubElement(parent, 'div')
-        div.set('class', f'message {"left" if direction == ">" else "right"} {charactor}')
-        div.text = dialogue
+        # 创建一个对话框
+        box = xml.etree.ElementTree.SubElement(parent, 'div')
+        box.set('class', 'message-box')
+        # 添加对话
+        for block in blocks[0].split('\n'):
+            charactor, direction, dialogue = re.compile(self.syllabus_re).match(block).groups()  # 解析对话
+            div = xml.etree.ElementTree.SubElement(box, 'div')
+            div.set('class', f'message {"left" if direction == ">" else "right"} {charactor}')
+            div.text = dialogue
+        xml.etree.ElementTree.SubElement(box, 'br')  # 添加强制换行符,防止格式错乱
         blocks[0] = ''
         return False
 
