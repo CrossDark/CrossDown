@@ -2,7 +2,7 @@ Title:   CrossDown示例
 Summary: 够简洁的了
 Authors: CrossDark
 Date:    __date__
-base_url: http://crossdark.net:3000/crossdark/CrossDown
+base_url: https://crossdark.com/crossdark/CrossDown
 
 [TOC]
 
@@ -208,8 +208,10 @@ def main():
 
 5 对话
 
+/// dialogue | 对话框
 左侧>话语
 右侧<话语
+///
 
 6 引用
 

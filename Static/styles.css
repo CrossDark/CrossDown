@@ -94,11 +94,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 .left {
             background-color: #f2f2f2;
             text-align: left;
-            float: left;
         }
 
 .right {
             background-color: #e5f0ff;
             text-align: right;
-            float: right;
         }

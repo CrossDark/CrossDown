@@ -14,7 +14,6 @@ from markdown.extensions import Extension, meta, toc, wikilinks, legacy_attrs
 from markdown.inlinepatterns import InlineProcessor
 
 from pymdownx.arithmatex import ArithmatexExtension
-from pymdownx.blocks import BlocksExtension
 from pymdownx.blocks.admonition import AdmonitionExtension
 from pymdownx.blocks.details import DetailsExtension
 from pymdownx.blocks.html import HTMLExtension
@@ -36,6 +35,8 @@ from pymdownx.tasklist import TasklistExtension
 from pymdownx.tilde import DeleteSubExtension
 from pymdownx.magiclink import MagiclinkExtension
 from pymdownx.pathconverter import PathConverterExtension
+from pymdownx.blocks import BlocksExtension
+from pymdownx.blocks.block import Block
 
 import kbdextension
 import markdown_gfm_admonition
@@ -166,40 +167,32 @@ class Syllabus(BlockProcessor):
         return False
 
 
-class Dialogue(BlockProcessor):
-    # 定义对话的正则表达式
-    syllabus_re = r'(.+)([<>])(.+)'
+class DialogueBlock(Block):
+    NAME = 'dialogue'
+    ARGUMENT = None
+    OPTIONS = {}
 
-    def test(self, parent: xml.etree.ElementTree.Element, block: str) -> Match[str] | None | bool:
-        """
-        检查当前块是否匹配正则表达式
-        :param parent: 当前块的Element对象
-        :param block: 当前块的内容
-        :return: 匹配成功与否
-        """
-        if block.startswith(r'\['):
-            return False
-        return re.match(self.syllabus_re, block)
+    def on_create(self, parent):
+        return xml.etree.ElementTree.SubElement(parent, 'div')
 
-    def run(self, parent: xml.etree.ElementTree.Element, blocks: list[str]) -> bool | None:
-        """
-        对匹配到的块进行处理
-        :param parent: 当前块的Element对象
-        :param blocks: 包含文本中剩余块的列表
-        :return: 匹配成功与否
-        """
+    def on_markdown(self) -> str:
+        return 'raw'
+
+    def on_end(self, block: xml.etree.ElementTree.Element):
         # 创建一个对话框
-        box = xml.etree.ElementTree.SubElement(parent, 'div')
+        title = xml.etree.ElementTree.SubElement(block, 'figure')
+        title_text = xml.etree.ElementTree.SubElement(title, 'figcaption')
+        title_text.text = self.argument
+        box = xml.etree.ElementTree.SubElement(block, 'div')
         box.set('class', 'message-box')
         # 添加对话
-        for block in blocks[0].split('\n'):
-            charactor, direction, dialogue = re.compile(self.syllabus_re).match(block).groups()  # 解析对话
+        for block_ in block.text.split('\n'):
+            charactor, direction, dialogue = re.compile(r'(.+)([<>])(.+)').match(block_).groups()  # 解析对话
             div = xml.etree.ElementTree.SubElement(box, 'div')
             div.set('class', f'message {"left" if direction == ">" else "right"} {charactor}')
             div.text = dialogue
-        xml.etree.ElementTree.SubElement(box, 'br')  # 添加强制换行符,防止格式错乱
-        blocks[0] = ''
-        return False
+        xml.etree.ElementTree.SubElement(block, 'br')  # 添加强制换行符,防止格式错乱
+        block.text = ''  # 清空块的内容
 
 
 class BasicExtension(Extension):
@@ -220,7 +213,11 @@ class BasicExtension(Extension):
             r'\[(.*?)]-\((.*?)\)', tag='span', property_='title'), 'hide', 180
         )  # [在指定的文本里面隐藏一段文本]-(只有鼠标放在上面才会显示隐藏文本)
         md.parser.blockprocessors.register(Syllabus(md.parser), 'syllabus', 182)  # 渲染提纲
-        md.parser.blockprocessors.register(Dialogue(md.parser), 'dialogue', 183)  # 渲染对话
+
+
+class DialogueExtension(BlocksExtension):
+    def extendMarkdownBlocks(self, md, block_mgr):
+        block_mgr.register(DialogueBlock, self.getConfigs())
 
 
 class InlineCode:
@@ -341,6 +338,7 @@ Extensions = {
 
     # 自定义
     '基本风格': BasicExtension(),
+    '对话': DialogueExtension(),
 }
 
 
